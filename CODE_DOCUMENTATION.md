@@ -2,11 +2,14 @@
 
 ## Overview
 
-Rush Rock Trivia is a React-based trivia application dedicated to the legendary Canadian progressive rock band Rush. The application generates AI-powered trivia questions using Google's Gemini API and provides an interactive quiz experience for fans of Geddy Lee, Alex Lifeson, and Neil Peart.
+Rush Rock Trivia is a React-based trivia application dedicated to the legendary
+Canadian progressive rock band Rush. The application generates AI-powered trivia
+questions using Google's Gemini API and provides an interactive quiz experience
+for fans of Geddy Lee, Alex Lifeson, and Neil Peart.
 
 ## Project Structure
 
-```
+```text
 rush-rock-trivia/
 ├── App.tsx                 # Main application component
 ├── index.tsx              # Application entry point
@@ -49,16 +52,20 @@ export interface TriviaQuestion {
 ```
 
 ### GameState Enum
+
 - **START**: Initial welcome screen
 - **PLAYING**: Active quiz gameplay
 - **FINISHED**: Results and replay screen
 
 ### TriviaQuestion Interface
-Represents a multiple-choice question with one correct answer and three incorrect options.
+
+Represents a multiple-choice question with one correct answer and three
+incorrect options.
 
 ## Main Application Logic (App.tsx)
 
-The main `App` component orchestrates the entire quiz experience through state management and component rendering.
+The main `App` component orchestrates the entire quiz experience through state
+management and component rendering.
 
 ### Key State Variables
 
@@ -74,7 +81,9 @@ const [error, setError] = useState<string | null>(null);
 ### Core Methods
 
 #### `loadQuestions()`
+
 ```typescript
+
 const loadQuestions = useCallback(async () => {
   setIsLoading(true);
   setError(null);
@@ -105,12 +114,14 @@ const loadQuestions = useCallback(async () => {
 
 **Purpose**: Fetches 5 unique trivia questions from the Gemini AI service
 **Features**:
+
 - Duplicate question prevention using `Set<string>`
 - Error handling with user-friendly messages
 - Loading state management
 - Automatic game state transitions
 
 #### `handleAnswer()`
+
 ```typescript
 const handleAnswer = (isCorrect: boolean) => {
   if (isCorrect) {
@@ -130,15 +141,18 @@ const handleAnswer = (isCorrect: boolean) => {
 
 **Purpose**: Processes user answers and manages quiz progression
 **Features**:
+
 - Score tracking
 - 2-second feedback delay for better UX
 - Automatic progression to next question or end screen
 
 ## AI Service Integration (geminiService.ts)
 
-The Gemini service handles AI-powered question generation with structured output validation.
+The Gemini service handles AI-powered question generation with structured output
+validation.
 
 ### Schema Definition
+
 ```typescript
 const triviaSchema = {
   type: Type.OBJECT,
@@ -164,6 +178,7 @@ const triviaSchema = {
 ```
 
 ### Question Generation
+
 ```typescript
 export const fetchTriviaQuestion = async (): Promise<TriviaQuestion> => {
   if (!process.env.API_KEY) {
@@ -207,6 +222,7 @@ export const fetchTriviaQuestion = async (): Promise<TriviaQuestion> => {
 ```
 
 **Features**:
+
 - Structured JSON output with schema validation
 - High temperature (1.0) for question variety
 - Comprehensive error handling
@@ -215,6 +231,7 @@ export const fetchTriviaQuestion = async (): Promise<TriviaQuestion> => {
 ## Component Architecture
 
 ### StartScreen Component
+
 ```typescript
 interface StartScreenProps {
   onStart: () => void;
@@ -224,11 +241,13 @@ interface StartScreenProps {
 
 **Purpose**: Welcome screen with game initiation
 **Features**:
+
 - Custom Rush-themed styling
 - Error message display
 - Call-to-action button with hover effects
 
 ### QuestionCard Component
+
 ```typescript
 interface QuestionCardProps {
   question: TriviaQuestion;
@@ -239,21 +258,24 @@ interface QuestionCardProps {
 ```
 
 **Key Features**:
+
 - **Answer Shuffling**: Randomizes option order for each question
-```typescript
-useEffect(() => {
-  setSelectedAnswer(null);
-  const answers = [...question.incorrectAnswers, question.correctAnswer];
-  // Simple shuffle algorithm
-  for (let i = answers.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [answers[i], answers[j]] = [answers[j], answers[i]];
-  }
-  setShuffledAnswers(answers);
-}, [question]);
-```
+
+    ```typescript
+    useEffect(() => {
+    setSelectedAnswer(null);
+    const answers = [...question.incorrectAnswers, question.correctAnswer];
+    // Simple shuffle algorithm
+    for (let i = answers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [answers[i], answers[j]] = [answers[j], answers[i]];
+    }
+    setShuffledAnswers(answers);
+    }, [question]);
+    ```
 
 - **Visual Feedback**: Dynamic styling based on answer correctness
+
 ```typescript
 const getButtonClass = (answer: string) => {
   if (!isAnswered) {
@@ -270,6 +292,7 @@ const getButtonClass = (answer: string) => {
 ```
 
 ### EndScreen Component
+
 ```typescript
 interface EndScreenProps {
   score: number;
@@ -279,8 +302,11 @@ interface EndScreenProps {
 ```
 
 **Features**:
+
 - **Dynamic Feedback**: Rush song title-inspired messages based on performance
+
 ```typescript
+
 const getFeedback = () => {
   const percentage = (score / totalQuestions) * 100;
   if (percentage === 100) return "A Modern Day Warrior! Perfect Score!";
@@ -293,6 +319,7 @@ const getFeedback = () => {
 ### Custom Icons (IconComponents.tsx)
 
 #### RushLogo Component
+
 ```typescript
 export const RushLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -311,13 +338,15 @@ export const RushLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 );
 ```
 
-Custom SVG logo incorporating Rush branding with gradient effects and geometric elements.
+Custom SVG logo incorporating Rush branding with gradient effects and geometric
+elements.
 
 ## Game Flow Process
 
 1. **Initialization**: App starts in `GameState.START`
-2. **Question Loading**: User clicks "Begin the Test" → `loadQuestions()` fetches 5 unique questions
-3. **Quiz Gameplay**: 
+2. **Question Loading**: User clicks "Begin the Test" → `loadQuestions()`
+   fetches 3. 5 unique questions
+3. **Quiz Gameplay**:
    - Display question with shuffled answers
    - User selects answer → visual feedback shown
    - 2-second delay → progress to next question
@@ -328,17 +357,20 @@ Custom SVG logo incorporating Rush branding with gradient effects and geometric 
 ## Design Philosophy
 
 ### User Experience
+
 - **Immediate Feedback**: Visual indicators for correct/incorrect answers
 - **Progressive Disclosure**: One question at a time to maintain focus
 - **Error Recovery**: Graceful handling of API failures with retry options
 - **Accessibility**: Semantic HTML structure and keyboard navigation
 
 ### Performance Optimizations
+
 - **useCallback**: Memoized functions to prevent unnecessary re-renders
 - **Duplicate Prevention**: Set-based tracking to avoid repeated questions
 - **Lazy Loading**: Questions fetched only when needed
 
 ### Theming
+
 - **Rush-Inspired**: Color scheme using reds and purples
 - **Typography**: Bold, rock-inspired font choices
 - **Animations**: Subtle transitions and hover effects
@@ -372,12 +404,16 @@ GEMINI_API_KEY=your_api_key_here
 ## Goals and Vision
 
 ### Primary Goals
+
 1. **Fan Engagement**: Create an entertaining experience for Rush enthusiasts
 2. **Knowledge Testing**: Challenge fans with deep-cut trivia beyond basic facts
-3. **AI Integration**: Demonstrate practical use of generative AI for content creation
-4. **User Experience**: Provide smooth, responsive gameplay with immediate feedback
+3. **AI Integration**: Demonstrate practical use of generative AI for content
+   creation
+4. **User Experience**: Provide smooth, responsive gameplay with immediate
+   feedback
 
 ### Technical Goals
+
 1. **Type Safety**: Comprehensive TypeScript implementation
 2. **Modern React**: Utilize React 19 features and best practices
 3. **Performance**: Optimized rendering and minimal API calls
@@ -385,7 +421,9 @@ GEMINI_API_KEY=your_api_key_here
 5. **Error Resilience**: Graceful handling of network and API failures
 
 ### Educational Value
+
 The application serves as an example of:
+
 - AI service integration with structured output
 - State management in React applications
 - Component composition and prop drilling
@@ -394,7 +432,8 @@ The application serves as an example of:
 
 ## Future Enhancement Opportunities
 
-1. **Question Categories**: Allow users to select specific topics (albums, lyrics, history)
+1. **Question Categories**: Allow users to select specific topics (albums,
+   lyrics, history)
 2. **Difficulty Levels**: Implement beginner, intermediate, and expert modes
 3. **Leaderboards**: Track high scores and user achievements
 4. **Social Features**: Share results and challenge friends
@@ -402,4 +441,7 @@ The application serves as an example of:
 6. **Audio Integration**: Include Rush song clips as question context
 7. **Progressive Web App**: Add service worker for offline functionality
 
-This trivia application successfully combines modern web development practices with AI-powered content generation to create an engaging experience for Rush fans while demonstrating clean code architecture and user-centered design principles.
+This trivia application successfully combines modern web development practices
+with AI-powered content generation to create an engaging experience for Rush
+fans while demonstrating clean code architecture and user-centered design
+principles.
