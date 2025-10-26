@@ -98,10 +98,20 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 text-white font-sans flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-slate-800 text-white font-sans flex flex-col items-center justify-center p-4">
       <header className="mb-8 text-center">
-        <RushLogo className="h-24 w-auto mx-auto mb-4 drop-shadow-lg" />
-        <h1 className="text-4xl md:text-5xl font-bold tracking-wider text-red-500 drop-shadow-[0_2px_2px_rgba(0,0,0,0.7)]">
+        <div className="mb-6 relative">
+          <img 
+            src="/images/Rush2026RedStar2.png" 
+            alt="Rush Rock Trivia Logo" 
+            className="max-w-xs h-auto mx-auto"
+            style={{
+              maskImage: 'radial-gradient(ellipse at center, black 25%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.05) 85%, transparent 100%)',
+              WebkitMaskImage: 'radial-gradient(ellipse at center, black 25%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.05) 85%, transparent 100%)'
+            }}
+          />
+        </div>
+        <h1 className="text-4xl md:text-5xl font-bold tracking-wider text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
           Rock Trivia
         </h1>
       </header>
