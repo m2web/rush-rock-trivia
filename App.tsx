@@ -104,7 +104,7 @@ const App: React.FC = () => {
           <img 
             src="/images/Rush2026RedStar2.png" 
             alt="Rush Rock Trivia Logo" 
-            className="max-w-xs h-auto mx-auto"
+            className="max-w-md h-auto mx-auto"
             style={{
               maskImage: 'radial-gradient(ellipse at center, black 25%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.05) 85%, transparent 100%)',
               WebkitMaskImage: 'radial-gradient(ellipse at center, black 25%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.05) 85%, transparent 100%)'
