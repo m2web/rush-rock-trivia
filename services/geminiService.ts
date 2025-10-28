@@ -33,13 +33,17 @@ export const fetchTriviaQuestion = async (): Promise<TriviaQuestion> => {
 
   const ai = new GoogleGenAI({ apiKey });
 
-  // TODO: Update the prompt to elicit easier questions and more questions about the lyrics
   const prompt = `
-    Generate a challenging and interesting multiple-choice trivia question about the Canadian progressive rock band Rush. 
-    The question can be about their lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), instruments, or history.
-    Avoid overly simple or common knowledge questions. Aim for questions that a true fan would appreciate.
-    Provide one correct answer and exactly three plausible but incorrect answers.
-    Ensure the incorrect answers are distinct from the correct one and from each other.
+  Generate a set of 5 multiple-choice trivia questions about the Canadian progressive rock band Rush.
+  50% of the questions should be about the band's lyrics and the other half based on general trivia about their most famous 
+  albums and band members (Geddy Lee, Alex Lifeson, Neil Peart).
+  Aim for questions that are accessible to a casual fan and include more difficult options for die-hard fans.
+  Avoid extremely obscure details; focus on their more popular songs and common knowledge about the band.
+  
+  For each question:
+  - Provide one correct answer.
+  - Provide exactly three plausible but incorrect answers.
+  - Ensure all answer options are distinct from each other.
   `;
 
   try {
