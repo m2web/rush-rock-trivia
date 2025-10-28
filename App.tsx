@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { GameState, TriviaQuestion } from './types';
-import { fetchTriviaQuestion } from './services/geminiService';
+import { getPreloadedQuestions } from './services/geminiService';
 import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';
@@ -22,17 +22,8 @@ const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const newQuestions: TriviaQuestion[] = [];
-      // Using a set to avoid duplicate questions from the LLM in a single session
-      const questionTexts = new Set<string>();
-      
-      while(newQuestions.length < TOTAL_QUESTIONS) {
-        const question = await fetchTriviaQuestion();
-        if (!questionTexts.has(question.question)) {
-          newQuestions.push(question);
-          questionTexts.add(question.question);
-        }
-      }
+      // Get preloaded questions from the cache
+      const newQuestions = await getPreloadedQuestions(TOTAL_QUESTIONS);
       setQuestions(newQuestions);
       setCurrentQuestionIndex(0);
       setScore(0);
