@@ -55,7 +55,7 @@ their extensive discography, band history, lyrics, and musical legacy.
    Create a `.env.local` file in the root directory:
 
    ```text
-   API_KEY=your_gemini_api_key_here
+   VITE_API_KEY=your_gemini_api_key_here
    ```
 
 4. **Start the development server**

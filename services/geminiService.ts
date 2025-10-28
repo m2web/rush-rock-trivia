@@ -26,12 +26,14 @@ const triviaSchema = {
 
 
 export const fetchTriviaQuestion = async (): Promise<TriviaQuestion> => {
-  if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
+  const apiKey = import.meta.env.VITE_API_KEY;
+  if (!apiKey) {
+    throw new Error("VITE_API_KEY environment variable not set");
   }
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
 
+  // TODO: Update the prompt to elicit easier questions and more questions about the lyrics
   const prompt = `
     Generate a challenging and interesting multiple-choice trivia question about the Canadian progressive rock band Rush. 
     The question can be about their lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), instruments, or history.

@@ -34,7 +34,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
 
   const getButtonClass = (answer: string) => {
     if (!isAnswered) {
-      return 'bg-purple-800/50 border-purple-600/70 hover:bg-purple-700/70 hover:border-purple-500';
+      return 'bg-gray-800 border-gray-600 hover:bg-gray-700 hover:border-gray-500';
     }
     if (answer === question.correctAnswer) {
       return 'bg-green-600/80 border-green-400 animate-pulse';
@@ -42,11 +42,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
     if (answer === selectedAnswer) {
       return 'bg-red-600/80 border-red-400';
     }
-    return 'bg-gray-700/50 border-gray-600 opacity-50 cursor-not-allowed';
+    return 'bg-gray-800/50 border-gray-700 opacity-50 cursor-not-allowed';
   };
 
   return (
-    <div className="bg-black bg-opacity-40 p-6 md:p-8 rounded-2xl shadow-2xl border border-purple-500/30 backdrop-blur-sm animate-fade-in">
+    <div className="bg-gray-900 bg-opacity-90 p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm animate-fade-in">
       <div className="mb-6 text-center">
         <p className="text-lg font-semibold text-red-400">Question {questionNumber} / {totalQuestions}</p>
         <h2 className="text-2xl md:text-3xl font-bold mt-2" dangerouslySetInnerHTML={{ __html: question.question }} />

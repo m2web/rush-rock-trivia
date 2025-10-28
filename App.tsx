@@ -98,7 +98,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-slate-800 text-white font-sans flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col items-center justify-center p-4">
       <header className="mb-8 text-center">
         <div className="mb-6 relative">
           <img 

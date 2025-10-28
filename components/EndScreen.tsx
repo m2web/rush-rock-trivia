@@ -18,13 +18,12 @@ const EndScreen: React.FC<EndScreenProps> = ({ score, totalQuestions, onPlayAgai
   };
 
   return (
-    <div className="text-center bg-black bg-opacity-40 p-8 rounded-2xl shadow-2xl border border-purple-500/30 backdrop-blur-sm animate-fade-in">
-      <StarmanIcon className="w-32 h-32 mx-auto mb-6 text-red-500" />
-      <h2 className="text-3xl font-bold mb-2">Quiz Complete!</h2>
+    <div className="text-center bg-gray-900 bg-opacity-90 p-8 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm animate-fade-in">
+      <h2 className="text-3xl font-bold mb-6">Quiz Complete!</h2>
       <p className="text-2xl text-gray-300 mb-4">
         You scored <span className="text-red-400 font-bold text-3xl">{score}</span> out of <span className="text-red-400 font-bold text-3xl">{totalQuestions}</span>
       </p>
-      <p className="text-xl italic text-purple-300 mb-8">{getFeedback()}</p>
+      <p className="text-xl italic text-gray-300 mb-8">{getFeedback()}</p>
       <button
         onClick={onPlayAgain}
         className="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-10 rounded-full text-xl transform hover:scale-105 transition-all duration-300 ease-in-out shadow-lg hover:shadow-red-500/50"
