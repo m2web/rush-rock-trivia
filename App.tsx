@@ -93,7 +93,7 @@ const App: React.FC = () => {
       <header className="mb-8 text-center">
         <div className="mb-6 relative">
           <img 
-            src="/images/Rush2026RedStar2.png" 
+            src="/Rush2026RedStar2.png" 
             alt="Rush Rock Trivia Logo" 
             className="max-w-md h-auto mx-auto"
             style={{
