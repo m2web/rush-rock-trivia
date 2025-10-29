@@ -1,7 +1,8 @@
 
 import React, { useState, useCallback } from 'react';
 import { GameState, TriviaQuestion } from './types';
-import { getPreloadedQuestions } from './services/geminiService';
+// Smart service that automatically chooses secure endpoint or direct API
+import { getPreloadedQuestions } from './services/smartGeminiService';
 import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';

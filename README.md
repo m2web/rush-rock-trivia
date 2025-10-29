@@ -52,11 +52,17 @@ their extensive discography, band history, lyrics, and musical legacy.
 
 3. **Set up environment variables**
 
-   Create a `.env.local` file in the root directory:
+   For local development, create a `.env.local` file in the root directory:
 
    ```text
-   VITE_API_KEY=your_gemini_api_key_here
+   GEMINI_API_KEY=your_gemini_api_key_here
    ```
+
+   For Cloudflare Pages deployment:
+   - Go to your Cloudflare Pages project dashboard
+   - Navigate to Settings → Environment variables
+   - Add `GEMINI_API_KEY` with your API key value
+   - Set it for both "Production" and "Preview" environments
 
 4. **Start the development server**
 
@@ -64,9 +70,21 @@ their extensive discography, band history, lyrics, and musical legacy.
    npm run dev
    ```
 
-5. **Open your browser**
+   Navigate to `http://localhost:3000`
 
-   Navigate to `http://localhost:5173` to start playing!
+   **How it works:**
+   - **Development**: Uses direct Gemini API calls with `VITE_API_KEY`
+   - **Production**: Automatically switches to secure Cloudflare Pages Functions
+   - **Smart fallback**: If Pages Function fails, falls back to direct API
+
+5. **Production Deployment**
+
+   Deploy to Cloudflare Pages with:
+
+   ```bash
+   npm run build
+   npm run pages:deploy
+   ```
 
 ## How to Play
 
@@ -81,9 +99,19 @@ their extensive discography, band history, lyrics, and musical legacy.
 
 - **Frontend Framework**: React 19.2.0 with TypeScript
 - **Build Tool**: Vite 6.2.0
-- **AI Service**: Google Gemini 2.5 Pro via `@google/genai`
+- **Backend**: Cloudflare Pages Functions (secure API proxy)
+- **AI Service**: Google Gemini 2.5 Flash via REST API
 - **Styling**: Tailwind CSS (utility-first CSS framework)
 - **State Management**: React Hooks (useState, useCallback)
+- **Deployment**: Cloudflare Pages with edge computing
+
+## Security Features
+
+- **API Key Protection**: Gemini API key stored securely server-side
+- **Edge Computing**: Cloudflare Pages Functions run on the edge
+- **No Client Exposure**: API keys never exposed in client bundle
+- **Rate Limiting**: Built-in protection via Cloudflare infrastructure
+- **CORS Security**: Proper cross-origin request handling
 
 ## Project Structure
 
