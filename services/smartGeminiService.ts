@@ -1,3 +1,27 @@
+// Send a chat message to Gemini LLM with fan story context
+export async function sendChatMessage(userMessage: string, fanStory: string): Promise<string> {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  if (!apiKey) {
+    throw new Error("VITE_API_KEY environment variable not set");
+  }
+
+  const { GoogleGenAI } = await import("@google/genai");
+  const ai = new GoogleGenAI({ apiKey });
+
+  // Compose a single prompt string, like trivia
+  const prompt = `You are a friendly, enthusiastic Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as a fellow Rush fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Make the conversation fun and engaging about Rush, their music, concerts, and fandom.\n\nUser: ${userMessage}`;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: prompt,
+    config: {
+      responseMimeType: 'text/plain',
+      temperature: 0.8,
+    }
+  });
+
+  return response.text.trim();
+}
 // Smart service that uses secure endpoint in production and direct API in development
 import { TriviaQuestion } from '../types';
 
