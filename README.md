@@ -1,6 +1,6 @@
 # Rush Rock Trivia
 
-![Rush Rock Trivia Logo][logo]
+![Rush Rock Trivia Logo](public/images/Rush2026RedStar2.png)
 
 ## A tribute to Geddy, Alex, and Neil
 
@@ -18,15 +18,24 @@ their extensive discography, band history, lyrics, and musical legacy.
 
 ### Features
 
-- **AI-Generated Questions**: Dynamic trivia questions powered by
-  Google's Gemini AI
-- **Randomized Answers**: Answer options are shuffled for each question
-- **Smart Scoring**: Track your performance with Rush-themed feedback
-- **Rush-Inspired Design**: Dark theme with band-inspired colors and styling
-- **Duplicate Prevention**: Ensures unique questions in each game session
-- **Real-time Feedback**: Immediate visual feedback for
-  correct/incorrect answers
-- **Responsive Design**: Works perfectly on desktop and mobile devices
+- **📝 Rush Fan Story Modal**: Prompts the user for their Rush fan story before
+   chat/LLM interaction.
+- **🎫 Floating Fan Story Badge**: Always-visible badge displays the user’s Rush
+   fan story and updates if the story changes.
+- **💬 Start Chat & Chat Interface**: “Start Chat” button and chat UI, enabled
+   only if a fan story exists.
+- **🤖 LLM Contextual Chat**: All chat interactions with Gemini LLM include the
+   fan story as context. LLM replies are brief, friendly, and reference the user’s
+   fan experience.
+- **🧠 AI-Generated Questions**: Dynamic trivia questions powered by Google's
+   Gemini AI
+- **🔀 Randomized Answers**: Answer options are shuffled for each question
+- **🏆 Smart Scoring**: Track your performance with Rush-themed feedback
+- **🎨 Rush-Inspired Design**: Dark theme with band-inspired colors and styling
+- **🆕 Duplicate Prevention**: Ensures unique questions in each game session
+- **⚡ Real-time Feedback**: Immediate visual feedback for correct/incorrect
+   answers
+- **📱 Responsive Design**: Works perfectly on desktop and mobile devices
 
 ## Quick Start
 
@@ -191,13 +200,16 @@ Geddy Lee (bass, vocals, keyboards), Alex Lifeson (guitar), and Neil Peart
 philosophical lyrics, and virtuosic musicianship, Rush is considered one of
 the most influential progressive rock bands of all time.
 
+Now looking forward to their 2026 world tour with the new drummer Anika Nilles,
+as the *Elder Race* returns to the stage.
+
 ---
 
-**"For today we live in the fire..."** - Rush, *Subdivisions*
+**"Growing up...opinions are provided, the future pre-decided...."** -
+Rush, *Subdivisions*
 
 Made with love for Rush fans everywhere
 
-[logo]: images/Rush2026RedStar2.png
 [typescript-badge]: https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white
 [typescript-url]: https://www.typescriptlang.org/
 [react-badge]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
