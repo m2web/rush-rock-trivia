@@ -65,8 +65,8 @@ const App: React.FC = () => {
     setTimeout(() => {
       const newStory = 'I became a Rush fan after seeing them live in 1981. It changed my life!';
       if (newStory && newStory !== rushFanStory) {
-        setPendingFanStory(newStory);
-        setShowUpdateFanStoryModal(true);
+        // Previously would update pending fan story and show update modal, but this is no longer needed
+        // (see comments above)
       }
     }, 3000); // Simulate after 3 seconds of chat
   };
