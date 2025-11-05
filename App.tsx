@@ -12,7 +12,7 @@ import EndScreen from './components/EndScreen';
 import LoadingSpinner from './components/LoadingSpinner';
 import { RushLogo } from './components/IconComponents';
 import PassingTheSticks from './components/PassingTheSticks';
-import './styles/passingthesticks.css';
+import './src/styles/passingthesticks.css';
 
 const TOTAL_QUESTIONS = 5;
 
