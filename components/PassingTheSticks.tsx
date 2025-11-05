@@ -154,7 +154,7 @@ const PassingTheSticks: React.FC = () => {
         </div>
       </div>
       
-      <audio ref={audioRef} src="/audio/passingthesticks/narrator_voice.mp3" preload="auto" />
+      {/* <audio ref={audioRef} src="/audio/passingthesticks/narrator_voice.mp3" preload="auto" /> */}
     </section>
   );
 };

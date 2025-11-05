@@ -28,7 +28,19 @@ const App: React.FC = () => {
   const [rushFanStory, setRushFanStory] = useState<string>('');
   const [showRushFanModal, setShowRushFanModal] = useState<boolean>(false);
   const [showChat, setShowChat] = useState<boolean>(false);
-  // No longer need update modal state
+  // Play ambient music on mount
+  React.useEffect(() => {
+    const audio = new Audio('/audio/sci-fi-ambient-music.mp3');
+    audio.loop = true;
+    audio.volume = 1.0;
+    audio.play().catch(() => {
+      // Autoplay may be blocked by browser, ignore error
+    });
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
 
   const loadQuestions = useCallback(async () => {
     setIsLoading(true);
