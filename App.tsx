@@ -184,6 +184,14 @@ const App: React.FC = () => {
               <h1 className="text-4xl md:text-5xl font-bold tracking-wider text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
                 Rock Trivia
               </h1>
+              <div className="mt-4">
+                <a 
+                  href="/passingthesticks" 
+                  className="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-full text-lg shadow-lg transition-all duration-300"
+                >
+                  Passing the Sticks
+                </a>
+              </div>
             </header>
             <main className="w-full max-w-2xl">
               {renderContent()}
