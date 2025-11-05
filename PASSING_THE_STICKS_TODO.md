@@ -72,17 +72,17 @@ Or use Tailwind utilities:
 
 ### Option A - Google Cloud Text-to-Speech (Recommended)
 
-1. Enable **Text-to-Speech API** in Google Cloud Console.
-2. Create a **new service account** (`tts-narration-generator`).
-3. Assign role - "Text-to-Speech Admin".
-4. Download the JSON key - save in `/keys/tts-narration-generator.json`.
-5. Set environment variable:
+1. [x] Enable **Text-to-Speech API** in Google Cloud Console.
+2. [x] Create a **new service account** (`tts-narration-generator`).
+3. [x] Assign role - "Text-to-Speech Admin".
+4. [x] Download the JSON key - save in `/keys/tts-narration-generator.json`.
+5. [x] Set environment variable:
 
    ```bash
    export GOOGLE_APPLICATION_CREDENTIALS="/path/to/tts-narration-generator.json"
    ```
 
-6. Install and run the script:
+6. [x] Install and run the script:
 
    ```bash
    pip install google-cloud-texttospeech
@@ -113,14 +113,7 @@ Or use Tailwind utilities:
    EOF
    ```
 
-- `narrator_voice.mp3` - AI-generated voice-over file (Google Cloud TTS recommended)
-- `ambient_pad.mp3` - optional background synth pad (low volume, loopable)
-- Scene 1 - Neil's quote (fade-in still + typewriter text)
-- Scene 2 - Kit transition overlay (crossfade animation)
-- Scene 3 - Anika live shot (color fade + text slide)
-- Scene 4 - Split fade into Rush red star (final logo)
-- Scene 5 - CTA footer - "Explore more at rush2026.fyi"
-
+- [x] `narrator_voice.mp3` - AI-generated voice-over file (Google Cloud TTS recommended)
 
 ### Option B - OpenAI TTS (Alternative)
 
@@ -184,19 +177,14 @@ Or use Tailwind utilities:
   narrator_voice.mp3
 ```
 
-### Key sections
+### Key scenes for the index.html/passingthesticks.css
 
-- Scene 1 - Neil's quote (fade-in still + typewriter text)
-- Scene 2 - Kit transition overlay (crossfade animation)
-- Scene 3 - Anika live shot (color fade + text slide)
-- Scene 4 - Split fade into Rush red star (final logo)
-- Scene 5 - CTA footer - "Explore more at rush2026.fyi"
+- [ ] Scene 1 - Neil with his kit (fade-in animation) - use neil.png
+- [ ] Scene 2 - Kit transition overlay (crossfade animation) - use kit_transition_overlay.png
+- [ ] Scene 3 - Anika with her kit (fade-in animation) - use anika.png
+- [ ] Scene 4 - Split fade into Rush red star (final logo) - use red_star_bg.png
 
----
-
-## 💻 Phase 4 – Base HTML / CSS
-
-Add `index.html` and `passingthesticks.css` using this structure like this:
+- [ ] Add `index.html` and `passingthesticks.css` using this structure like this (I say like as you will need to fill in the details):
 
 ```html
 <section id="passing-the-sticks" class="relative min-h-screen bg-black text-gray-200 overflow-hidden">
@@ -223,12 +211,11 @@ Add `index.html` and `passingthesticks.css` using this structure like this:
 
 ---
 
-## 🔄 Phase 5 – Integration & QA
+## 🔄 Phase 4 – Integration & QA
 
 - [ ] Add route `/passingthesticks` in `vite.config.ts`
 - [ ] Verify all images resolve correctly under `/public/image/passingthesticks/`
 - [ ] Verify all audio files resolve correctly under `/public/audio/passingthesticks/`
-- [ ] (Optional) Add audio toggle button for narrator voice
 - [ ] Deploy through Cloudflare Pages
 - [ ] Test on mobile (responsive text scaling)
 - [ ] Validate performance via Lighthouse (target >= 90)
@@ -242,17 +229,8 @@ Add `index.html` and `passingthesticks.css` using this structure like this:
 
 ---
 
-## 🧭 Phase 6 – Optional Enhancements
-
-- [ ] Scroll-triggered transitions (GSAP / ScrollTrigger)
-- [ ] Audio fade-in/out based on scroll position
-- [ ] Add button - "Hear the Story" (plays narration)
-- [ ] Expand to "Legacy Series" (future thematic sections)
-
----
-
 ### Goal
 
-Once all items are checked off, `/passingthesticks` will be a self-contained,
+- [ ] Once all items are checked off, `/passingthesticks` will be a self-contained,
 cinematic Rush timeline tribute with minimal load time and high emotional
 impact.
