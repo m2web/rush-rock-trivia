@@ -26,7 +26,22 @@ const PassingTheSticks: React.FC = () => {
     };
   }, []);
 
-  // Audio will start automatically when the component loads due to autoPlay attribute
+  // Audio starts when Scene 2 (Anika) begins fading in at 9 seconds
+  useEffect(() => {
+    const audioTimer = setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play()
+          .then(() => {
+            console.log("Audio started with Scene 2 (Anika) fade-in");
+          })
+          .catch(error => {
+            console.log("Audio playback failed:", error);
+          });
+      }
+    }, 9000); // Start audio when Scene 2 starts fading in
+
+    return () => clearTimeout(audioTimer);
+  }, []);
 
   return (
     <section 
@@ -139,7 +154,7 @@ const PassingTheSticks: React.FC = () => {
         </div>
       </div>
       
-      <audio ref={audioRef} src="/audio/passingthesticks/narrator_voice.mp3" preload="auto" autoPlay />
+      <audio ref={audioRef} src="/audio/passingthesticks/narrator_voice.mp3" preload="auto" />
     </section>
   );
 };
