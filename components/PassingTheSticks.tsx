@@ -3,17 +3,35 @@ import React, { useEffect, useRef, useState } from "react";
 
 const PassingTheSticks: React.FC = () => {
   const [currentScene, setCurrentScene] = useState(0);
+  const [opacity, setOpacity] = useState(1);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (currentScene < 2) {
-        setCurrentScene(currentScene + 1);
-      }
-    }, currentScene === 0 ? 3000 : currentScene === 1 ? 2500 : 0);
-
-    if (currentScene === 2 && audioRef.current) {
-      audioRef.current.play();
+    let timer: NodeJS.Timeout;
+    
+    if (currentScene === 0) {
+      // Neil shows for 3 seconds, then fade out
+      timer = setTimeout(() => {
+        setOpacity(0);
+        // After fade out, switch to next scene and fade in
+        setTimeout(() => {
+          setCurrentScene(1);
+          setOpacity(1);
+        }, 1000);
+      }, 3000);
+    } else if (currentScene === 1) {
+      // Transition shows briefly, then fade out
+      timer = setTimeout(() => {
+        setOpacity(0);
+        // After fade out, switch to final scene and fade in
+        setTimeout(() => {
+          setCurrentScene(2);
+          setOpacity(1);
+          if (audioRef.current) {
+            audioRef.current.play();
+          }
+        }, 1000);
+      }, 500);
     }
 
     return () => clearTimeout(timer);
@@ -47,7 +65,10 @@ const PassingTheSticks: React.FC = () => {
         padding: "1rem"
       }}>
         {currentScene === 0 && (
-          <>
+          <div style={{
+            opacity: opacity,
+            transition: "opacity 1s ease-in-out"
+          }}>
             <img 
               src="/images/passingthesticks/neil.png" 
               alt="Neil Peart behind the drums" 
@@ -65,23 +86,33 @@ const PassingTheSticks: React.FC = () => {
                 - Neil Peart
               </footer>
             </blockquote>
-          </>
+          </div>
         )}
         
         {currentScene === 1 && (
-          <img 
-            src="/images/passingthesticks/kit_transition_overlay.png" 
-            alt="Kit transition overlay" 
-            style={{ width: "100%", maxWidth: "900px", margin: "0 auto", opacity: 0.8 }} 
-          />
+          <div style={{
+            opacity: opacity,
+            transition: "opacity 1s ease-in-out"
+          }}>
+            <img 
+              src="/images/passingthesticks/kit_transition_overlay.png" 
+              alt="Kit transition overlay" 
+              style={{ width: "100%", maxWidth: "900px", margin: "0 auto", opacity: 0.8 }} 
+            />
+          </div>
         )}
         
         {currentScene === 2 && (
-          <img 
-            src="/images/passingthesticks/anika.png" 
-            alt="Anika Nilles behind the drums" 
-            style={{ width: "100%", maxWidth: "900px", margin: "0 auto", opacity: 0.8 }} 
-          />
+          <div style={{
+            opacity: opacity,
+            transition: "opacity 1s ease-in-out"
+          }}>
+            <img 
+              src="/images/passingthesticks/anika.png" 
+              alt="Anika Nilles behind the drums" 
+              style={{ width: "100%", maxWidth: "900px", margin: "0 auto", opacity: 0.8 }} 
+            />
+          </div>
         )}
       </div>
       
