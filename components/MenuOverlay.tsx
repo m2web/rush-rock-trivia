@@ -23,7 +23,7 @@ const MenuOverlay: React.FC = () => {
   return (
     <nav className="menu-overlay fixed top-0 left-0 w-full z-50 flex flex-col items-center px-4 py-2 bg-black bg-opacity-80 shadow-lg rounded-b-2xl">
       <div className="flex flex-col md:flex-row items-center justify-center w-full">
-        <span className="text-xl font-bold tracking-wide text-red-500 drop-shadow mb-2 md:mb-0 md:mr-4">RUSH MENU</span>
+        {/* <span className="text-xl font-bold tracking-wide text-red-500 drop-shadow mb-2 md:mb-0 md:mr-4">From the Computer Halls</span> */}
         <div className="flex items-center space-x-2">
           {menuItems.map(item => (
             <Link
