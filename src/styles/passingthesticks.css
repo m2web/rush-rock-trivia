@@ -1,0 +1,74 @@
+body {
+  font-family: 'Open Sans', Arial, sans-serif;
+  background-color: #000;
+  color: #e5e7eb;
+}
+h1, h2, h3, .font-orbitron {
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+/* Scene 1: Neil - fades in slowly, holds 3s, fades out slowly */
+.scene:nth-child(2) {
+  animation: scene1 18s ease-in-out forwards;
+}
+
+/* Scene 2: Kit transition - starts fading in at 3s, holds, fades out slowly */
+.scene:nth-child(3) {
+  animation: scene2 30s ease-in-out forwards;
+  animation-delay: 3s;
+}
+
+/* Scene 3: Anika - starts fading in slowly at 8s, stays visible */
+.scene:nth-child(4) {
+  animation: scene3 12s ease-in-out forwards;
+  animation-delay: 8s;
+}
+
+/* Scene 4: Red star - starts fading in slowly at 15s, stays visible */
+.scene:nth-child(5) {
+  animation: scene4 12s ease-in-out forwards;
+  animation-delay: 15s;
+}
+
+@keyframes scene1 {
+  0% { opacity: 0; }
+  33% { opacity: 1; }     /* 6s fade-in out of 18s total */
+  50% { opacity: 1; }     /* hold for 3s (9s-12s) */
+  100% { opacity: 0; }    /* 6s fade-out (12s-18s) */
+}
+
+@keyframes scene2 {
+  0% { opacity: 0; }
+  40% { opacity: 1; }     /* 12s fade-in out of 30s total */
+  70% { opacity: 1; }     /* hold for 9s (12s-21s) */
+  100% { opacity: 0; }    /* 9s fade-out (21s-30s) */
+}
+
+@keyframes scene3 {
+  0% { opacity: 0; }
+  100% { opacity: 1; }    /* 12s fade-in */
+}
+
+@keyframes scene4 {
+  0% { opacity: 0; }
+  100% { opacity: 1; }    /* 12s fade-in */
+}
+blockquote {
+  font-style: italic;
+  color: #d1d5db;
+  max-width: 32rem;
+  margin: 2rem auto 0 auto;
+}
+footer {
+  margin-top: 1rem;
+  color: #ef4444;
+  font-weight: 600;
+}

@@ -19,7 +19,9 @@
       "json",
       "markdown",
       "text",
-      "typescript"
+      "typescript",
+      "css",
+      "xml"
     ],
     "language_only": true
   },
