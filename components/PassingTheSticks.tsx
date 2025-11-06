@@ -8,17 +8,17 @@ const PassingTheSticks: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    // Scene 0 (Neil) shows for 3 seconds, then fades out while Scene 1 fades in
+    // Scene 0 (Neil) shows for 7 seconds, then fades out while Scene 1 fades in
     const timer1 = setTimeout(() => {
       setScene0Opacity(0); // Start fade out
       setScene1Opacity(1); // Start fade in simultaneously
-    }, 3000);
+    }, 7000);
 
     // Scene 1 (Kit) shows for 3 seconds after fade-in completes, then fades out while Scene 2 fades in
     const timer2 = setTimeout(() => {
       setScene1Opacity(0); // Start fade out
       setScene2Opacity(1); // Start fade in simultaneously
-    }, 9000); // 3s display + 6s transition = 9s
+    }, 15000); // 7s display + 6s transition + 3s display + 6s transition = 15s
 
     return () => {
       clearTimeout(timer1);
