@@ -21,7 +21,8 @@
       "text",
       "typescript",
       "css",
-      "xml"
+      "xml",
+      "python"
     ],
     "language_only": true
   },
