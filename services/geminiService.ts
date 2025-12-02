@@ -129,8 +129,10 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
   const prompt = `
   Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.
   Each question should be about the band's lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.
-  Aim for questions that are accessible to a casual fan with some more difficult options for die-hard fans.
+  Aim for questions that are accessible to a casual fan and also add some more difficult questions for die-hard fans.
   Avoid extremely obscure details; but do not focus just on their more popular songs. Also, include common knowledge about the band.
+  Note that these will be first generation fans as well as newer fans. Ask about album themes, song meanings, and band history.
+  Consider the many phases of the band over the decades because of their musical influences at that time.
   
   For each question:
   - Provide one correct answer.
