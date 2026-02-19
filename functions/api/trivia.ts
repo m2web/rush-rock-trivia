@@ -81,7 +81,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   - Make sure all questions are unique and cover different aspects of Rush.
   `;
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-exp:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
