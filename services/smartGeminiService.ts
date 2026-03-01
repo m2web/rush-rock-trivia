@@ -1,3 +1,6 @@
+// Smart service that uses secure endpoint in production and direct API in development
+import { TriviaQuestion } from '../types';
+
 // Send a chat message to Gemini LLM with fan story context
 export async function sendChatMessage(userMessage: string, fanStory: string): Promise<string> {
   const apiKey = import.meta.env.VITE_API_KEY;
@@ -12,7 +15,7 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
   const prompt = `You are a friendly, enthusiastic Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as a fellow Rush fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Make the conversation fun and engaging about Rush, their music, concerts, and fandom.\n\nUser: ${userMessage}`;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.0-flash',
     contents: prompt,
     config: {
       responseMimeType: 'text/plain',
@@ -22,8 +25,7 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
 
   return response.text.trim();
 }
-// Smart service that uses secure endpoint in production and direct API in development
-import { TriviaQuestion } from '../types';
+
 
 interface ApiResponse {
   questions: TriviaQuestion[];
@@ -49,7 +51,7 @@ class QuestionCache {
 
     // Return the requested number of questions and remove them from cache
     const questions = this.cache.splice(0, count);
-    
+
     // Start preloading more questions in the background if cache is getting low
     if (this.cache.length < 5 && !this.isLoading) {
       this.preloadQuestions();
@@ -60,10 +62,10 @@ class QuestionCache {
 
   async preloadQuestions(): Promise<void> {
     if (this.isLoading) return;
-    
+
     this.isLoading = true;
     this.loadPromise = this.loadQuestionsInBackground();
-    
+
     try {
       await this.loadPromise;
     } finally {
@@ -109,7 +111,7 @@ async function fetchViaSecureEndpoint(count: number): Promise<TriviaQuestion[]> 
   }
 
   const data: ApiResponse = await response.json();
-  
+
   if (data.error) {
     throw new Error(data.details || data.error);
   }
@@ -126,7 +128,7 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
 
   // Import the GoogleGenAI only when needed (development)
   const { GoogleGenAI, Type } = await import("@google/genai");
-  
+
   const multipleQuestionsSchema = {
     type: Type.OBJECT,
     properties: {
@@ -175,7 +177,7 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.0-flash',
     contents: prompt,
     config: {
       responseMimeType: 'application/json',
@@ -186,7 +188,7 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
 
   const jsonString = response.text.trim();
   const data = JSON.parse(jsonString);
-  
+
   return data.questions || [];
 }
 
@@ -194,7 +196,7 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
 export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQuestion[]> {
   try {
     let questions: TriviaQuestion[];
-    
+
     // Try secure endpoint first (production), fallback to direct API (development)
     if (!isDevelopment || !hasViteApiKey) {
       try {
@@ -224,7 +226,7 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
         throw new Error("API returned an invalid number of incorrect answers for one of the questions.");
       }
     }
-    
+
     return questions;
   } catch (error) {
     console.error("Error fetching multiple trivia questions:", error);

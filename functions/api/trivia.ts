@@ -81,7 +81,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   - Make sure all questions are unique and cover different aspects of Rush.
   `;
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-exp:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -105,14 +105,14 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   }
 
   const data = await response.json();
-  
+
   if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
     throw new Error('Invalid response from Gemini API');
   }
 
   const jsonString = data.candidates[0].content.parts[0].text;
   const parsedData = JSON.parse(jsonString) as MultipleQuestionsResponse;
-  
+
   if (!parsedData.questions || !Array.isArray(parsedData.questions) || parsedData.questions.length !== count) {
     throw new Error(`API returned invalid number of questions. Expected ${count}, got ${parsedData.questions?.length || 0}`);
   }
@@ -123,7 +123,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
       throw new Error("API returned an invalid number of incorrect answers for one of the questions.");
     }
   }
-  
+
   return parsedData.questions;
 }
 
@@ -164,7 +164,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   } catch (error) {
     console.error('Error generating trivia questions:', error);
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       error: 'Failed to generate trivia questions',
       details: error instanceof Error ? error.message : 'Unknown error'
     }), {

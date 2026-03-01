@@ -75,7 +75,7 @@ class QuestionCache {
 
     // Return the requested number of questions and remove them from cache
     const questions = this.cache.splice(0, count);
-    
+
     // Start preloading more questions in the background if cache is getting low
     if (this.cache.length < 5 && !this.isLoading) {
       this.preloadQuestions();
@@ -86,10 +86,10 @@ class QuestionCache {
 
   async preloadQuestions(): Promise<void> {
     if (this.isLoading) return;
-    
+
     this.isLoading = true;
     this.loadPromise = this.loadQuestionsInBackground();
-    
+
     try {
       await this.loadPromise;
     } finally {
@@ -143,7 +143,7 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -154,7 +154,7 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
 
     const jsonString = response.text.trim();
     const data = JSON.parse(jsonString);
-    
+
     if (!data.questions || !Array.isArray(data.questions) || data.questions.length !== count) {
       throw new Error(`API returned invalid number of questions. Expected ${count}, got ${data.questions?.length || 0}`);
     }
@@ -165,7 +165,7 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
         throw new Error("API returned an invalid number of incorrect answers for one of the questions.");
       }
     }
-    
+
     return data.questions as TriviaQuestion[];
   } catch (error) {
     console.error("Error fetching or parsing multiple trivia questions:", error);
@@ -195,7 +195,7 @@ export async function fetchTriviaQuestion(): Promise<TriviaQuestion> {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -207,10 +207,10 @@ export async function fetchTriviaQuestion(): Promise<TriviaQuestion> {
     const jsonString = response.text.trim();
     const parsedQuestion = JSON.parse(jsonString) as TriviaQuestion;
 
-    if(parsedQuestion.incorrectAnswers.length !== 3) {
+    if (parsedQuestion.incorrectAnswers.length !== 3) {
       throw new Error("API returned an invalid number of incorrect answers.");
     }
-    
+
     return parsedQuestion;
   } catch (error) {
     console.error("Error fetching or parsing trivia question:", error);
