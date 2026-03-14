@@ -1,29 +1,70 @@
 // Smart service that uses secure endpoint in production and direct API in development
 import { TriviaQuestion } from '../types';
 
+function getProviderConfig() {
+  const useOpenAI = process.env.USE_OPENAI === 'true';
+  const apiKey = useOpenAI 
+    ? (process.env.OPENAI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY)
+    : ((process.env.GEMINI_API_KEY || process.env.API_KEY) || import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY);
+  
+  if (useOpenAI) {
+    console.log("🤖 [smartGeminiService] Initialized with OpenAI (gpt-5-mini)");
+  } else {
+    console.log("🤖 [smartGeminiService] Initialized with Google Gemini (gemini-2.0-flash)");
+  }
+  
+  return { useOpenAI, apiKey };
+}
+
 // Send a chat message to Gemini LLM with fan story context
 export async function sendChatMessage(userMessage: string, fanStory: string): Promise<string> {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey) {
-    throw new Error("VITE_API_KEY environment variable not set");
-  }
+  const { useOpenAI, apiKey } = getProviderConfig();
 
-  const { GoogleGenAI } = await import("@google/genai");
-  const ai = new GoogleGenAI({ apiKey });
+  if (!apiKey) {
+    throw new Error(`${useOpenAI ? 'OPENAI' : 'GEMINI'}_API_KEY environment variable not set. Add it to .env`);
+  }
 
   // Compose a single prompt string, like trivia
   const prompt = `You are a friendly, enthusiastic Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as a fellow Rush fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Make the conversation fun and engaging about Rush, their music, concerts, and fandom.\n\nUser: ${userMessage}`;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'text/plain',
-      temperature: 0.8,
-    }
-  });
+  if (useOpenAI) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-5-mini',
+        messages: [
+          { role: 'system', content: 'You are a helpful and enthusiastic fan assistant.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.8,
+      })
+    });
 
-  return response.text.trim();
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content.trim();
+  } else {
+    const { GoogleGenAI } = await import("@google/genai");
+    const ai = new GoogleGenAI({ apiKey });
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'text/plain',
+        temperature: 0.8,
+      }
+    });
+
+    return response.text.trim();
+  }
 }
 
 
@@ -85,7 +126,8 @@ class QuestionCache {
 
   // Initialize preloading as soon as the module loads
   init() {
-    this.preloadQuestions();
+    // To ensure environment is loaded, we can delay initialization
+    setTimeout(() => this.preloadQuestions(), 100);
   }
 }
 
@@ -94,7 +136,6 @@ const questionCache = new QuestionCache();
 
 // Check if we're in development mode
 const isDevelopment = import.meta.env.DEV;
-const hasViteApiKey = !!import.meta.env.VITE_API_KEY;
 
 // Fetch via secure Pages Function (production)
 async function fetchViaSecureEndpoint(count: number): Promise<TriviaQuestion[]> {
@@ -119,49 +160,30 @@ async function fetchViaSecureEndpoint(count: number): Promise<TriviaQuestion[]> 
   return data.questions || [];
 }
 
-// Fetch directly via Google Gemini API (development)
+// Fetch directly via API (development)
 async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
-  const apiKey = import.meta.env.VITE_API_KEY;
+  const { useOpenAI, apiKey } = getProviderConfig();
   if (!apiKey) {
-    throw new Error("VITE_API_KEY environment variable not set");
+    throw new Error(`${useOpenAI ? 'OPENAI' : 'GEMINI'}_API_KEY environment variable not set. Add it to .env`);
   }
 
-  // Import the GoogleGenAI only when needed (development)
-  const { GoogleGenAI, Type } = await import("@google/genai");
-
-  const multipleQuestionsSchema = {
-    type: Type.OBJECT,
-    properties: {
-      questions: {
-        type: Type.ARRAY,
-        description: `An array of exactly ${count} trivia questions about Rush.`,
-        items: {
-          type: Type.OBJECT,
-          properties: {
-            question: {
-              type: Type.STRING,
-              description: "The trivia question about the band Rush."
-            },
-            correctAnswer: {
-              type: Type.STRING,
-              description: "The single correct answer to the question."
-            },
-            incorrectAnswers: {
-              type: Type.ARRAY,
-              description: "An array of exactly three plausible but incorrect answers.",
-              items: {
-                type: Type.STRING,
-              }
-            },
-          },
-          required: ['question', 'correctAnswer', 'incorrectAnswers']
-        }
-      },
+  const baseSchemaProperties = {
+    question: {
+      type: "string",
+      description: "The trivia question about the band Rush."
     },
-    required: ['questions']
+    correctAnswer: {
+      type: "string",
+      description: "The single correct answer to the question."
+    },
+    incorrectAnswers: {
+      type: "array",
+      description: "An array of exactly three plausible but incorrect answers.",
+      items: {
+        type: "string",
+      }
+    },
   };
-
-  const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `
   Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.
@@ -176,34 +198,122 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
   - Make sure all questions are unique and cover different aspects of Rush.
   `;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: multipleQuestionsSchema,
-      temperature: 1,
+  if (useOpenAI) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-5-mini',
+        messages: [
+          { role: 'system', content: 'You are a helpful trivia generation assistant.' },
+          { role: 'user', content: prompt }
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "trivia_questions",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                questions: {
+                  type: "array",
+                  description: `An array of exactly ${count} trivia questions about Rush.`,
+                  items: {
+                    type: "object",
+                    properties: baseSchemaProperties,
+                    required: ['question', 'correctAnswer', 'incorrectAnswers'],
+                    additionalProperties: false
+                  }
+                },
+              },
+              required: ['questions'],
+              additionalProperties: false
+            }
+          }
+        },
+        temperature: 1,
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
     }
-  });
 
-  const jsonString = response.text.trim();
-  const data = JSON.parse(jsonString);
+    const data = await response.json();
+    const result = JSON.parse(data.choices[0].message.content);
+    return result.questions || [];
+  } else {
+    // Import the GoogleGenAI only when needed (development)
+    const { GoogleGenAI, Type } = await import("@google/genai");
 
-  return data.questions || [];
+    const multipleQuestionsSchema = {
+      type: Type.OBJECT,
+      properties: {
+        questions: {
+          type: Type.ARRAY,
+          description: `An array of exactly ${count} trivia questions about Rush.`,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              question: {
+                type: Type.STRING,
+                description: "The trivia question about the band Rush."
+              },
+              correctAnswer: {
+                type: Type.STRING,
+                description: "The single correct answer to the question."
+              },
+              incorrectAnswers: {
+                type: Type.ARRAY,
+                description: "An array of exactly three plausible but incorrect answers.",
+                items: {
+                  type: Type.STRING,
+                }
+              },
+            },
+            required: ['question', 'correctAnswer', 'incorrectAnswers']
+          }
+        },
+      },
+      required: ['questions']
+    };
+
+    const ai = new GoogleGenAI({ apiKey });
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: multipleQuestionsSchema,
+        temperature: 1,
+      }
+    });
+
+    const jsonString = response.text.trim();
+    const data = JSON.parse(jsonString);
+
+    return data.questions || [];
+  }
 }
 
 // Smart fetch function that chooses the appropriate method
 export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQuestion[]> {
   try {
     let questions: TriviaQuestion[];
+    const hasApiKey = !!getProviderConfig().apiKey;
 
     // Try secure endpoint first (production), fallback to direct API (development)
-    if (!isDevelopment || !hasViteApiKey) {
+    if (!isDevelopment || !hasApiKey) {
       try {
         questions = await fetchViaSecureEndpoint(count);
         console.log('✅ Using secure Pages Function endpoint');
       } catch (error) {
-        if (isDevelopment && hasViteApiKey) {
+        if (isDevelopment && hasApiKey) {
           console.warn('⚠️ Secure endpoint failed, falling back to direct API call');
           questions = await fetchDirectly(count);
         } else {
