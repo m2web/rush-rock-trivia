@@ -32,7 +32,8 @@ const triviaSchema = {
       }
     },
   },
-  required: ['question', 'correctAnswer', 'incorrectAnswers']
+  required: ['question', 'correctAnswer', 'incorrectAnswers'],
+  additionalProperties: false
 };
 
 const multipleQuestionsSchema = {
@@ -60,11 +61,13 @@ const multipleQuestionsSchema = {
             }
           },
         },
-        required: ['question', 'correctAnswer', 'incorrectAnswers']
+        required: ['question', 'correctAnswer', 'incorrectAnswers'],
+        additionalProperties: false
       }
     },
   },
-  required: ['questions']
+  required: ['questions'],
+  additionalProperties: false
 };
 
 async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
@@ -127,6 +130,67 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   return parsedData.questions;
 }
 
+async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
+  const prompt = `
+  Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.
+  Each question should be about the band's lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.
+  Aim for questions that are accessible to a casual fan with some more difficult options for die-hard fans.
+  Avoid extremely obscure details; focus on their more popular songs and common knowledge about the band.
+  
+  For each question:
+  - Provide one correct answer.
+  - Provide exactly three plausible but incorrect answers.
+  - Ensure all answer options are distinct from each other.
+  - Make sure all questions are unique and cover different aspects of Rush.
+  `;
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-5-mini',
+      messages: [
+        { role: 'system', content: 'You are a helpful trivia generation assistant.' },
+        { role: 'user', content: prompt }
+      ],
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "trivia_questions",
+          strict: true,
+          schema: multipleQuestionsSchema
+        }
+      },
+      temperature: 1,
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  const data = await response.json();
+  const jsonString = data.choices[0].message.content;
+  const parsedData = JSON.parse(jsonString) as MultipleQuestionsResponse;
+
+  if (!parsedData.questions || !Array.isArray(parsedData.questions) || parsedData.questions.length !== count) {
+    throw new Error(`API returned invalid number of questions. Expected ${count}, got ${parsedData.questions?.length || 0}`);
+  }
+
+  // Validate each question
+  for (const question of parsedData.questions) {
+    if (question.incorrectAnswers.length !== 3) {
+      throw new Error("API returned an invalid number of incorrect answers for one of the questions.");
+    }
+  }
+
+  return parsedData.questions;
+}
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   // CORS headers
   const corsHeaders = {
@@ -136,9 +200,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   };
 
   try {
-    const apiKey = context.env.GEMINI_API_KEY;
+    const useOpenAI = context.env.USE_OPENAI === 'true';
+    const apiKey = useOpenAI ? context.env.OPENAI_API_KEY : context.env.GEMINI_API_KEY;
+    
+    if (useOpenAI) {
+      console.log("☁️ [Cloudflare Pages] Processing request with OpenAI (gpt-5-mini)");
+    } else {
+      console.log("☁️ [Cloudflare Pages] Processing request with Google Gemini (gemini-2.0-flash)");
+    }
+
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'GEMINI_API_KEY not configured' }), {
+      return new Response(JSON.stringify({ error: `${useOpenAI ? 'OPENAI' : 'GEMINI'}_API_KEY not configured` }), {
         status: 500,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
@@ -156,7 +228,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    const questions = await callGemini(apiKey, count);
+    const questions = useOpenAI 
+      ? await callOpenAI(apiKey, count)
+      : await callGemini(apiKey, count);
 
     return new Response(JSON.stringify({ questions }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
