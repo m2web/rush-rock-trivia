@@ -180,8 +180,8 @@ environment variable:
 ## LLM Evaluation with Promptfoo
 
 The `SyntheticHemispheres/prompt-foo/` directory contains a
-[promptfoo](https://promptfoo.dev) evaluation harness used to validate the
-migration from Gemini to OpenAI before deploying to production.
+[promptfoo](https://promptfoo.dev) evaluation harness used to evaluate and
+compare OpenAI model candidates before deploying to production.
 
 - **Dataset**: `rush_full_eval.jsonl` — 20 Q&A pairs covering album concepts,
   lyrical themes, band history, the 2026 reunion tour, and adversarial edge
