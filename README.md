@@ -134,7 +134,7 @@ rush-rock-trivia/
 │   │   ├── LoadingSpinner.tsx# Loading indicator
 │   │   └── IconComponents.tsx# Custom Rush-themed icons
 │   ├── services/
-│   │   └── geminiService.ts  # AI service integration
+│   │   └── aiService.ts      # AI service integration (OpenAI or Gemini)
 │   ├── App.tsx              # Main application component
 │   ├── types.ts             # TypeScript type definitions
 │   └── index.tsx            # Application entry point
