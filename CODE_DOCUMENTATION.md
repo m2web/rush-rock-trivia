@@ -150,8 +150,9 @@ const handleAnswer = (isCorrect: boolean) => {
 
 ## AI Service Integration (aiService.ts / smartAiService.ts)
 
-The Gemini service handles AI-powered question generation with structured output
-validation.
+The AI service layer handles AI-powered question generation with structured output
+validation, and can be configured to use different model providers (for example,
+OpenAI or Gemini).
 
 ### Schema Definition
 
