@@ -73,7 +73,7 @@ their extensive discography, band history, lyrics, and musical legacy.
    To use Google Gemini instead, omit `USE_OPENAI` (or set it to `false`) and add:
 
    ```text
-   GOOGLE_API_KEY=your_gemini_api_key_here
+   GEMINI_API_KEY=your_gemini_api_key_here
    ```
 
    For Cloudflare Pages deployment:
