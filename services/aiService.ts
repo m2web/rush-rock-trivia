@@ -7,9 +7,9 @@ function getProviderConfig() {
     : ((process.env.GEMINI_API_KEY || process.env.API_KEY) || import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY);
   
   if (useOpenAI) {
-    console.log("🤖 [geminiService] Initialized with OpenAI (gpt-5-mini)");
+    console.log("🤖 [aiService] Initialized with OpenAI (gpt-4o-mini)");
   } else {
-    console.log("🤖 [geminiService] Initialized with Google Gemini (gemini-2.0-flash)");
+    console.log("🤖 [aiService] Initialized with Google Gemini (gemini-2.0-flash)");
   }
   
   return { useOpenAI, apiKey };

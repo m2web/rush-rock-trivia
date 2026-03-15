@@ -6,7 +6,7 @@ const LoadingSpinner: React.FC = () => {
   const loadingMessages = [
     "Begin the day with a friendly voice...",
     "We only stop for the best!",
-    "...takes time for Gemini to research and form the Rush trivia questions...",
+    "...takes time for AI to research and form the Rush trivia questions...",
     "Living in the Limelight...",
     "Time Stand Still while we prepare...",
     "Working through the Subdivisions...",
@@ -20,7 +20,7 @@ const LoadingSpinner: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentMessageIndex((prevIndex) => 
+      setCurrentMessageIndex((prevIndex) =>
         (prevIndex + 1) % loadingMessages.length
       );
     }, 5000); // Change message every 5 seconds

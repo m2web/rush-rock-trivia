@@ -6,7 +6,7 @@ import MenuOverlay from './components/MenuOverlay';
 import ChatInterface from './components/ChatInterface';
 import { GameState, TriviaQuestion } from './types';
 // Smart service that automatically chooses secure endpoint or direct API
-import { getPreloadedQuestions } from './services/smartGeminiService';
+import { getPreloadedQuestions } from './services/smartAiService';
 import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';

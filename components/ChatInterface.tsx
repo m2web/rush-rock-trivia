@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { sendChatMessage } from '../services/smartGeminiService';
+import { sendChatMessage } from '../services/smartAiService';
 
 interface Message {
   sender: 'user' | 'llm';
