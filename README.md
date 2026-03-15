@@ -7,6 +7,7 @@
 [![TypeScript][typescript-badge]][typescript-url]
 [![React][react-badge]][react-url]
 [![Vite][vite-badge]][vite-url]
+[![OpenAI][openai-badge]][openai-url]
 [![Google AI][google-ai-badge]][google-ai-url]
 
 ## About
@@ -42,6 +43,7 @@ their extensive discography, band history, lyrics, and musical legacy.
 ### Prerequisites
 
 - **Node.js** (version 18 or higher)
+- **OpenAI API Key** ([Get one here][openai-api]) OR
 - **Google Gemini API Key** ([Get one here][gemini-api])
 
 ### Installation
@@ -61,17 +63,24 @@ their extensive discography, band history, lyrics, and musical legacy.
 
 3. **Set up environment variables**
 
-   For local development, create a `.env.local` file in the root directory:
+   For local development, create a `.env` file in the root directory:
 
    ```text
-   GEMINI_API_KEY=your_gemini_api_key_here
+   OPENAI_API_KEY=your_openai_api_key_here
+   USE_OPENAI=true
+   ```
+
+   To use Google Gemini instead, omit `USE_OPENAI` (or set it to `false`) and add:
+
+   ```text
+   GOOGLE_API_KEY=your_gemini_api_key_here
    ```
 
    For Cloudflare Pages deployment:
    - Go to your Cloudflare Pages project dashboard
    - Navigate to Settings → Environment variables
-   - Add `GEMINI_API_KEY` with your API key value
-   - Set it for both "Production" and "Preview" environments
+   - Add `OPENAI_API_KEY` and `USE_OPENAI=true`
+   - Set them for both "Production" and "Preview" environments
 
 4. **Start the development server**
 
@@ -109,7 +118,8 @@ their extensive discography, band history, lyrics, and musical legacy.
 - **Frontend Framework**: React 19.2.0 with TypeScript
 - **Build Tool**: Vite 6.2.0
 - **Backend**: Cloudflare Pages Functions (secure API proxy)
-- **AI Service**: Google Gemini 2.5 Flash via REST API
+- **AI Service**: OpenAI `gpt-5-mini` OR Google Gemini 2.0 Flash (selectable)
+- **LLM Evaluation**: [promptfoo](https://promptfoo.dev) (see `SyntheticHemispheres/prompt-foo/`)
 - **Styling**: Tailwind CSS (utility-first CSS framework)
 - **State Management**: React Hooks (useState, useCallback)
 - **Deployment**: Cloudflare Pages with edge computing
@@ -126,35 +136,63 @@ their extensive discography, band history, lyrics, and musical legacy.
 
 ```text
 rush-rock-trivia/
-├── src/
-│   ├── components/           # Reusable UI components
-│   │   ├── StartScreen.tsx   # Welcome screen
-│   │   ├── QuestionCard.tsx  # Quiz question display
-│   │   ├── EndScreen.tsx     # Results screen
-│   │   ├── LoadingSpinner.tsx# Loading indicator
-│   │   └── IconComponents.tsx# Custom Rush-themed icons
-│   ├── services/
-│   │   └── aiService.ts      # AI service integration (OpenAI or Gemini)
-│   ├── App.tsx              # Main application component
-│   ├── types.ts             # TypeScript type definitions
-│   └── index.tsx            # Application entry point
-├── images/                  # Rush-themed assets
-├── package.json            # Dependencies and scripts
-└── README.md               # This file
+├── components/               # Reusable UI components
+│   ├── StartScreen.tsx       # Welcome screen
+│   ├── QuestionCard.tsx      # Quiz question display
+│   ├── EndScreen.tsx         # Results screen
+│   ├── ChatInterface.tsx     # Rush fan chat UI
+│   ├── LoadingSpinner.tsx    # Loading indicator
+│   └── IconComponents.tsx   # Custom Rush-themed icons
+├── services/
+│   ├── aiService.ts          # AI service (OpenAI or Gemini, trivia generation)
+│   ├── smartAiService.ts     # Smart service (secure endpoint + chat)
+│   └── secureAiService.ts   # Cloudflare Pages Function proxy
+├── SyntheticHemispheres/
+│   └── prompt-foo/           # promptfoo LLM evaluation harness
+│       ├── promptfooconfig.yaml
+│       └── rush_full_eval.jsonl
+├── App.tsx                   # Main application component
+├── types.ts                  # TypeScript type definitions
+├── package.json              # Dependencies and scripts
+└── README.md                 # This file
 ```
 
 ## AI Integration
 
-The application uses Google's Gemini AI to generate challenging Rush trivia
-questions with:
+The application supports two AI providers, toggled via the `USE_OPENAI`
+environment variable:
 
-- **Structured Output**: JSON schema validation ensures consistent
-  question format
-- **Content Guidelines**: Prompts designed to create engaging,
-  fan-appropriate questions
+| Provider | Model | How to enable |
+| --- | --- | --- |
+| OpenAI | `gpt-5-mini` | Toggle `USE_OPENAI=true` |
+| Google Gemini | `gemini-2.0-flash` | Default (or `USE_OPENAI=false`) |
+
+- **Structured Output**: JSON schema validation ensures consistent question format
+- **Content Guidelines**: Prompts designed to create engaging, fan-appropriate questions
 - **Error Handling**: Graceful fallback for API failures
-- **Quality Control**: Validation to ensure exactly 3 incorrect answers
-  per question
+- **Quality Control**: Validation to ensure exactly 3 incorrect answers per question
+- **Contextual Chat**: Fan story passed as context to every LLM chat call
+
+## LLM Evaluation with Promptfoo
+
+The `SyntheticHemispheres/prompt-foo/` directory contains a
+[promptfoo](https://promptfoo.dev) evaluation harness used to validate the
+migration from Gemini to OpenAI before deploying to production.
+
+- **Dataset**: `rush_full_eval.jsonl` — 20 Q&A pairs covering album concepts,
+  lyrical themes, band history, the 2026 reunion tour, and adversarial edge
+  cases (e.g. questions about nonexistent tour legs)
+- **Assertion type**: `factuality` — an LLM judge scores semantic accuracy
+  against ground truth, handling paraphrasing gracefully
+- **Providers evaluated**: `openai:gpt-4o-mini` vs `openai:gpt-5-mini`
+
+To run the eval:
+
+```bash
+cd SyntheticHemispheres/prompt-foo
+npx promptfoo eval
+npx promptfoo view
+```
 
 ## Game Mechanics
 
@@ -171,10 +209,19 @@ questions with:
 ## Available Scripts
 
 ```bash
-npm run dev      # Start development server
+npm run dev      # Start Vite development server
+npm run dev:pages # Local preview with Cloudflare Pages Functions
 npm run build    # Build for production
 npm run preview  # Preview production build locally
+npm run pages:deploy # Deploy to Cloudflare Pages
 ```
+
+## Documentation
+
+- [Code Documentation](CODE_DOCUMENTATION.md) — Detailed technical deep-dive into
+  the app architecture and logic.
+- [Future Feature Ideas](FEATURE_IDEAS.md) — Roadmap for upcoming Rush-themed
+  modes and features.
 
 ## Contributing
 
@@ -216,6 +263,9 @@ Made with love for Rush fans everywhere
 [react-url]: https://reactjs.org/
 [vite-badge]: https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white
 [vite-url]: https://vitejs.dev/
+[openai-badge]: https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white
+[openai-url]: https://platform.openai.com/
+[openai-api]: https://platform.openai.com/api-keys
 [google-ai-badge]: https://img.shields.io/badge/Google%20AI-4285F4?style=for-the-badge&logo=google&logoColor=white
 [google-ai-url]: https://ai.google.dev/
 [gemini-api]: https://ai.google.dev/
