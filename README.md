@@ -79,8 +79,12 @@ their extensive discography, band history, lyrics, and musical legacy.
    For Cloudflare Pages deployment:
    - Go to your Cloudflare Pages project dashboard
    - Navigate to Settings → Environment variables
-   - Add `OPENAI_API_KEY` and `USE_OPENAI=true`
-   - Set them for both "Production" and "Preview" environments
+   - If using **OpenAI** in production Pages Functions:
+     - Add `OPENAI_API_KEY` and set `USE_OPENAI=true`
+   - If using **Google Gemini** in production Pages Functions:
+     - Add `GEMINI_API_KEY`
+     - Either omit `USE_OPENAI` entirely (recommended) or set `USE_OPENAI=false`
+   - Set the relevant variables for both "Production" and "Preview" environments
 
 4. **Start the development server**
 
