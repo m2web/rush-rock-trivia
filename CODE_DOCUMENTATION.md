@@ -12,19 +12,19 @@ for fans of Geddy Lee, Alex Lifeson, and Neil Peart.
 ```text
 rush-rock-trivia/
 ├── App.tsx                 # Main application component
-├── index.tsx              # Application entry point
-├── types.ts               # TypeScript type definitions
-├── package.json           # Project dependencies and scripts
-├── components/            # Reusable UI components
-│   ├── StartScreen.tsx    # Welcome screen component
-│   ├── QuestionCard.tsx   # Quiz question display component
-│   ├── EndScreen.tsx      # Results screen component
-│   ├── LoadingSpinner.tsx # Loading state component
-│   └── IconComponents.tsx # Custom SVG icons
-    └── services/              # External service integrations
-        ├── aiService.ts         # AI service (OpenAI or Gemini, direct API)
-        ├── secureAiService.ts   # Secure AI service (via Cloudflare Pages Function)
-        └── smartAiService.ts    # Smart service (secure in prod, direct in dev)
+├── index.tsx               # Application entry point
+├── types.ts                # TypeScript type definitions
+├── package.json            # Project dependencies and scripts
+├── components/             # Reusable UI components
+│   ├── StartScreen.tsx     # Welcome screen component
+│   ├── QuestionCard.tsx    # Quiz question display component
+│   ├── EndScreen.tsx       # Results screen component
+│   ├── LoadingSpinner.tsx  # Loading state component
+│   └── IconComponents.tsx  # Custom SVG icons
+└── services/               # External service integrations
+    ├── aiService.ts        # AI service (OpenAI or Gemini, direct API)
+    ├── secureAiService.ts  # Secure AI service (via Cloudflare Pages Function)
+    └── smartAiService.ts   # Smart service (secure in prod, direct in dev)
 ```
 
 ## Core Technologies
