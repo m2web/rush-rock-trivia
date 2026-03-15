@@ -8,7 +8,7 @@ function getProviderConfig() {
     : ((process.env.GEMINI_API_KEY || process.env.API_KEY) || import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY);
   
   if (useOpenAI) {
-    console.log("🤖 [smartAiService] Initialized with OpenAI (gpt-4o-mini)");
+    console.log("🤖 [smartAiService] Initialized with OpenAI (gpt-5-mini)");
   } else {
     console.log("🤖 [smartAiService] Initialized with Google Gemini (gemini-2.0-flash)");
   }
