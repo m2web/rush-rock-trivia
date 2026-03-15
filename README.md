@@ -139,7 +139,7 @@ their extensive discography, band history, lyrics, and musical legacy.
 ## Project Structure
 
 ```text
-rush-rock-trivia/
+rush-rock-trivia/             # High-level view (partial tree; not all top-level dirs shown)
 ├── components/               # Reusable UI components
 │   ├── StartScreen.tsx       # Welcome screen
 │   ├── QuestionCard.tsx      # Quiz question display
