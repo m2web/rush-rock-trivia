@@ -84,7 +84,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   - Make sure all questions are unique and cover different aspects of Rush.
   `;
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -202,11 +202,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const useOpenAI = context.env.USE_OPENAI === 'true';
     const apiKey = useOpenAI ? context.env.OPENAI_API_KEY : context.env.GEMINI_API_KEY;
-    
+
     if (useOpenAI) {
       console.log("☁️ [Cloudflare Pages] Processing request with OpenAI (gpt-5-mini)");
     } else {
-      console.log("☁️ [Cloudflare Pages] Processing request with Google Gemini (gemini-2.0-flash)");
+      console.log("☁️ [Cloudflare Pages] Processing request with Google Gemini (gemini-2.5-flash)");
     }
 
     if (!apiKey) {
@@ -228,7 +228,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    const questions = useOpenAI 
+    const questions = useOpenAI
       ? await callOpenAI(apiKey, count)
       : await callGemini(apiKey, count);
 

@@ -122,7 +122,7 @@ their extensive discography, band history, lyrics, and musical legacy.
 - **Frontend Framework**: React 19.2.0 with TypeScript
 - **Build Tool**: Vite 6.2.0
 - **Backend**: Cloudflare Pages Functions (secure API proxy)
-- **AI Service**: OpenAI `gpt-5-mini` OR Google Gemini 2.0 Flash (selectable)
+- **AI Service**: OpenAI `gpt-5-mini` OR Google Gemini 2.5 Flash (selectable)
 - **LLM Evaluation**: [promptfoo](https://promptfoo.dev) (see `SyntheticHemispheres/prompt-foo/`)
 - **Styling**: Tailwind CSS (utility-first CSS framework)
 - **State Management**: React Hooks (useState, useCallback)
@@ -169,7 +169,7 @@ environment variable:
 | Provider | Model | How to enable |
 | --- | --- | --- |
 | OpenAI | `gpt-5-mini` | Toggle `USE_OPENAI=true` |
-| Google Gemini | `gemini-2.0-flash` | Default (or `USE_OPENAI=false`) |
+| Google Gemini | `gemini-2.5-flash` | Default (or `USE_OPENAI=false`) |
 
 - **Structured Output**: JSON schema validation ensures consistent question format
 - **Content Guidelines**: Prompts designed to create engaging, fan-appropriate questions

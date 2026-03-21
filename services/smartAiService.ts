@@ -10,7 +10,7 @@ function getProviderConfig() {
   if (useOpenAI) {
     console.log("🤖 [smartAiService] Initialized with OpenAI (gpt-5-mini)");
   } else {
-    console.log("🤖 [smartAiService] Initialized with Google Gemini (gemini-2.0-flash)");
+    console.log("🤖 [smartAiService] Initialized with Google Gemini (gemini-2.5-flash)");
   }
   
   return { useOpenAI, apiKey };
@@ -55,7 +55,7 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
     const ai = new GoogleGenAI({ apiKey });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'text/plain',
@@ -285,7 +285,7 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
     const ai = new GoogleGenAI({ apiKey });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
