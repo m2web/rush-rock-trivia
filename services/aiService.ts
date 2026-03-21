@@ -2,16 +2,16 @@ import { TriviaQuestion } from '../types';
 
 function getProviderConfig() {
   const useOpenAI = process.env.USE_OPENAI === 'true';
-  const apiKey = useOpenAI 
+  const apiKey = useOpenAI
     ? (process.env.OPENAI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY)
     : ((process.env.GEMINI_API_KEY || process.env.API_KEY) || import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY);
-  
+
   if (useOpenAI) {
     console.log("🤖 [aiService] Initialized with OpenAI (gpt-5-mini)");
   } else {
-    console.log("🤖 [aiService] Initialized with Google Gemini (gemini-2.0-flash)");
+    console.log("🤖 [aiService] Initialized with Google Gemini (gemini-2.5-flash)");
   }
-  
+
   return { useOpenAI, apiKey };
 }
 
