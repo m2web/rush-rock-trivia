@@ -32,8 +32,7 @@ const triviaSchema = {
       }
     },
   },
-  required: ['question', 'correctAnswer', 'incorrectAnswers'],
-  additionalProperties: false
+  required: ['question', 'correctAnswer', 'incorrectAnswers']
 };
 
 const multipleQuestionsSchema = {
@@ -61,13 +60,11 @@ const multipleQuestionsSchema = {
             }
           },
         },
-        required: ['question', 'correctAnswer', 'incorrectAnswers'],
-        additionalProperties: false
+        required: ['question', 'correctAnswer', 'incorrectAnswers']
       }
     },
   },
-  required: ['questions'],
-  additionalProperties: false
+  required: ['questions']
 };
 
 async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
