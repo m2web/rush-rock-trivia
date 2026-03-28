@@ -1,15 +1,11 @@
 # Cloudflare Pages configuration
 name = "rush-rock-trivia"
 compatibility_date = "2024-10-29"
-# pages_build_output_dir = "dist"
+pages_build_output_dir = "dist"
+
+# Standard Environment Variables (non-sensitive)
+[vars]
+USE_OPENAI = "true"
 
 # Pages Functions are automatically detected in the /functions directory
-# No additional configuration needed for basic setup
-
-[env.production]
-# Environment variables are set in Cloudflare Pages dashboard
-# GEMINI_API_KEY = "your-production-api-key"
-
-[env.preview]
-# Environment variables for preview deployments
-# GEMINI_API_KEY = "your-preview-api-key"
+# API Keys (GEMINI_API_KEY, OPENAI_API_KEY) are managed via Cloudflare Dashboard Secrets
