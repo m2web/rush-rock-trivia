@@ -5,7 +5,7 @@ pages_build_output_dir = "dist"
 
 # Standard Environment Variables (non-sensitive)
 [vars]
-USE_OPENAI = "true"
+USE_OPENAI = "false"
 
 # Pages Functions are automatically detected in the /functions directory
 # API Keys (GEMINI_API_KEY, OPENAI_API_KEY) are managed via Cloudflare Dashboard Secrets
