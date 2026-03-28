@@ -1,8 +1,6 @@
 // Cloudflare Pages Function for secure chat API calls
 import { PagesFunction, Env } from '../types';
-
-const GEMINI_MODEL = 'gemini-1.5-flash';
-const OPENAI_MODEL = 'gpt-4o-mini';
+import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
 
 async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string): Promise<string> {
   const prompt = `You are a friendly, enthusiastic Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as a fellow Rush fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Make the conversation fun and engaging about Rush, their music, concerts, and fandom.\n\nUser: ${userMessage}`;

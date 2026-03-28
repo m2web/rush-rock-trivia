@@ -2,6 +2,7 @@
 // This runs on Cloudflare's edge, keeping the API key secure
 
 import { PagesFunction, Env } from '../types';
+import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
 
 interface TriviaQuestion {
   question: string;
@@ -13,8 +14,6 @@ interface MultipleQuestionsResponse {
   questions: TriviaQuestion[];
 }
 
-const GEMINI_MODEL = 'gemini-1.5-flash';
-const OPENAI_MODEL = 'gpt-4o-mini';
 
 const geminiMultipleQuestionsSchema = {
   type: "object",
