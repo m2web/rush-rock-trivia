@@ -2,7 +2,7 @@
 import { TriviaQuestion } from '../types';
 
 const OPENAI_MODEL = 'gpt-4o-mini';
-const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODEL = 'gemini-2.0-flash';
 
 function getProviderConfig() {
   const useOpenAI = process.env.USE_OPENAI === 'true';
@@ -77,19 +77,26 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
     const data = await response.json();
     return data.choices[0].message.content.trim();
   } else {
-    const { GoogleGenAI } = await import("@google/genai");
-    const ai = new GoogleGenAI({ apiKey });
-
-    const response = await ai.models.generateContent({
-      model,
-      contents: prompt,
-      config: {
-        responseMimeType: 'text/plain',
-        temperature: 0.8,
-      }
+    // Direct API fallback for Gemini (local development)
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: 'text/plain',
+          temperature: 0.8,
+        }
+      })
     });
 
-    return response.text.trim();
+    if (!apiResponse.ok) {
+      const errorText = await apiResponse.text();
+      throw new Error(`Gemini API error: ${apiResponse.status} - ${errorText}`);
+    }
+
+    const data = await apiResponse.json();
+    return data.candidates[0].content.parts[0].text.trim();
   }
 }
 
@@ -308,22 +315,30 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
       required: ['questions']
     };
 
-    const ai = new GoogleGenAI({ apiKey });
-
-    const response = await ai.models.generateContent({
-      model,
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: multipleQuestionsSchema,
-        temperature: 1,
-      }
+    // Use raw fetch for direct API call to avoid SDK version mismatches (local development)
+    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: multipleQuestionsSchema,
+          temperature: 1,
+        }
+      })
     });
 
-    const jsonString = response.text.trim();
-    const data = JSON.parse(jsonString);
+    if (!apiResponse.ok) {
+      const errorText = await apiResponse.text();
+      throw new Error(`Gemini API error: ${apiResponse.status} - ${errorText}`);
+    }
 
-    return data.questions || [];
+    const data = await apiResponse.json();
+    const jsonString = data.candidates[0].content.parts[0].text;
+    const parsedData = JSON.parse(jsonString);
+
+    return parsedData.questions || [];
   }
 }
 
