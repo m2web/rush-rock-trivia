@@ -13,7 +13,9 @@ interface MultipleQuestionsResponse {
   questions: TriviaQuestion[];
 }
 
-// Gemini REST API does NOT support additionalProperties — omit it entirely
+const GEMINI_MODEL = 'gemini-1.5-flash';
+const OPENAI_MODEL = 'gpt-4o-mini';
+
 const geminiMultipleQuestionsSchema = {
   type: "object",
   properties: {
@@ -95,7 +97,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   - Make sure all questions are unique and cover different aspects of Rush.
   `;
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -163,7 +165,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: 'gpt-5-mini',
+      model: OPENAI_MODEL,
       messages: [
         { role: 'system', content: 'You are a helpful trivia generation assistant.' },
         { role: 'user', content: prompt }

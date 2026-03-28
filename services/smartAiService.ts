@@ -1,19 +1,20 @@
 // Smart service that uses secure endpoint in production and direct API in development
 import { TriviaQuestion } from '../types';
 
+const OPENAI_MODEL = 'gpt-4o-mini';
+const GEMINI_MODEL = 'gemini-1.5-flash';
+
 function getProviderConfig() {
   const useOpenAI = process.env.USE_OPENAI === 'true';
+  const model = useOpenAI ? OPENAI_MODEL : GEMINI_MODEL;
   const apiKey = useOpenAI
     ? (process.env.OPENAI_API_KEY || import.meta.env.VITE_OPENAI_API_KEY)
     : ((process.env.GEMINI_API_KEY || process.env.API_KEY) || import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY);
 
-  if (useOpenAI) {
-    console.log("🤖 [smartAiService] Initialized with OpenAI (gpt-5-mini)");
-  } else {
-    console.log("🤖 [smartAiService] Initialized with Google Gemini (gemini-2.5-flash)");
-  }
+  const provider = useOpenAI ? `OpenAI (${model})` : `Google Gemini (${model})`;
+  console.log(`🤖 [smartAiService] Initialized with ${provider}`);
 
-  return { useOpenAI, apiKey };
+  return { useOpenAI, apiKey, model };
 }
 
 // Send a chat message to Gemini LLM with fan story context
@@ -48,7 +49,7 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
   }
 
   // Fallback to direct API for local development
-  const { useOpenAI } = getProviderConfig();
+  const { useOpenAI, model } = getProviderConfig();
   const prompt = `You are a friendly, enthusiastic Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as a fellow Rush fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Make the conversation fun and engaging about Rush, their music, concerts, and fandom.\n\nUser: ${userMessage}`;
 
   if (useOpenAI) {
@@ -59,7 +60,7 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-5-mini',
+        model,
         messages: [
           { role: 'system', content: 'You are a helpful and enthusiastic fan assistant.' },
           { role: 'user', content: prompt }
@@ -80,7 +81,7 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
     const ai = new GoogleGenAI({ apiKey });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model,
       contents: prompt,
       config: {
         responseMimeType: 'text/plain',
@@ -187,7 +188,7 @@ async function fetchViaSecureEndpoint(count: number): Promise<TriviaQuestion[]> 
 
 // Fetch directly via API (development)
 async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
-  const { useOpenAI, apiKey } = getProviderConfig();
+  const { useOpenAI, apiKey, model } = getProviderConfig();
   if (!apiKey) {
     throw new Error(`${useOpenAI ? 'OPENAI' : 'GEMINI'}_API_KEY environment variable not set. Add it to .env`);
   }
@@ -231,7 +232,7 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-5-mini',
+        model,
         messages: [
           { role: 'system', content: 'You are a helpful trivia generation assistant.' },
           { role: 'user', content: prompt }
@@ -310,7 +311,7 @@ async function fetchDirectly(count: number): Promise<TriviaQuestion[]> {
     const ai = new GoogleGenAI({ apiKey });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model,
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
