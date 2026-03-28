@@ -18,13 +18,37 @@ function getProviderConfig() {
 
 // Send a chat message to Gemini LLM with fan story context
 export async function sendChatMessage(userMessage: string, fanStory: string): Promise<string> {
-  const { useOpenAI, apiKey } = getProviderConfig();
+  const { apiKey } = getProviderConfig();
 
-  if (!apiKey) {
-    throw new Error(`${useOpenAI ? 'OPENAI' : 'GEMINI'}_API_KEY environment variable not set. Add it to .env`);
+  // Try secure endpoint first (production), fallback to direct API (development)
+  if (!isDevelopment || !apiKey) {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userMessage, fanStory })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.error) throw new Error(data.details || data.error);
+      return data.reply;
+    } catch (error) {
+      if (isDevelopment && apiKey) {
+        console.warn('⚠️ Secure chat endpoint failed, falling back to direct API call');
+      } else {
+        throw error;
+      }
+    }
   }
 
-  // Compose a single prompt string, like trivia
+  // Fallback to direct API for local development
+  const { useOpenAI } = getProviderConfig();
   const prompt = `You are a friendly, enthusiastic Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as a fellow Rush fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Make the conversation fun and engaging about Rush, their music, concerts, and fandom.\n\nUser: ${userMessage}`;
 
   if (useOpenAI) {
@@ -45,7 +69,8 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
@@ -55,7 +80,7 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
     const ai = new GoogleGenAI({ apiKey });
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: 'text/plain',

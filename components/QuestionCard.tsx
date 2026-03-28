@@ -64,10 +64,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
         ))}
       </div>
        {isAnswered && (
-         <div className="mt-6 p-4 text-center text-xl font-bold rounded-lg animate-fade-in-fast
+         <div className={`mt-6 p-4 text-center text-xl font-bold rounded-lg animate-fade-in-fast
           bg-opacity-80
           ${selectedAnswer === question.correctAnswer ? 'bg-green-500/30 text-green-300' : 'bg-red-500/30 text-red-300'}
-         ">
+         `}>
             {selectedAnswer === question.correctAnswer ? 'Correct!' : 'Incorrect!'}
          </div>
        )}

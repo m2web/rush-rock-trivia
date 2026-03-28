@@ -104,7 +104,8 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   });
 
   if (!response.ok) {
-    throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Gemini API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
   const data = await response.json();
