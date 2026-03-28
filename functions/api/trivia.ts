@@ -13,34 +13,13 @@ interface MultipleQuestionsResponse {
   questions: TriviaQuestion[];
 }
 
-const triviaSchema = {
-  type: "object",
-  properties: {
-    question: {
-      type: "string",
-      description: "The trivia question about the band Rush."
-    },
-    correctAnswer: {
-      type: "string",
-      description: "The single correct answer to the question."
-    },
-    incorrectAnswers: {
-      type: "array",
-      description: "An array of exactly three plausible but incorrect answers.",
-      items: {
-        type: "string",
-      }
-    },
-  },
-  required: ['question', 'correctAnswer', 'incorrectAnswers']
-};
-
-const multipleQuestionsSchema = {
+// Gemini REST API does NOT support additionalProperties — omit it entirely
+const geminiMultipleQuestionsSchema = {
   type: "object",
   properties: {
     questions: {
       type: "array",
-      description: "An array of exactly 5 trivia questions about Rush.",
+      description: "An array of trivia questions about Rush.",
       items: {
         type: "object",
         properties: {
@@ -65,6 +44,41 @@ const multipleQuestionsSchema = {
     },
   },
   required: ['questions']
+};
+
+// OpenAI Structured Outputs REQUIRES additionalProperties: false on every object
+const openAiMultipleQuestionsSchema = {
+  type: "object",
+  properties: {
+    questions: {
+      type: "array",
+      description: "An array of trivia questions about Rush.",
+      items: {
+        type: "object",
+        properties: {
+          question: {
+            type: "string",
+            description: "The trivia question about the band Rush."
+          },
+          correctAnswer: {
+            type: "string",
+            description: "The single correct answer to the question."
+          },
+          incorrectAnswers: {
+            type: "array",
+            description: "An array of exactly three plausible but incorrect answers.",
+            items: {
+              type: "string",
+            }
+          },
+        },
+        required: ['question', 'correctAnswer', 'incorrectAnswers'],
+        additionalProperties: false
+      }
+    },
+  },
+  required: ['questions'],
+  additionalProperties: false
 };
 
 async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
@@ -94,7 +108,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
       }],
       generationConfig: {
         responseMimeType: 'application/json',
-        responseSchema: multipleQuestionsSchema,
+        responseSchema: geminiMultipleQuestionsSchema,
         temperature: 1,
       }
     })
@@ -159,7 +173,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
         json_schema: {
           name: "trivia_questions",
           strict: true,
-          schema: multipleQuestionsSchema
+          schema: openAiMultipleQuestionsSchema
         }
       },
       temperature: 1,
