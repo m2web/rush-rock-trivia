@@ -217,9 +217,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const apiKey = useOpenAI ? context.env.OPENAI_API_KEY : context.env.GEMINI_API_KEY;
 
     if (useOpenAI) {
-      console.log("☁️ [Cloudflare Pages] Processing request with OpenAI (gpt-5-mini)");
+      console.log(`☁️ [Cloudflare Pages] Processing request with OpenAI (${OPENAI_MODEL})`);
     } else {
-      console.log("☁️ [Cloudflare Pages] Processing request with Google Gemini (gemini-2.5-flash)");
+      console.log(`☁️ [Cloudflare Pages] Processing request with Google Gemini (${GEMINI_MODEL})`);
     }
 
     if (!apiKey) {

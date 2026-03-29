@@ -166,9 +166,7 @@ rush-rock-trivia/             # High-level view (partial tree; not all top-level
 The application supports two AI providers, toggled via the `USE_OPENAI`
 environment variable:
 
-| Provider | Model | How to enable |
-| --- | --- | --- |
-| OpenAI | `gpt-5-mini` | Toggle `USE_OPENAI=true` |
+| OpenAI | `gpt-4o-mini` | Toggle `USE_OPENAI=true` |
 | Google Gemini | `gemini-2.5-flash` | Default (or `USE_OPENAI=false`) |
 
 - **Structured Output**: JSON schema validation ensures consistent question format
@@ -188,7 +186,7 @@ compare OpenAI model candidates before deploying to production.
   cases (e.g. questions about nonexistent tour legs)
 - **Assertion type**: `factuality` — an LLM judge scores semantic accuracy
   against ground truth, handling paraphrasing gracefully
-- **Providers evaluated**: `openai:gpt-4o-mini` vs `openai:gpt-5-mini`
+- **Providers evaluated**: `openai:gpt-4o-mini` vs `openai:gpt-5.4-mini`
 
 To run the eval:
 

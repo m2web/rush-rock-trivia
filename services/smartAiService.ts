@@ -1,8 +1,6 @@
 // Smart service that uses secure endpoint in production and direct API in development
 import { TriviaQuestion } from '../types';
-
-const OPENAI_MODEL = 'gpt-4o-mini';
-const GEMINI_MODEL = 'gemini-2.0-flash';
+import { OPENAI_MODEL, GEMINI_MODEL } from '../functions/constants';
 
 function getProviderConfig() {
   const useOpenAI = process.env.USE_OPENAI === 'true';
