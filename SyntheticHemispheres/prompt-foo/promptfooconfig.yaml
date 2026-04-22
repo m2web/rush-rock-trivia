@@ -1,4 +1,6 @@
-description: "Rush Trivia Evaluation: Gemini 2.5 Flash vs GPT-5 Mini"
+description: "Rush Trivia Evaluation: Gemini 2.5 Flash vs GPT-4.1 Mini"
+
+outputPath: gemini-2.5-flash_gpt-4.1-mini.json
 
 prompts:
   - |
@@ -12,7 +14,7 @@ prompts:
 
 providers:
   - id: google:gemini-2.5-flash
-  - id: openai:gpt-5-mini
+  - id: openai:gpt-4.1-mini
 
 defaultTest:
   assert:

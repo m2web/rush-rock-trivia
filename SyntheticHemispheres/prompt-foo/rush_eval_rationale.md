@@ -1,6 +1,9 @@
 # Rationale for rush_full_eval.jsonl Additions
 
-This document outlines the rationale behind the 10 new trivia entries added to the evaluation dataset. Each entry is designed to test the model's ability to handle specific types of information beyond basic facts, including historical context, technical details, and nuanced interpretations.
+This document outlines the rationale behind the 10 new trivia entries added to
+the evaluation dataset. Each entry is designed to test the model's ability to
+handle specific types of information beyond basic facts, including historical
+context, technical details, and nuanced interpretations.
 
 | Album / Topic | Question Snippet | Rationale & Significance |
 | :--- | :--- | :--- |
@@ -17,8 +20,13 @@ This document outlines the rationale behind the 10 new trivia entries added to t
 
 ## Why these additions matter
 
-By moving beyond *Moving Pictures*, we ensure the model isn't just relying on the most commonly quoted statistics. This broad range forces the LLM to:
+By moving beyond *Moving Pictures*, we ensure the model isn't
+just relying on the most commonly quoted statistics. This broad
+range forces the LLM to:
 
-- **Distinguish between eras:** Synthesizer-heavy 80s vs. guitar-driven 70s vs. layered 90s.
-- **Understand Technicality:** Correctly identifying specific instruments and guest musicians.
-- **Capture Persona:** Reflecting the philosophical and intellectual nature of the lyrics.
+- **Distinguish between eras:** Synthesizer-heavy 80s vs.
+  guitar-driven 70s vs. layered 90s.
+- **Understand Technicality:** Correctly identifying specific
+  instruments and guest musicians.
+- **Capture Persona:** Reflecting the philosophical and
+  intellectual nature of the lyrics.
