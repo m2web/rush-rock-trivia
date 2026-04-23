@@ -86,8 +86,8 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   const prompt = `
   Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.
   Each question should be about the band's lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.
-  Aim for questions that are accessible to a casual fan with some more difficult options for die-hard fans.
-  Avoid extremely obscure details; focus on their more popular songs and common knowledge about the band.
+  Aim for high-quality, deep-dive questions for die-hard fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.
+  Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.
   
   For each question:
   - Provide one correct answer.
@@ -110,7 +110,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: geminiMultipleQuestionsSchema,
-        temperature: 1,
+        temperature: 0.3,
       }
     })
   });
@@ -147,8 +147,8 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
   const prompt = `
   Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.
   Each question should be about the band's lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.
-  Aim for questions that are accessible to a casual fan with some more difficult options for die-hard fans.
-  Avoid extremely obscure details; focus on their more popular songs and common knowledge about the band.
+  Aim for high-quality, deep-dive questions for die-hard fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.
+  Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.
   
   For each question:
   - Provide one correct answer.
@@ -166,7 +166,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
     body: JSON.stringify({
       model: OPENAI_MODEL,
       messages: [
-        { role: 'system', content: 'You are a helpful trivia generation assistant.' },
+        { role: 'system', content: 'You are a helpful and expert Rush trivia generation assistant.' },
         { role: 'user', content: prompt }
       ],
       response_format: {
@@ -177,7 +177,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
           schema: openAiMultipleQuestionsSchema
         }
       },
-      temperature: 1,
+      temperature: 0.3,
     })
   });
 
