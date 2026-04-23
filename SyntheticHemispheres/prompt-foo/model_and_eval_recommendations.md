@@ -90,7 +90,3 @@ Five questions covering **basic, well-established facts** — not esoteric trivi
 
 - `OPENAI_API_KEY` — for GPT-4.1-mini and GPT-4.1-nano
 - `GOOGLE_API_KEY` — for Gemini 2.5 Flash and Flash Lite (via AI Studio)
-
----
-
-**Awaiting your feedback before I make the changes!**

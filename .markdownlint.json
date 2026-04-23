@@ -22,7 +22,8 @@
       "typescript",
       "css",
       "xml",
-      "python"
+      "python",
+      "yaml"
     ],
     "language_only": true
   },

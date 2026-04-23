@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rush Trivia Evaluation Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto+Condensed:wght@300;400;700&family=Special+Elite&family=VT323&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Default Theme (2112: Solar Federation) */
+            --bg-image: url('assets/bg_2112.png');
+            --bg-color: #000000;
+            --primary-color: #ff003c;
+            --secondary-color: #00f2ff;
+            --accent-color: #ffffff;
+            --text-color: #e0e0e0;
+            --card-bg: rgba(10, 10, 10, 0.85);
+            --header-font: 'Orbitron', sans-serif;
+            --body-font: 'Roboto Condensed', sans-serif;
+            --shadow: 0 0 20px rgba(255, 0, 60, 0.3);
+            --border: 1px solid rgba(255, 0, 60, 0.5);
+            --pass-color: #00ff88;
+            --fail-color: #ff3333;
+        }
+
+        [data-theme="gallery"] {
+            --bg-image: url('assets/bg_moving_pictures.png');
+            --bg-color: #2c1a1a;
+            --primary-color: #8b0000;
+            --secondary-color: #d4af37;
+            --accent-color: #3d1c1c;
+            --text-color: #2c2c2c;
+            --card-bg: rgba(245, 241, 230, 0.92);
+            --header-font: 'Playfair Display', serif;
+            --body-font: 'Playfair Display', serif;
+            --shadow: 10px 10px 30px rgba(0, 0, 0, 0.2);
+            --border: 4px double #d4af37;
+            --pass-color: #2e7d32;
+            --fail-color: #c62828;
+        }
+
+        [data-theme="signals"] {
+            --bg-image: url('assets/bg_subdivisions.png');
+            --bg-color: #000000;
+            --primary-color: #39ff14;
+            --secondary-color: #004400;
+            --accent-color: #00ff00;
+            --text-color: #39ff14;
+            --card-bg: rgba(0, 10, 0, 0.9);
+            --header-font: 'VT323', monospace;
+            --body-font: 'VT323', monospace;
+            --shadow: 0 0 15px rgba(57, 255, 20, 0.4);
+            --border: 1px solid #39ff14;
+            --pass-color: #39ff14;
+            --fail-color: #ff0000;
+        }
+
+        [data-theme="analog-kid"] {
+            --bg-image: url('assets/bg_analog_kid.png');
+            --bg-color: #81d4fa;
+            --primary-color: #ff9800;
+            --secondary-color: #03a9f4;
+            --accent-color: #ffffff;
+            --text-color: #1a237e;
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --header-font: 'Roboto Condensed', sans-serif;
+            --body-font: 'Roboto Condensed', sans-serif;
+            --shadow: 0 4px 15px rgba(3, 169, 244, 0.2);
+            --border: 2px solid #03a9f4;
+            --pass-color: #4caf50;
+            --fail-color: #f44336;
+        }
+
+        [data-theme="clockwork"] {
+            --bg-image: url('assets/bg_clockwork.png');
+            --bg-color: #3e2723;
+            --primary-color: #b87333;
+            --secondary-color: #8b4513;
+            --accent-color: #d4af37;
+            --text-color: #4e342e;
+            --card-bg: rgba(230, 217, 194, 0.9);
+            --header-font: 'Special Elite', cursive;
+            --body-font: 'Special Elite', cursive;
+            --shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+            --border: 2px solid #b87333;
+            --pass-color: #558b2f;
+            --fail-color: #a52714;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image: var(--bg-image);
+            background-color: var(--bg-color);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: var(--body-font);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Scanline effect for Signals theme */
+        body[data-theme="signals"]::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            pointer-events: none;
+            background-size: 100% 2px, 3px 100%;
+        }
+
+        header {
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: var(--border);
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: var(--header-font);
+            margin: 0;
+            font-size: 3rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--primary-color);
+            text-shadow: var(--shadow);
+        }
+
+        .theme-selector {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn {
+            padding: 0.8rem 1.5rem;
+            border: var(--border);
+            background: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: var(--header-font);
+            font-size: 0.9rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .theme-btn:hover,
+        .theme-btn.active {
+            background: var(--primary-color);
+            color: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            padding-bottom: 5rem;
+        }
+
+        .upload-zone {
+            width: 100%;
+            padding: 3rem;
+            border: 2px dashed var(--primary-color);
+            border-radius: 12px;
+            text-align: center;
+            background: var(--card-bg);
+            margin-bottom: 2rem;
+            cursor: pointer;
+        }
+
+        .upload-zone:hover {
+            border-style: solid;
+            background: rgba(var(--primary-color), 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: var(--border);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1rem;
+        }
+
+        .result-row {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .result-row td {
+            padding: 1.5rem;
+            border-top: var(--border);
+            border-bottom: var(--border);
+        }
+
+        .result-row td:first-child {
+            border-left: var(--border);
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .result-row td:last-child {
+            border-right: var(--border);
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .model-column {
+            width: 45%;
+        }
+
+        .provider-name {
+            font-weight: bold;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-pass {
+            background: var(--pass-color);
+            color: #000;
+        }
+
+        .status-fail {
+            background: var(--fail-color);
+            color: #fff;
+        }
+
+        .output-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .rationale {
+            font-size: 0.9rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            border-left: 3px solid var(--primary-color);
+            font-style: italic;
+        }
+
+        .rationale b,
+        .rationale strong {
+            color: var(--primary-color);
+        }
+
+        .question-header {
+            font-family: var(--header-font);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .latency {
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Rush Trivia Eval Dashboard</h1>
+        <div class="theme-selector">
+            <button class="theme-btn active" onclick="setTheme('solar')">Solar Federation</button>
+            <button class="theme-btn" onclick="setTheme('gallery')">The Gallery</button>
+            <button class="theme-btn" onclick="setTheme('signals')">Subdivisions</button>
+            <button class="theme-btn" onclick="setTheme('analog-kid')">The Analog Kid</button>
+            <button class="theme-btn" onclick="setTheme('clockwork')">Clockwork Angels</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="drop-zone" class="upload-zone">
+            <h2>Drop your evaluation JSON here</h2>
+            <p>or click to select file (e.g., gemini-2.5-flash_gpt-4.1-mini.json)</p>
+            <input type="file" id="file-input" class="hidden" accept=".json">
+        </div>
+
+        <div id="dashboard-content" class="hidden">
+            <div class="stats-grid" id="stats-container">
+                <!-- Stats will be injected here -->
+            </div>
+
+            <table class="results-table" id="results-table">
+                <!-- Results will be injected here -->
+            </table>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="loader"></div>
+            <p style="text-align: center;">Processing evaluation data...</p>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const loading = document.getElementById('loading');
+        const resultsTable = document.getElementById('results-table');
+        const statsContainer = document.getElementById('stats-container');
+
+        // Theme switching
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.toLowerCase().includes(theme));
+            });
+        }
+
+        // File handling
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'white'; });
+        dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = ''; });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/json') handleFile(file);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleFile(file);
+        });
+
+        function handleFile(file) {
+            loading.classList.remove('hidden');
+            dropZone.classList.add('hidden');
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    renderDashboard(data);
+                } catch (err) {
+                    alert('Error parsing JSON: ' + err.message);
+                    loading.classList.add('hidden');
+                    dropZone.classList.remove('hidden');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function renderDashboard(data) {
+            // Group results by question (testIdx)
+            const results = data.results.results;
+            const prompts = data.results.prompts;
+
+            // Calculate Global Stats
+            const totalTests = prompts.reduce((sum, p) => sum + p.metrics.testPassCount + p.metrics.testFailCount, 0);
+            const totalPass = prompts.reduce((sum, p) => sum + p.metrics.testPassCount, 0);
+            const totalFail = prompts.reduce((sum, p) => sum + p.metrics.testFailCount, 0);
+            const avgLatency = prompts.reduce((sum, p) => sum + p.metrics.totalLatencyMs, 0) / (totalPass + totalFail);
+            const totalCost = prompts.reduce((sum, p) => sum + (p.metrics.cost || 0), 0);
+
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <span class="stat-value">${totalPass}/${totalPass + totalFail}</span>
+                    <span class="stat-label">Total Success Rate</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" style="color: var(--fail-color)">${totalFail}</span>
+                    <span class="stat-label">Total Failures</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">${(avgLatency / 1000).toFixed(2)}s</span>
+                    <span class="stat-label">Avg Latency</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value">$${totalCost.toFixed(4)}</span>
+                    <span class="stat-label">Total Token Cost</span>
+                </div>
+            `;
+
+            // Group by testCase
+            const grouped = {};
+            results.forEach(res => {
+                const q = res.vars.question;
+                if (!grouped[q]) grouped[q] = [];
+                grouped[q].push(res);
+            });
+
+            resultsTable.innerHTML = '';
+
+            Object.entries(grouped).forEach(([question, runs], idx) => {
+                // Sort runs by provider ID to ensure consistent columns
+                runs.sort((a, b) => a.provider.id.localeCompare(b.provider.id));
+
+                const row = document.createElement('tr');
+                row.className = 'result-row animate-in';
+                row.style.animationDelay = `${idx * 0.05}s`;
+
+                let contentHtml = `
+                    <td colspan="2">
+                        <div class="question-header">
+                            <span>Q: ${question}</span>
+                            <span class="latency">Case #${idx + 1}</span>
+                        </div>
+                        <div style="display: flex; gap: 2rem;">
+                `;
+
+                runs.forEach(run => {
+                    const isPass = run.success;
+                    const provider = run.provider.id;
+                    const output = run.response.output;
+                    const reason = run.gradingResult ? run.gradingResult.reason : 'No reasoning provided';
+                    const latency = (run.latencyMs / 1000).toFixed(2);
+
+                    contentHtml += `
+                        <div class="model-column">
+                            <span class="provider-name">${provider}</span>
+                            <div class="status-badge ${isPass ? 'status-pass' : 'status-fail'}">
+                                ${isPass ? 'PASS' : 'FAIL'}
+                            </div>
+                            <div class="output-text">${output}</div>
+                            <div class="rationale">
+                                <strong>Rationale:</strong> ${reason.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}
+                            </div>
+                            <div class="latency" style="margin-top: 10px">Latency: ${latency}s</div>
+                        </div>
+                    `;
+                });
+
+                contentHtml += `</div></td>`;
+                row.innerHTML = contentHtml;
+                resultsTable.appendChild(row);
+            });
+
+            loading.classList.add('hidden');
+            dashboardContent.classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>
