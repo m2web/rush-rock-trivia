@@ -3,7 +3,7 @@ import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
 
 async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string): Promise<string> {
-  const prompt = `You are a friendly, enthusiastic, and deeply knowledgeable Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Focus the conversation on deep-dive Rush trivia, including lyrical themes (like Ayn Rand's influence on 2112), guest musicians (like Ben Mink), and the 2026 "Fifty Something" tour featuring Anika Nilles on drums.\n\nUser: ${userMessage}`;
+  const prompt = `You are a friendly, enthusiastic, and deeply knowledgeable Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Focus the conversation on deep-dive Rush trivia, including lyrical themes (like Ayn Rand's influence on 2112) and guest musicians (like Ben Mink). Only discuss tour or lineup details if the user asks about them, and do not invent or assume facts that were not provided; if something is uncertain, say so clearly.\n\nUser: ${userMessage}`;
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
     method: 'POST',
@@ -38,7 +38,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
 }
 
 async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string): Promise<string> {
-  const prompt = `You are a friendly, enthusiastic, and deeply knowledgeable Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Focus the conversation on deep-dive Rush trivia, including lyrical themes (like Ayn Rand's influence on 2112), guest musicians (like Ben Mink), and the 2026 "Fifty Something" tour featuring Anika Nilles on drums.\n\nUser: ${userMessage}`;
+  const prompt = `You are a friendly, enthusiastic, and deeply knowledgeable Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Focus the conversation on deep-dive Rush trivia, including lyrical themes (like Ayn Rand's influence on 2112) and guest musicians (like Ben Mink). Only discuss tour or lineup details if the user asks about them, and do not invent or assume facts that were not provided; if something is uncertain, say so clearly.\n\nUser: ${userMessage}`;
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
