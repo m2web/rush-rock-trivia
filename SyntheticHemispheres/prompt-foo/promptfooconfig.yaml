@@ -17,6 +17,8 @@ providers:
   - id: openai:gpt-4.1-mini
 
 defaultTest:
+  options:
+    provider: openai:gpt-4o-mini  # Use a high-quality judge
   assert:
     - type: factuality
       value: "{{ground_truth}}"
