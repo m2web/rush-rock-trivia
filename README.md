@@ -89,15 +89,17 @@ their extensive discography, band history, lyrics, and musical legacy.
 4. **Start the development server**
 
    ```bash
-   npm run dev
+   npm run dev:pages
    ```
 
-   Navigate to `http://localhost:3000`
+   Navigate to `http://localhost:8788`
 
-   **How it works:**
-   - **Development**: Uses direct Gemini API calls with `VITE_API_KEY`
-   - **Production**: Automatically switches to secure Cloudflare Pages Functions
-   - **Smart fallback**: If Pages Function fails, falls back to direct API
+   > **Note:** Local development uses `npm run dev:pages` (Wrangler) so that
+   > the Cloudflare Pages Functions at `/api/*` are available locally. API
+   > keys are read from your `.env` file by Wrangler and stay server-side.
+   > The plain `npm run dev` Vite server can still be used for
+   > front-end-only work, but AI features will not function without the
+   > Pages Functions backend.
 
 5. **Production Deployment**
 
@@ -148,9 +150,9 @@ rush-rock-trivia/             # High-level view (partial tree; not all top-level
 │   ├── LoadingSpinner.tsx    # Loading indicator
 │   └── IconComponents.tsx   # Custom Rush-themed icons
 ├── services/
-│   ├── aiService.ts          # AI service (OpenAI or Gemini, trivia generation)
-│   ├── smartAiService.ts     # Smart service (secure endpoint + chat)
-│   └── secureAiService.ts   # Cloudflare Pages Function proxy
+│   ├── aiService.ts          # Legacy AI service (secure endpoint proxy)
+│   ├── smartAiService.ts     # Primary service (trivia + chat via /api/*)
+│   └── secureAiService.ts   # Alternate secure endpoint proxy
 ├── SyntheticHemispheres/
 │   └── prompt-foo/           # promptfoo LLM evaluation harness
 │       ├── promptfooconfig.yaml
@@ -211,10 +213,10 @@ npx promptfoo view
 ## Available Scripts
 
 ```bash
-npm run dev      # Start Vite development server
-npm run dev:pages # Local preview with Cloudflare Pages Functions
-npm run build    # Build for production
-npm run preview  # Preview production build locally
+npm run dev:pages # Local dev with Cloudflare Pages Functions (recommended)
+npm run dev       # Vite-only dev server (front-end only, no AI features)
+npm run build     # Build for production
+npm run preview   # Preview production build locally
 npm run pages:deploy # Deploy to Cloudflare Pages
 ```
 
