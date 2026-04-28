@@ -14,9 +14,9 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [react()],
     define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.OPENAI_API_KEY': JSON.stringify(env.OPENAI_API_KEY),
+      // Only non-sensitive config flags are injected into the client bundle.
+      // API keys are NEVER exposed to the frontend — all AI calls go through
+      // the secure Cloudflare Pages Functions (/api/trivia, /api/chat).
       'process.env.USE_OPENAI': JSON.stringify(env.USE_OPENAI),
     },
     resolve: {
