@@ -27,3 +27,6 @@ dist-ssr
 # Environment variables
 .env
 .env.local
+
+# Security audit notes (local only)
+API_KEY_EXPOSURE_COMPARISON.md
