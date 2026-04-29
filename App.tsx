@@ -1,12 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import RushFanModal from './components/RushFanModal';
-import RushFanBadge from './components/RushFanBadge';
 import MenuOverlay from './components/MenuOverlay';
-import ChatInterface from './components/ChatInterface';
 import { GameState, TriviaQuestion } from './types';
-// Smart service that automatically chooses secure endpoint or direct API
-import { getPreloadedQuestions } from './services/smartAiService';
+// AI service – routes all calls through Cloudflare Pages Functions
+import { getPreloadedQuestions } from './services/aiService';
 import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';
@@ -17,6 +14,10 @@ import './src/styles/passingthesticks.css';
 
 const TOTAL_QUESTIONS = 5;
 
+// NOTE: Rate limiting is not enforced on the client. Any real cooldown
+// should be enforced server-side in the Pages Functions (429 + Retry-After)
+// and surfaced to the UI via the API response.
+
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>(GameState.START);
@@ -25,10 +26,7 @@ const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Rush fan story state
-  const [rushFanStory, setRushFanStory] = useState<string>('');
-  const [showRushFanModal, setShowRushFanModal] = useState<boolean>(false);
-  const [showChat, setShowChat] = useState<boolean>(false);
+
   // Play ambient music on mount
   React.useEffect(() => {
     const audio = new Audio('/audio/sci-fi-ambient-music.mp3');
@@ -43,6 +41,8 @@ const App: React.FC = () => {
     };
   }, []);
 
+
+
   const loadQuestions = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -52,6 +52,7 @@ const App: React.FC = () => {
       setQuestions(newQuestions);
       setCurrentQuestionIndex(0);
       setScore(0);
+
       setGameState(GameState.PLAYING);
     } catch (err) {
       setError('Failed to fetch trivia questions. Please try again later.');
@@ -63,42 +64,10 @@ const App: React.FC = () => {
   }, []);
 
 
-
   const startGame = () => {
-    // If no story, show modal first
-    if (!rushFanStory) {
-      setShowRushFanModal(true);
-    } else {
-      loadQuestions();
-    }
+    loadQuestions();
   };
 
-  // Start chat only if story exists
-  const handleStartChat = () => {
-    setShowChat(true);
-    // Simulate detection of a new fan story from chat context (for demo)
-    setTimeout(() => {
-      const newStory = 'I became a Rush fan after seeing them live in 1981. It changed my life!';
-      if (newStory && newStory !== rushFanStory) {
-        // Previously would update pending fan story and show update modal, but this is no longer needed
-        // (see comments above)
-      }
-    }, 3000); // Simulate after 3 seconds of chat
-  };
-  // Handle update fan story modal actions
-  // No longer need update modal handlers
-
-  // When modal submits, save story and start game
-
-  const handleRushFanModalSubmit = (story: string) => {
-    setRushFanStory(story);
-    setShowRushFanModal(false);
-    // Only start game if this was triggered by game start
-    if (gameState === GameState.START) {
-      loadQuestions();
-    }
-  };
-  
   const handleAnswer = (isCorrect: boolean) => {
     if (isCorrect) {
       setScore(prev => prev + 1);
@@ -156,34 +125,6 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={
             <div className="min-h-screen bg-black text-white font-sans flex flex-col items-center justify-center p-4 pt-20">
-              {/* Floating badge and Start Chat button (pill style) */}
-              {rushFanStory && (
-                <>
-                  {/* Mobile: above image, Desktop: floating top-right */}
-                  <div className="block lg:hidden w-full flex flex-col items-center justify-center mt-4 mb-2 px-2 sm:px-0">
-                    <RushFanBadge story={rushFanStory} />
-                    <div className="mt-4 w-full max-w-xl flex justify-center">
-                      <button
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-red-500/50 transition-all duration-300 w-full sm:w-auto"
-                        onClick={handleStartChat}
-                      >
-                        Start Chat
-                      </button>
-                    </div>
-                  </div>
-                  <div className="hidden lg:flex fixed z-50 flex-col items-end right-8 top-6 w-[480px]">
-                    <RushFanBadge story={rushFanStory} />
-                    <div className="mt-4 w-full flex justify-end">
-                      <button
-                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg hover:shadow-red-500/50 transition-all duration-300 w-full lg:w-auto"
-                        onClick={handleStartChat}
-                      >
-                        Start Chat
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
               <header className="mb-8 text-center">
                 <div className="mb-6 relative">
                   <img 
@@ -208,23 +149,6 @@ const App: React.FC = () => {
                 <p>Questions generated by Google's Gemini AI.</p>
                 <p>&nbsp;</p>
               </footer>
-              {/* Rush Fan Modal */}
-              <RushFanModal isOpen={showRushFanModal} onSubmit={handleRushFanModalSubmit} />
-              {/* Chat interface placeholder */}
-              {showChat && (
-                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-70">
-                  <div className="bg-gray-900 p-8 rounded-2xl shadow-2xl border border-gray-700 max-w-2xl w-full relative">
-                    <h2 className="text-2xl font-bold mb-4 text-white">Chat with Synthetic Hemispheres (LLM)</h2>
-                    <ChatInterface
-                      fanStory={rushFanStory}
-                      onFanStoryUpdate={(newStory) => {
-                        setRushFanStory(newStory);
-                      }}
-                      onClose={() => setShowChat(false)}
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           } />
           <Route path="/passingthesticks" element={<PassingTheSticks />} />

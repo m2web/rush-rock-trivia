@@ -86,18 +86,28 @@ their extensive discography, band history, lyrics, and musical legacy.
      - Either omit `USE_OPENAI` entirely (recommended) or set `USE_OPENAI=false`
    - Set the relevant variables for both "Production" and "Preview" environments
 
-4. **Start the development server**
+4. **Build and start the development server**
+
+   Because `dev:pages` serves the pre-built `dist/` folder, you must build
+   first:
 
    ```bash
-   npm run dev
+   npm run build
+   npm run dev:pages
    ```
 
    Navigate to `http://localhost:3000`
 
-   **How it works:**
-   - **Development**: Uses direct Gemini API calls with `VITE_API_KEY`
-   - **Production**: Automatically switches to secure Cloudflare Pages Functions
-   - **Smart fallback**: If Pages Function fails, falls back to direct API
+   > **Note:** `npm run dev:pages` uses Wrangler to serve the production
+   > build *and* the Cloudflare Pages Functions at `/api/*` locally. API
+   > keys are read from your `.env` file by Wrangler and stay server-side.
+   >
+   > After changing front-end code, run `npm run build` again and refresh
+   > the browser (there is no HMR in this mode).
+   >
+   > The plain `npm run dev` (Vite) server can still be used for
+   > front-end-only work with full HMR, but AI features will not function
+   > without the Pages Functions backend.
 
 5. **Production Deployment**
 
@@ -148,9 +158,7 @@ rush-rock-trivia/             # High-level view (partial tree; not all top-level
 │   ├── LoadingSpinner.tsx    # Loading indicator
 │   └── IconComponents.tsx   # Custom Rush-themed icons
 ├── services/
-│   ├── aiService.ts          # AI service (OpenAI or Gemini, trivia generation)
-│   ├── smartAiService.ts     # Smart service (secure endpoint + chat)
-│   └── secureAiService.ts   # Cloudflare Pages Function proxy
+│   └── aiService.ts          # AI service (trivia + chat via /api/*)
 ├── SyntheticHemispheres/
 │   └── prompt-foo/           # promptfoo LLM evaluation harness
 │       ├── promptfooconfig.yaml
@@ -211,10 +219,10 @@ npx promptfoo view
 ## Available Scripts
 
 ```bash
-npm run dev      # Start Vite development server
-npm run dev:pages # Local preview with Cloudflare Pages Functions
-npm run build    # Build for production
-npm run preview  # Preview production build locally
+npm run build        # Build for production (required before dev:pages)
+npm run dev:pages    # Serve dist/ with Cloudflare Pages Functions (port 3000)
+npm run dev          # Vite-only dev server with HMR (front-end only, no AI)
+npm run preview      # Preview production build locally
 npm run pages:deploy # Deploy to Cloudflare Pages
 ```
 
