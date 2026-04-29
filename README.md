@@ -86,20 +86,28 @@ their extensive discography, band history, lyrics, and musical legacy.
      - Either omit `USE_OPENAI` entirely (recommended) or set `USE_OPENAI=false`
    - Set the relevant variables for both "Production" and "Preview" environments
 
-4. **Start the development server**
+4. **Build and start the development server**
+
+   Because `dev:pages` serves the pre-built `dist/` folder, you must build
+   first:
 
    ```bash
+   npm run build
    npm run dev:pages
    ```
 
-   Navigate to `http://localhost:8788`
+   Navigate to `http://localhost:3000`
 
-   > **Note:** Local development uses `npm run dev:pages` (Wrangler) so that
-   > the Cloudflare Pages Functions at `/api/*` are available locally. API
+   > **Note:** `npm run dev:pages` uses Wrangler to serve the production
+   > build *and* the Cloudflare Pages Functions at `/api/*` locally. API
    > keys are read from your `.env` file by Wrangler and stay server-side.
-   > The plain `npm run dev` Vite server can still be used for
-   > front-end-only work, but AI features will not function without the
-   > Pages Functions backend.
+   >
+   > After changing front-end code, run `npm run build` again and refresh
+   > the browser (there is no HMR in this mode).
+   >
+   > The plain `npm run dev` (Vite) server can still be used for
+   > front-end-only work with full HMR, but AI features will not function
+   > without the Pages Functions backend.
 
 5. **Production Deployment**
 
@@ -150,9 +158,7 @@ rush-rock-trivia/             # High-level view (partial tree; not all top-level
 │   ├── LoadingSpinner.tsx    # Loading indicator
 │   └── IconComponents.tsx   # Custom Rush-themed icons
 ├── services/
-│   ├── aiService.ts          # Legacy AI service (secure endpoint proxy)
-│   ├── smartAiService.ts     # Primary service (trivia + chat via /api/*)
-│   └── secureAiService.ts   # Alternate secure endpoint proxy
+│   └── aiService.ts          # AI service (trivia + chat via /api/*)
 ├── SyntheticHemispheres/
 │   └── prompt-foo/           # promptfoo LLM evaluation harness
 │       ├── promptfooconfig.yaml
@@ -213,10 +219,10 @@ npx promptfoo view
 ## Available Scripts
 
 ```bash
-npm run dev:pages # Local dev with Cloudflare Pages Functions (recommended)
-npm run dev       # Vite-only dev server (front-end only, no AI features)
-npm run build     # Build for production
-npm run preview   # Preview production build locally
+npm run build        # Build for production (required before dev:pages)
+npm run dev:pages    # Serve dist/ with Cloudflare Pages Functions (port 3000)
+npm run dev          # Vite-only dev server with HMR (front-end only, no AI)
+npm run preview      # Preview production build locally
 npm run pages:deploy # Deploy to Cloudflare Pages
 ```
 

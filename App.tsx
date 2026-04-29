@@ -2,8 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MenuOverlay from './components/MenuOverlay';
 import { GameState, TriviaQuestion } from './types';
-// Smart service that automatically chooses secure endpoint or direct API
-import { getPreloadedQuestions } from './services/smartAiService';
+// AI service – routes all calls through Cloudflare Pages Functions
+import { getPreloadedQuestions } from './services/aiService';
 import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';
@@ -13,21 +13,10 @@ import PassingTheSticks from './components/PassingTheSticks';
 import './src/styles/passingthesticks.css';
 
 const TOTAL_QUESTIONS = 5;
-const RATE_LIMIT_MS = 30 * 60 * 1000; // 30 minutes in milliseconds
-const RATE_LIMIT_KEY = 'rush_trivia_last_quiz_time';
 
-/** Returns the number of milliseconds remaining in the cooldown, or 0 if ready. */
-function getCooldownRemaining(): number {
-  const lastQuizTime = localStorage.getItem(RATE_LIMIT_KEY);
-  if (!lastQuizTime) return 0;
-  const elapsed = Date.now() - parseInt(lastQuizTime, 10);
-  return Math.max(0, RATE_LIMIT_MS - elapsed);
-}
-
-/** Record that a quiz was just started. */
-function recordQuizStart(): void {
-  localStorage.setItem(RATE_LIMIT_KEY, Date.now().toString());
-}
+// NOTE: Rate limiting is not enforced on the client. Any real cooldown
+// should be enforced server-side in the Pages Functions (429 + Retry-After)
+// and surfaced to the UI via the API response.
 
 
 const App: React.FC = () => {
@@ -37,8 +26,6 @@ const App: React.FC = () => {
   const [score, setScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Rate-limit cooldown state (ms remaining)
-  const [cooldownRemaining, setCooldownRemaining] = useState<number>(getCooldownRemaining());
 
   // Play ambient music on mount
   React.useEffect(() => {
@@ -54,16 +41,7 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Tick the cooldown timer every second while there is a cooldown
-  React.useEffect(() => {
-    if (cooldownRemaining <= 0) return;
-    const interval = setInterval(() => {
-      const remaining = getCooldownRemaining();
-      setCooldownRemaining(remaining);
-      if (remaining <= 0) clearInterval(interval);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [cooldownRemaining]);
+
 
   const loadQuestions = useCallback(async () => {
     setIsLoading(true);
@@ -74,8 +52,7 @@ const App: React.FC = () => {
       setQuestions(newQuestions);
       setCurrentQuestionIndex(0);
       setScore(0);
-      recordQuizStart();
-      setCooldownRemaining(RATE_LIMIT_MS);
+
       setGameState(GameState.PLAYING);
     } catch (err) {
       setError('Failed to fetch trivia questions. Please try again later.');
@@ -88,11 +65,6 @@ const App: React.FC = () => {
 
 
   const startGame = () => {
-    const remaining = getCooldownRemaining();
-    if (remaining > 0) {
-      setCooldownRemaining(remaining);
-      return; // Rate-limited — StartScreen will show the countdown
-    }
     loadQuestions();
   };
 
@@ -114,8 +86,6 @@ const App: React.FC = () => {
   const handlePlayAgain = () => {
     setGameState(GameState.START);
     setQuestions([]);
-    // Refresh cooldown so StartScreen shows the latest timer
-    setCooldownRemaining(getCooldownRemaining());
   };
   
 
@@ -126,7 +96,7 @@ const App: React.FC = () => {
 
     switch (gameState) {
       case GameState.START:
-        return <StartScreen onStart={startGame} error={error} cooldownRemaining={cooldownRemaining} />;
+        return <StartScreen onStart={startGame} error={error} />;
       case GameState.PLAYING:
         return (
           <>
@@ -143,7 +113,7 @@ const App: React.FC = () => {
       case GameState.FINISHED:
         return <EndScreen score={score} totalQuestions={TOTAL_QUESTIONS} onPlayAgain={handlePlayAgain} />;
       default:
-        return <StartScreen onStart={startGame} cooldownRemaining={cooldownRemaining} />;
+        return <StartScreen onStart={startGame} />;
     }
   };
 

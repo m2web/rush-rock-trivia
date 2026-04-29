@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { sendChatMessage } from '../services/smartAiService';
+import { sendChatMessage } from '../services/aiService';
 
 interface Message {
   sender: 'user' | 'llm';

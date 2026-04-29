@@ -1,9 +1,33 @@
-// Secure client-side AI service that routes ALL calls through Cloudflare Pages Functions.
+// Client-side AI service that routes all calls through Cloudflare Pages Functions.
 // API keys are never present on the client — they live server-side only.
-//
-// NOTE: This is the legacy service. New code should import from smartAiService.ts instead.
 
 import { TriviaQuestion } from '../types';
+
+// ── Chat ───────────────────────────────────────────────────────────────────────
+
+/**
+ * Send a chat message via the secure /api/chat Pages Function.
+ * The backend injects the API key server-side.
+ */
+export async function sendChatMessage(userMessage: string, fanStory: string): Promise<string> {
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userMessage, fanStory }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  if (data.error) throw new Error(data.details || data.error);
+  return data.reply;
+}
+
+// ── Trivia Questions ───────────────────────────────────────────────────────────
 
 interface ApiResponse {
   questions: TriviaQuestion[];
@@ -18,6 +42,7 @@ class QuestionCache {
   private loadPromise: Promise<void> | null = null;
 
   async getQuestions(count: number = 5): Promise<TriviaQuestion[]> {
+    // If we don't have enough questions, wait for loading to complete
     if (this.cache.length < count) {
       if (this.isLoading && this.loadPromise) {
         await this.loadPromise;
@@ -26,8 +51,10 @@ class QuestionCache {
       }
     }
 
+    // Return the requested number of questions and remove them from cache
     const questions = this.cache.splice(0, count);
 
+    // Start preloading more questions in the background if cache is getting low
     if (this.cache.length < 5 && !this.isLoading) {
       this.preloadQuestions();
     }
@@ -58,11 +85,9 @@ class QuestionCache {
     }
   }
 
-  init() {
-    setTimeout(() => this.preloadQuestions(), 100);
-  }
 }
 
+// Create global cache instance
 const questionCache = new QuestionCache();
 
 /**
@@ -107,13 +132,13 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
   }
 }
 
+// Fetch single question (uses fetchMultipleQuestions with count=1)
 export async function fetchTriviaQuestion(): Promise<TriviaQuestion> {
   const questions = await fetchMultipleQuestions(1);
   return questions[0];
 }
 
+// Get preloaded questions from cache
 export async function getPreloadedQuestions(count: number = 5): Promise<TriviaQuestion[]> {
   return await questionCache.getQuestions(count);
 }
-
-questionCache.init();
