@@ -49,7 +49,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
     <div className="bg-gray-900 bg-opacity-90 p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm animate-fade-in">
       <div className="mb-6 text-center">
         <p className="text-lg font-semibold text-red-400">Question {questionNumber} / {totalQuestions}</p>
-        <h2 className="text-2xl md:text-3xl font-bold mt-2" dangerouslySetInnerHTML={{ __html: question.question }} />
+        <h2 className="text-2xl md:text-3xl font-bold mt-2">{question.question}</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {shuffledAnswers.map((answer, index) => (
@@ -59,7 +59,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
             disabled={isAnswered}
             className={`w-full p-4 rounded-lg border-2 text-left font-semibold text-lg transition-all duration-300 transform ${getButtonClass(answer)} ${!isAnswered ? 'hover:scale-105' : ''}`}
           >
-            <span dangerouslySetInnerHTML={{ __html: answer }} />
+            <span>{answer}</span>
           </button>
         ))}
       </div>

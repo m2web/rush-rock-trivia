@@ -205,9 +205,12 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // CORS headers
+  // CORS headers — restrict browser access to the production domain (not a server-side abuse control)
+  const origin = context.request.headers.get('Origin') || '';
+  const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': corsOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
@@ -262,11 +265,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 };
 
 // Handle CORS preflight requests
-export const onRequestOptions: PagesFunction = async () => {
+export const onRequestOptions: PagesFunction<Env> = async (context) => {
+  const origin = context.request.headers.get('Origin') || '';
+  const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
   return new Response(null, {
     status: 204,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     }

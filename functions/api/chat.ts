@@ -1,3 +1,30 @@
+import { PagesFunction } from '../types';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://rush2026.fyi',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Vary': 'Origin',
+};
+
+export const onRequestPost: PagesFunction = async () => {
+  return new Response(JSON.stringify({ error: 'Chat endpoint is disabled' }), {
+    status: 410,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders },
+  });
+};
+
+export const onRequestOptions: PagesFunction = async () => {
+  return new Response(null, { status: 204, headers: corsHeaders });
+};
+
+// ============================================================================
+// CHAT ENDPOINT — DISABLED
+// This endpoint is not yet wired up in the UI. The implementation is preserved
+// below for later re-enable.
+// ============================================================================
+
+/*
 // Cloudflare Pages Function for secure chat API calls
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
@@ -126,3 +153,4 @@ export const onRequestOptions: PagesFunction = async () => {
     }
   });
 };
+*/
