@@ -205,7 +205,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // CORS headers — locked to production domain to prevent API abuse
+  // CORS headers — restrict browser access to the production domain (not a server-side abuse control)
   const origin = context.request.headers.get('Origin') || '';
   const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
   const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
