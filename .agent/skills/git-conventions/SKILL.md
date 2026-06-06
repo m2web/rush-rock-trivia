@@ -49,7 +49,14 @@ Any GitHub-supported emoji is allowed — choose whichever best fits the change.
 | `:wastebasket:` | `🗑️` | Remove dead code or files |
 | `:rocket:` | `🚀` | Deploy or release |
 | `:white_check_mark:` | `✅` | Add or update tests |
-| `:twisted_rightwards_arrows:` | `🔀` | Merge branches |
+| `:twisted_rightwards_arrows:` | :twisted_rightwards_arrows: | Merge branches |
+
+## Commit Topic Continuity
+
+After a `git push`, treat the current commit message topic as closed.
+If the next set of changes relates to a **different topic**, start a fresh
+commit message with an appropriate emoji and type. Only carry forward the
+same topic if the new changes are directly related to the previous commit.
 
 ## Branch Naming Strategy
 
