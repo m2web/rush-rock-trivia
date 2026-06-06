@@ -29,7 +29,7 @@ const App: React.FC = () => {
 
   // Play ambient music on mount
   React.useEffect(() => {
-    const audio = new Audio('/audio/sci-fi-ambient-music.mp3');
+    const audio = new Audio('/audio/passingthesticks/sci-fi-ambient-music.mp3');
     audio.loop = true;
     audio.volume = 1.0;
     audio.play().catch(() => {

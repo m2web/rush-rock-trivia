@@ -1,3 +1,12 @@
+// ============================================================================
+// CHAT ENDPOINT — DISABLED
+// This endpoint is not yet wired up in the UI. Commenting out to prevent
+// an unused but publicly accessible API from being called and consuming
+// OpenAI/Gemini credits. Uncomment when the ChatInterface component is
+// integrated into the app.
+// ============================================================================
+
+/*
 // Cloudflare Pages Function for secure chat API calls
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
@@ -126,3 +135,4 @@ export const onRequestOptions: PagesFunction = async () => {
     }
   });
 };
+*/
