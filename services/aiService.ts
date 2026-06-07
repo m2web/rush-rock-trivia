@@ -30,9 +30,8 @@ export async function sendChatMessage(userMessage: string, fanStory: string): Pr
 // ── Trivia Questions ───────────────────────────────────────────────────────────
 
 interface ApiResponse {
-  questions: TriviaQuestion[];
+  questions?: TriviaQuestion[];
   error?: string;
-  details?: string;
 }
 
 // Question cache for preloading
@@ -111,7 +110,7 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
     const data: ApiResponse = await response.json();
 
     if (data.error) {
-      throw new Error(data.details || data.error);
+      throw new Error(data.error);
     }
 
     if (!data.questions || !Array.isArray(data.questions) || data.questions.length !== count) {

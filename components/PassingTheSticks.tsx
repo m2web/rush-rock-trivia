@@ -55,7 +55,7 @@ const PassingTheSticks: React.FC = () => {
       }}>
       <div style={{ position: "absolute", inset: 0, opacity: 0.1 }}>
         <img
-          src="/images/passingthesticks/red_star_bg.png"
+          src="/images/passingthesticks/red_star_bg.webp"
           alt="Rush Red Star Logo Background"
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
@@ -89,7 +89,7 @@ const PassingTheSticks: React.FC = () => {
           transition: "opacity 6s ease-in-out"
         }}>
           <img
-            src="/images/passingthesticks/neil.png"
+            src="/images/passingthesticks/neil.webp"
             alt="Neil Peart behind the drums"
             style={{ width: "100%", maxWidth: "900px", maxHeight: "60vh", margin: "0 auto", opacity: 0.8, objectFit: "contain" }}
           />
@@ -124,7 +124,7 @@ const PassingTheSticks: React.FC = () => {
           transition: "opacity 6s ease-in-out"
         }}>
           <img
-            src="/images/passingthesticks/kit_transition_overlay.png"
+            src="/images/passingthesticks/kit_transition_overlay.webp"
             alt="Kit transition overlay"
             style={{ width: "100%", maxWidth: "900px", maxHeight: "60vh", margin: "0 auto", opacity: 0.8, objectFit: "contain" }}
           />
@@ -147,7 +147,7 @@ const PassingTheSticks: React.FC = () => {
           transition: "opacity 6s ease-in-out"
         }}>
           <img
-            src="/images/passingthesticks/anika.png"
+            src="/images/passingthesticks/anika.webp"
             alt="Anika Nilles behind the drums"
             style={{ width: "100%", maxWidth: "900px", maxHeight: "60vh", margin: "0 auto", opacity: 0.8, objectFit: "contain" }}
           />
