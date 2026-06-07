@@ -1,0 +1,104 @@
+description: "Rush Trivia Generation Evaluation (Multiple Choice)"
+
+outputPath: trivia_generation_eval.json
+
+prompts:
+  - |
+    Generate exactly {{count}} unique multiple-choice trivia questions about the progressive rock band Rush.
+    Cover lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general history.
+    Focus on deep-dive, high-quality questions for die-hard fans (e.g., lyrical themes, recording details, or guest musicians like Ben Mink and Aimee Mann).
+    Use only verifiable, documented facts. Do not invent details or speculate on rumors, future tours, or unconfirmed releases.
+
+    Each question must include:
+    - One correct answer.
+    - Exactly three plausible, distinct, incorrect answers.
+
+providers:
+  - id: openai:gpt-4.1-mini
+    config:
+      response_format:
+        type: "json_schema"
+        json_schema:
+          name: "trivia_questions"
+          strict: true
+          schema:
+            type: "object"
+            properties:
+              questions:
+                type: "array"
+                description: "An array of trivia questions about Rush."
+                items:
+                  type: "object"
+                  properties:
+                    question:
+                      type: "string"
+                      description: "The trivia question about the band Rush."
+                    correctAnswer:
+                      type: "string"
+                      description: "The single correct answer to the question."
+                    incorrectAnswers:
+                      type: "array"
+                      description: "An array of exactly three plausible but incorrect answers."
+                      items:
+                        type: "string"
+                  required: ["question", "correctAnswer", "incorrectAnswers"]
+                  additionalProperties: false
+            required: ["questions"]
+            additionalProperties: false
+
+  - id: openai:gpt-5-mini
+    config:
+      response_format:
+        type: "json_schema"
+        json_schema:
+          name: "trivia_questions"
+          strict: true
+          schema:
+            type: "object"
+            properties:
+              questions:
+                type: "array"
+                description: "An array of trivia questions about Rush."
+                items:
+                  type: "object"
+                  properties:
+                    question:
+                      type: "string"
+                      description: "The trivia question about the band Rush."
+                    correctAnswer:
+                      type: "string"
+                      description: "The single correct answer to the question."
+                    incorrectAnswers:
+                      type: "array"
+                      description: "An array of exactly three plausible but incorrect answers."
+                      items:
+                        type: "string"
+                  required: ["question", "correctAnswer", "incorrectAnswers"]
+                  additionalProperties: false
+            required: ["questions"]
+            additionalProperties: false
+
+tests:
+  - vars:
+      count: 5
+    assert:
+      - type: is-json
+      - type: javascript
+        value: |
+          const parsed = JSON.parse(output);
+          if (!parsed.questions || !Array.isArray(parsed.questions)) return false;
+          if (parsed.questions.length !== vars.count) return false;
+          for (const q of parsed.questions) {
+            if (typeof q.question !== 'string' || q.question.trim().length === 0) return false;
+            if (typeof q.correctAnswer !== 'string' || q.correctAnswer.trim().length === 0) return false;
+            if (!Array.isArray(q.incorrectAnswers) || q.incorrectAnswers.length !== 3) return false;
+            for (const inc of q.incorrectAnswers) {
+              if (typeof inc !== 'string' || inc.trim().length === 0) return false;
+              if (inc === q.correctAnswer) return false;
+            }
+            const uniqueInc = new Set(q.incorrectAnswers);
+            if (uniqueInc.size !== 3) return false;
+          }
+          return true;
+      - type: llm-rubric
+        value: "The output contains exactly 5 high-quality, factually accurate multiple-choice trivia questions about the progressive rock band Rush. The correct answers are correct, the incorrect answers are plausible but incorrect, and there is no speculation or rumored information."

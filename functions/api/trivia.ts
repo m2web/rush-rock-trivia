@@ -89,9 +89,9 @@ function buildTriviaPrompt(count: number): string {
   return [
     `Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
     'Each question should be about the band\'s lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.',
-    'Aim for high-quality, deep-dive questions for die-hard fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.',
+    'Aim for high-quality questions for Rush fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.',
     'Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.',
-    '',
+    'Please check the validity of your answer as some answers have been known to be incorrect.',
     'For each question:',
     '- Provide one correct answer.',
     '- Provide exactly three plausible but incorrect answers.',
@@ -201,7 +201,8 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // CORS headers — restrict browser access to the production domain (not a server-side abuse control)
+  // CORS headers — restrict browser access to the production domain (not a server-side abuse control)
+
   const origin = context.request.headers.get('Origin') || '';
   const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
   const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
