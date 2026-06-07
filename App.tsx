@@ -128,7 +128,7 @@ const App: React.FC = () => {
               <header className="mb-8 text-center">
                 <div className="mb-6 relative">
                   <img 
-                    src="/images/Rush2026RedStar2.png" 
+                    src="/images/Rush2026RedStar2.webp" 
                     alt="Rush Rock Trivia Logo" 
                     className="max-w-md h-auto mx-auto"
                     style={{

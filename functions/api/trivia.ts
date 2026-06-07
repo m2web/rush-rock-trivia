@@ -82,19 +82,26 @@ const openAiMultipleQuestionsSchema = {
   additionalProperties: false
 };
 
+// System-level instruction — no user input is interpolated into this prompt.
+// The only variable (count) is a server-validated integer (1–10), so prompt
+// injection is not possible through this path.
+function buildTriviaPrompt(count: number): string {
+  return [
+    `Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
+    'Each question should be about the band\'s lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.',
+    'Aim for high-quality, deep-dive questions for die-hard fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.',
+    'Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.',
+    '',
+    'For each question:',
+    '- Provide one correct answer.',
+    '- Provide exactly three plausible but incorrect answers.',
+    '- Ensure all answer options are distinct from each other.',
+    '- Make sure all questions are unique and cover different aspects of Rush.',
+  ].join('\n');
+}
+
 async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
-  const prompt = `
-  Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.
-  Each question should be about the band's lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.
-  Aim for high-quality, deep-dive questions for die-hard fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.
-  Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.
-  
-  For each question:
-  - Provide one correct answer.
-  - Provide exactly three plausible but incorrect answers.
-  - Ensure all answer options are distinct from each other.
-  - Make sure all questions are unique and cover different aspects of Rush.
-  `;
+  const prompt = buildTriviaPrompt(count);
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
     method: 'POST',
@@ -144,18 +151,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
 }
 
 async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
-  const prompt = `
-  Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.
-  Each question should be about the band's lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.
-  Aim for high-quality, deep-dive questions for die-hard fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.
-  Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.
-  
-  For each question:
-  - Provide one correct answer.
-  - Provide exactly three plausible but incorrect answers.
-  - Ensure all answer options are distinct from each other.
-  - Make sure all questions are unique and cover different aspects of Rush.
-  `;
+  const prompt = buildTriviaPrompt(count);
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -232,11 +228,49 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
+    // ── Input validation ──────────────────────────────────────────────
     const request = context.request;
-    const body = await request.json() as { count?: number };
-    const count = body.count || 5;
 
-    // Validate count
+    // Verify Content-Type
+    const contentType = request.headers.get('Content-Type') || '';
+    if (!contentType.includes('application/json')) {
+      return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
+        status: 415,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    // Reject oversized payloads (max 1 KB for a simple { count: N } body)
+    const contentLength = parseInt(request.headers.get('Content-Length') || '0', 10);
+    if (contentLength > 1024) {
+      return new Response(JSON.stringify({ error: 'Request body too large' }), {
+        status: 413,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    // Validate body shape
+    if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+      return new Response(JSON.stringify({ error: 'Request body must be a JSON object' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    const { count: rawCount } = body as { count?: unknown };
+    const count = typeof rawCount === 'number' ? Math.floor(rawCount) : 5;
+
+    // Validate count range
     if (count < 1 || count > 10) {
       return new Response(JSON.stringify({ error: 'Count must be between 1 and 10' }), {
         status: 400,
@@ -244,6 +278,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
+    // ── Generate questions ────────────────────────────────────────────
     const questions = useOpenAI
       ? await callOpenAI(apiKey, count)
       : await callGemini(apiKey, count);
@@ -253,10 +288,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
 
   } catch (error) {
+    // Log full error server-side for debugging; return generic message to client
     console.error('Error generating trivia questions:', error);
     return new Response(JSON.stringify({
-      error: 'Failed to generate trivia questions',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Failed to generate trivia questions'
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
