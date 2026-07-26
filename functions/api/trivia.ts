@@ -152,6 +152,8 @@ function buildTriviaPrompt(count: number): string {
     '',
     RUSH_FACTS_REFERENCE,
     '',
+    'IMPORTANT: The fact sheet above is for YOUR internal reference only. Do NOT mention the fact sheet, reference it, or use phrases like "according to the fact sheet" in any question or answer text. Present all information as standalone trivia.',
+    '',
     'For each question:',
     '- Provide one correct answer that is VERIFIABLY TRUE.',
     '- Provide exactly three plausible but incorrect answers.',

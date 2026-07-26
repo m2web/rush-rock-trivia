@@ -1,6 +1,6 @@
-description: "Rush Trivia Evaluation: GPT-4.1 Mini vs GPT-5 Mini"
+description: "Rush Trivia Evaluation: GPT-5.4 Nano vs GPT-5 Mini"
 
-outputPath: gpt-4.1-mini_gpt-5-mini.json
+outputPath: gpt-5.4-nano_gpt-5-mini.json
 
 prompts:
   - |
@@ -13,7 +13,7 @@ prompts:
     {{question}}
 
 providers:
-  - id: openai:gpt-4.1-mini
+  - id: openai:gpt-5.4-nano
   - id: openai:gpt-5-mini
 
 defaultTest:
@@ -25,3 +25,4 @@ defaultTest:
 
 tests:
   - rush_full_eval.jsonl
+
