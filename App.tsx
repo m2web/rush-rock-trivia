@@ -121,7 +121,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <>
-        <MenuOverlay />
+        {/* <MenuOverlay /> */}
         <Routes>
           <Route path="/" element={
             <div className="min-h-screen bg-black text-white font-sans flex flex-col items-center justify-center p-4 pt-20">
