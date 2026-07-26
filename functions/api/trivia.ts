@@ -82,6 +82,58 @@ const openAiMultipleQuestionsSchema = {
   additionalProperties: false
 };
 
+// Verified Rush facts extracted from the evaluation dataset.
+// Embedded at build time so Cloudflare Pages Functions can reference them
+// without filesystem access.
+const RUSH_FACTS_REFERENCE = `
+VERIFIED RUSH FACT SHEET — use this to validate every answer you generate.
+
+1. The primary theme of 2112 is the conflict of the individual versus totalitarian control. The lyrical inspiration came from Ayn Rand.
+2. The title "Moving Pictures" is a triple entendre: pictures being carried (movers), emotionally moving (stirring), and motion pictures (films). Themes explore modern life, pop culture, and oxymorons (e.g., "Tom Sawyer").
+3. "Cygnus X-1 Book II: Hemispheres" uses Greek mythology — Apollo (Reason) vs. Dionysus (Emotion) — to explore the need for balance between logic and emotion.
+4. The 2026 "Fifty Something" tour features Geddy Lee (bass, keys, vocals), Alex Lifeson (guitar, vocals), and Anika Nilles (drums).
+5. The 2026 tour kicks off Sunday, June 7, 2026, at The Kia Forum in Los Angeles, CA.
+6. Los Angeles, CA, and Fort Worth, TX, have the most currently scheduled 2026 tour dates with four shows each.
+7. The new drummer for the 2026 tour is German drummer, composer, and producer Anika Nilles.
+8. Each 2026 "evening with" show features two career-spanning sets each night.
+9. Seattle, WA (Oct 10) and Vancouver, BC (Dec 15) have shows scheduled for late 2026.
+10. The 2026 tour setlist is built from a catalogue of 35 songs including greatest hits and fan favorites.
+11. Presale info is available on the official Rush website, fan club sign-ups, and Citi for US shows.
+12. "Subdivisions" (Signals) explores teenage alienation and the pressure to conform to suburban expectations.
+13. "The Big Money" (Power Windows) addresses the pervasive influence of global capitalism and financial power.
+14. "Time Stand Still" is from the album HOLD YOUR FIRE (1987). Aimee Mann provided backing vocals on this track. It is NOT from Presto, Roll the Bones, Counterparts, or Test for Echo.
+15. There is no announced European leg for the 2026 tour.
+16. The 2026 setlist focuses on hits from the Fly by Night era onward; material from the debut album with John Rutsey is highly unlikely.
+17. Moving Pictures (1981) is Rush's best-selling U.S. album — certified 4x Multi-Platinum (4,000,000 units) by the RIAA.
+18. Clockwork Angels (2012) is Rush's final studio album — a steampunk concept album that debuted #1 in Canada and #2 on the U.S. Billboard 200.
+19. The six-year hiatus before Vapor Trails (2002) was caused by the tragic loss of Neil Peart's daughter and wife. The album has a raw, emotional sound dealing with grief and recovery.
+20. "The Spirit of Radio" (Permanent Waves, 1980) was inspired by Toronto radio station CFNY-FM and its motto.
+21. Ben Mink played electric violin on "Losing It" from SIGNALS (1982).
+22. The intro of "Xanadu" (A Farewell to Kings, 1977) features tubular bells, temple blocks, wind chimes, and a glockenspiel.
+23. The cover art for Grace Under Pressure was designed by Hugh Syme.
+24. The Presto (1989) cover features levitating rabbits — a play on the album's magic/sleight-of-hand theme.
+25. In "The Trees" (Hemispheres), the conflict is between the Oaks and the Maples.
+26. "Manhattan Project" (Power Windows) is about the development of the atomic bomb and the bombings of Hiroshima and Nagasaki.
+27. The "rap" section in "Roll the Bones" (1991) was performed by Geddy Lee with his voice electronically lowered.
+28. Neil Peart's book about his motorbike journeys during the late-90s hiatus is "Ghost Rider: Travels on the Healing Road."
+29. "Natural Science" (Permanent Waves) explores nature vs. technology and has three parts: "Tide Pools," "Hyperspace," and "Permanent Waves."
+30. "Countdown" (Signals, 1982) addresses the launch of the Space Shuttle Columbia (STS-1).
+31. "A Farewell to Kings" (1977) critiques the medieval mindset of modern leaders, serving as a thematic counterpart to "Closer to the Heart" on the same album.
+32. "Red Sector A" (Grace Under Pressure) was inspired by Geddy Lee's mother's experiences in the Bergen-Belsen concentration camp.
+33. "The Pass" (Presto) is an empathetic plea against teenage suicide.
+34. Apollo represents Reason in "Hemispheres"; Dionysus represents Emotion.
+35. "Territories" (Power Windows) critiques nationalism and artificial boundaries.
+36. "Dreamline" (Roll the Bones) represents the youthful pursuit of dreams and the feeling of immortality while traveling.
+37. Vapor Trails (2002) has zero synthesizers — a deliberate return to raw, guitar-driven sound.
+38. "By-Tor" and the "Snow Dog" (Fly by Night) were named after two dogs owned by lighting director Howard Ungerleider.
+39. "Fly by Night" (1975) is about Neil Peart's journey from Canada to London to pursue his musical dreams.
+40. Anika Nilles was born May 29, 1983, in Aschaffenburg, West Germany. She grew up in a musical family of drummers.
+41. Anika Nilles earned a degree in popular music from the Popakademie Baden-Württemberg in Mannheim and later became head of the drums department there.
+42. Anika Nilles released Pikalar (2017), For a Colorful Soul (2020), the EP Opuntia (2022), and False Truth (2025) with her band Nevell.
+43. Anika Nilles gained international recognition through viral YouTube drumming videos, including "Wild Boy" (2013) and "Alter Ego" (2014).
+44. Anika Nilles toured with guitarist Jeff Beck, performing as his drummer for over 60 shows in 2022.
+`;
+
 // System-level instruction — no user input is interpolated into this prompt.
 // The only variable (count) is a server-validated integer (1–10), so prompt
 // injection is not possible through this path.
@@ -89,12 +141,21 @@ function buildTriviaPrompt(count: number): string {
   return [
     `Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
     'Each question should be about the band\'s lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.',
-    'Aim for high-quality questions for Rush fans. Focus on specific lyrical themes, recording history, guest musicians (like Ben Mink or Aimee Mann), and other well-established, broadly documented facts about Rush.',
+    'Aim for high-quality questions for Rush fans. Focus on specific lyrical themes, recording history, guest musicians, and other well-established, broadly documented facts about Rush.',
     'Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.',
-    'Please check the validity of your answer as some answers have been known to be incorrect.',
+    '',
+    'CRITICAL — FACTUAL ACCURACY:',
+    'Before generating any question, consult the VERIFIED RUSH FACT SHEET below.',
+    'If a question you generate touches ANY topic covered in the fact sheet, the correct answer MUST match the fact sheet exactly.',
+    'Do NOT generate answers that contradict the fact sheet.',
+    'You MUST verify that every correct answer is actually true before including a question.',
+    '',
+    RUSH_FACTS_REFERENCE,
+    '',
     'For each question:',
-    '- Provide one correct answer.',
+    '- Provide one correct answer that is VERIFIABLY TRUE.',
     '- Provide exactly three plausible but incorrect answers.',
+    '- The correct answer MUST appear in the correctAnswer field, NOT in the incorrectAnswers array.',
     '- Ensure all answer options are distinct from each other.',
     '- Make sure all questions are unique and cover different aspects of Rush.',
   ].join('\n');
@@ -162,7 +223,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
     body: JSON.stringify({
       model: OPENAI_MODEL,
       messages: [
-        { role: 'system', content: 'You are a helpful and expert Rush trivia generation assistant.' },
+        { role: 'system', content: 'You are a helpful and expert Rush trivia generation assistant. You MUST verify every fact against the provided fact sheet before including it. Accuracy is your top priority — never guess.' },
         { role: 'user', content: prompt }
       ],
       response_format: {
@@ -173,7 +234,6 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
           schema: openAiMultipleQuestionsSchema
         }
       },
-      temperature: 0.3,
     })
   });
 

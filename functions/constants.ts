@@ -2,4 +2,4 @@
 // Change these to switch models across all API endpoints
 
 export const GEMINI_MODEL = 'gemini-2.5-flash';
-export const OPENAI_MODEL = 'gpt-4.1-mini';
+export const OPENAI_MODEL = 'gpt-5-mini';
