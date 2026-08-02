@@ -3,6 +3,7 @@
 
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
+import { sendErrorAlert } from '../errorNotifier';
 
 interface TriviaQuestion {
   question: string;
@@ -274,8 +275,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
+  let useOpenAI = false;
+
   try {
-    const useOpenAI = context.env.USE_OPENAI === 'true';
+    useOpenAI = context.env.USE_OPENAI === 'true';
     const apiKey = useOpenAI ? context.env.OPENAI_API_KEY : context.env.GEMINI_API_KEY;
 
     if (useOpenAI) {
@@ -351,10 +354,22 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
 
   } catch (error) {
-    // Log full error server-side for debugging; return generic message to client
-    console.error('Error generating trivia questions:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error generating trivia questions:', errorMessage);
+
+    // Fire-and-forget email alert — does not block the response
+    context.waitUntil(
+      sendErrorAlert(context.env, {
+        endpoint: '/api/trivia',
+        provider: useOpenAI ? `OpenAI (${OPENAI_MODEL})` : `Gemini (${GEMINI_MODEL})`,
+        errorMessage,
+        timestamp: new Date().toISOString(),
+      })
+    );
+
     return new Response(JSON.stringify({
-      error: 'Failed to generate trivia questions'
+      error: 'Failed to generate trivia questions',
+      details: errorMessage,
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders }

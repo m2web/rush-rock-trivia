@@ -3,6 +3,8 @@ export interface Env {
   GEMINI_API_KEY: string;
   OPENAI_API_KEY: string;
   USE_OPENAI: string;
+  RESEND_API_KEY: string;
+  ALERT_EMAIL: string;
 }
 
 export interface EventContext<Env = any> {
