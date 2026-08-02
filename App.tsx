@@ -27,19 +27,7 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Play ambient music on mount
-  React.useEffect(() => {
-    const audio = new Audio('/audio/passingthesticks/sci-fi-ambient-music.mp3');
-    audio.loop = true;
-    audio.volume = 1.0;
-    audio.play().catch(() => {
-      // Autoplay may be blocked by browser, ignore error
-    });
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, []);
+
 
 
 
