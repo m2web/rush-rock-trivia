@@ -174,13 +174,14 @@ rush-rock-trivia/             # High-level view (partial tree; not all top-level
 The application supports two AI providers, toggled via the `USE_OPENAI`
 environment variable:
 
-| OpenAI | `gpt-4o-mini` | Toggle `USE_OPENAI=true` |
+| OpenAI | `gpt-5.4-nano` | Toggle `USE_OPENAI=true` |
 | Google Gemini | `gemini-2.5-flash` | Default (or `USE_OPENAI=false`) |
 
+- **Catalog & Era Diversity**: System prompt explicitly balances questions across 5 distinct eras of Rush history (1970s hard rock/prog, 1980s synth era, 1990s alt rock, 2000s/2010s late period, and live/gear/side projects)
+- **Truth Baseline Guardrail**: Embedded 44-fact reference sheet prevents hallucinations and invalid claims while allowing questions from the broader Rush universe
+- **Freshness & Temperature**: Generation temperature set to `0.8` for max question variety without repeating common tropes
 - **Structured Output**: JSON schema validation ensures consistent question format
-- **Content Guidelines**: Prompts designed to create engaging, fan-appropriate questions
-- **Error Handling**: Graceful fallback for API failures
-- **Quality Control**: Validation to ensure exactly 3 incorrect answers per question
+- **Error Handling**: Graceful fallback and validation ensuring exactly 3 distinct incorrect answers per question
 - **Contextual Chat**: Fan story passed as context to every LLM chat call
 
 ## LLM Evaluation with Promptfoo
