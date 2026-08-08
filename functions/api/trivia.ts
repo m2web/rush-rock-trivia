@@ -140,27 +140,37 @@ VERIFIED RUSH FACT SHEET — use this to validate every answer you generate.
 // injection is not possible through this path.
 function buildTriviaPrompt(count: number): string {
   return [
-    `Generate exactly ${count} different multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
-    'Each question should be about the band\'s lyrics, albums, band members (Geddy Lee, Alex Lifeson, Neil Peart), or general trivia.',
-    'Aim for high-quality questions for Rush fans. Focus on specific lyrical themes, recording history, guest musicians, and other well-established, broadly documented facts about Rush.',
-    'Do not shy away from obscure details, but only use information that is widely documented and can be stated confidently. Do not invent, speculate about, or rely on rumored, future, or insufficiently substantiated events, tours, lineups, or releases.',
+    `Generate exactly ${count} different, highly diverse multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
     '',
-    'CRITICAL — FACTUAL ACCURACY:',
-    'Before generating any question, consult the VERIFIED RUSH FACT SHEET below.',
-    'If a question you generate touches ANY topic covered in the fact sheet, the correct answer MUST match the fact sheet exactly.',
-    'Do NOT generate answers that contradict the fact sheet.',
-    'You MUST verify that every correct answer is actually true before including a question.',
+    'BROAD CATALOG & ERA DIVERSITY:',
+    'Generate questions spanning the broader universe of Rush\'s 40+ year history. Do NOT limit questions to a single era or a small handful of popular songs.',
+    'Draw evenly across all of Rush\'s distinct eras and topics:',
+    '1. 1970s Hard Rock & Prog Era (Rush, Fly By Night, Caress of Steel, 2112, A Farewell to Kings, Hemispheres, Permanent Waves)',
+    '2. 1980s Synth & Digital Era (Moving Pictures, Signals, Grace Under Pressure, Power Windows, Hold Your Fire, Presto)',
+    '3. 1990s Hard Rock & Alt Era (Roll the Bones, Counterparts, Test for Echo)',
+    '4. 2000s–2010s Late Studio Era (Vapor Trails, Feedback, Snakes & Arrows, Clockwork Angels)',
+    '5. Live albums, tour history, gear/instruments, Neil Peart\'s writing/books, Geddy Lee & Alex Lifeson side projects or memoirs.',
+    '',
+    'QUESTION VARIETY & NO REPETITION:',
+    `- Ensure all ${count} questions in this batch cover completely different topics, albums, or band members.`,
+    '- Avoid over-using repetitive tropes (e.g., asking only about Ayn Rand, Ben Mink, or album certifications). Provide a fresh, creative mix.',
+    '- Aim for high-quality, engaging questions that reward deep fan knowledge while remaining 100% verifiably accurate.',
+    '',
+    'FACTUAL ACCURACY GUARDRAIL:',
+    'Below is a VERIFIED RUSH FACT SHEET. This sheet serves as a strict factual truth baseline to prevent hallucinations or incorrect claims.',
+    '- You are encouraged and expected to draw questions from the broader universe of Rush history BEYOND this list.',
+    '- However, IF a question touches any topic mentioned in the fact sheet, your correct answer MUST strictly comply with and NOT contradict the fact sheet.',
+    '- Never invent, speculate, or rely on rumored, unconfirmed, or false information.',
     '',
     RUSH_FACTS_REFERENCE,
     '',
-    'IMPORTANT: The fact sheet above is for YOUR internal reference only. Do NOT mention the fact sheet, reference it, or use phrases like "according to the fact sheet" in any question or answer text. Present all information as standalone trivia.',
-    '',
-    'For each question:',
-    '- Provide one correct answer that is VERIFIABLY TRUE.',
-    '- Provide exactly three plausible but incorrect answers.',
-    '- The correct answer MUST appear in the correctAnswer field, NOT in the incorrectAnswers array.',
-    '- Ensure all answer options are distinct from each other.',
-    '- Make sure all questions are unique and cover different aspects of Rush.',
+    'IMPORTANT formatting rules:',
+    '- Do NOT mention "the fact sheet", "according to reference", or similar metadata in any question or answer text. Present all questions as standalone trivia.',
+    '- For each question:',
+    '  - Provide one correct answer in the "correctAnswer" field that is verifiably true.',
+    '  - Provide exactly three plausible, distinct, but incorrect answers in the "incorrectAnswers" array.',
+    '  - The correct answer MUST NOT appear in the "incorrectAnswers" array.',
+    '  - Ensure all 4 options are distinct.',
   ].join('\n');
 }
 
@@ -181,7 +191,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: geminiMultipleQuestionsSchema,
-        temperature: 0.3,
+        temperature: 0.8,
       }
     })
   });
@@ -226,9 +236,10 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
     body: JSON.stringify({
       model: OPENAI_MODEL,
       messages: [
-        { role: 'system', content: 'You are a helpful and expert Rush trivia generation assistant. You MUST verify every fact against the provided fact sheet before including it. Accuracy is your top priority — never guess.' },
+        { role: 'system', content: 'You are a helpful and expert Rush trivia generation assistant. Draw from the broader universe of Rush history while strictly honoring the verified fact sheet for accurate details. Provide diverse, creative, and factually flawless trivia.' },
         { role: 'user', content: prompt }
       ],
+      temperature: 0.8,
       response_format: {
         type: "json_schema",
         json_schema: {
