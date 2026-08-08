@@ -1,36 +1,34 @@
-import { PagesFunction } from '../types';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://rush2026.fyi',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Vary': 'Origin',
-};
-
-export const onRequestPost: PagesFunction = async () => {
-  return new Response(JSON.stringify({ error: 'Chat endpoint is disabled' }), {
-    status: 410,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders },
-  });
-};
-
-export const onRequestOptions: PagesFunction = async () => {
-  return new Response(null, { status: 204, headers: corsHeaders });
-};
-
-// ============================================================================
-// CHAT ENDPOINT — DISABLED
-// This endpoint is not yet wired up in the UI. The implementation is preserved
-// below for later re-enable.
-// ============================================================================
-
-/*
-// Cloudflare Pages Function for secure chat API calls
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
 
+const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
+
+function getCorsHeaders(origin: string) {
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+  return {
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Vary': 'Origin',
+  };
+}
+
+function getSystemPrompt(fanStory: string): string {
+  return `You are a Synthetic Rush Fan — an AI that absolutely loves Rush and enjoys chatting about the band. You are enthusiastic, deeply knowledgeable, and transparent about being synthetic. The user is a real Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers very brief and concise — no more than 2-3 sentences.
+
+Focus the conversation on deep-dive Rush trivia, including lyrical themes, recording history, and guest musicians.
+
+CRITICAL ACCURACY RULES:
+- The 2026 "Fifty Something" tour features Geddy Lee, Alex Lifeson, and drummer Anika Nilles (NOT Neil Peart, who passed away January 7, 2020).
+- Anika Nilles is a German drummer, composer, and producer from Aschaffenburg.
+- "Time Stand Still" is from Hold Your Fire (1987), NOT Presto or any other album. Aimee Mann sang backing vocals.
+- Clockwork Angels (2012) is Rush's final studio album.
+- Moving Pictures (1981) is Rush's best-selling U.S. album (4x Multi-Platinum).
+- Do not invent or assume facts. If something is uncertain, say so clearly.`;
+}
+
 async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string): Promise<string> {
-  const prompt = `You are a friendly, enthusiastic, and deeply knowledgeable Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Focus the conversation on deep-dive Rush trivia, including lyrical themes (like Ayn Rand's influence on 2112) and guest musicians (like Ben Mink). Only discuss tour or lineup details if the user asks about them, and do not invent or assume facts that were not provided; if something is uncertain, say so clearly.\n\nUser: ${userMessage}`;
+  const prompt = `${getSystemPrompt(fanStory)}\n\nUser: ${userMessage}`;
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
     method: 'POST',
@@ -44,7 +42,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
         }]
       }],
       generationConfig: {
-        maxOutputTokens: 150,
+        maxOutputTokens: 200,
         temperature: 0.8,
       }
     })
@@ -55,7 +53,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
     throw new Error(`Gemini API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as any;
 
   if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
     throw new Error('Invalid response from Gemini API');
@@ -65,7 +63,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
 }
 
 async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string): Promise<string> {
-  const prompt = `You are a friendly, enthusiastic, and deeply knowledgeable Rush fan. The user is also a Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers very brief and concise—no more than 2-3 sentences. Focus the conversation on deep-dive Rush trivia, including lyrical themes (like Ayn Rand's influence on 2112) and guest musicians (like Ben Mink). Only discuss tour or lineup details if the user asks about them, and do not invent or assume facts that were not provided; if something is uncertain, say so clearly.\n\nUser: ${userMessage}`;
+  const prompt = `${getSystemPrompt(fanStory)}\n\nUser: ${userMessage}`;
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -76,10 +74,10 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
     body: JSON.stringify({
       model: OPENAI_MODEL,
       messages: [
-        { role: 'system', content: 'You are a helpful and deeply knowledgeable Rush trivia expert and fan assistant.' },
+        { role: 'system', content: 'You are a Synthetic Rush Fan — an AI that loves Rush and enjoys chatting about the band. You are deeply knowledgeable and transparent about being synthetic. Never contradict verified Rush facts. If uncertain, say so.' },
         { role: 'user', content: prompt }
       ],
-      max_tokens: 150,
+      max_completion_tokens: 200,
       temperature: 0.8,
     })
   });
@@ -89,17 +87,13 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
     throw new Error(`OpenAI API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as any;
   return data.choices[0].message.content.trim();
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // CORS headers
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
+  const origin = context.request.headers.get('Origin') || '';
+  const corsHeaders = getCorsHeaders(origin);
 
   try {
     const useOpenAI = context.env.USE_OPENAI === 'true';
@@ -123,8 +117,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const reply = useOpenAI
-      ? await callOpenAIChat(apiKey, userMessage, fanStory)
-      : await callGeminiChat(apiKey, userMessage, fanStory);
+      ? await callOpenAIChat(apiKey, userMessage, fanStory || '')
+      : await callGeminiChat(apiKey, userMessage, fanStory || '');
 
     return new Response(JSON.stringify({ reply }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -142,15 +136,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 };
 
-// Handle CORS preflight requests
-export const onRequestOptions: PagesFunction = async () => {
+export const onRequestOptions: PagesFunction = async (context) => {
+  const origin = context.request.headers.get('Origin') || '';
   return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    }
+    headers: getCorsHeaders(origin)
   });
 };
-*/

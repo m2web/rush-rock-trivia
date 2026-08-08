@@ -4,12 +4,20 @@ import React, { useState, useEffect, useRef } from 'react';
 interface RushFanModalProps {
   isOpen: boolean;
   onSubmit: (story: string) => void;
+  initialStory?: string;
 }
 
 
-const RushFanModal: React.FC<RushFanModalProps> = ({ isOpen, onSubmit }) => {
-  const [story, setStory] = useState('');
+const RushFanModal: React.FC<RushFanModalProps> = ({ isOpen, onSubmit, initialStory = '' }) => {
+  const [story, setStory] = useState(initialStory);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // Sync textarea when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setStory(initialStory);
+    }
+  }, [isOpen, initialStory]);
 
   // Handle Esc key to skip
   useEffect(() => {

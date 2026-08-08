@@ -15,7 +15,7 @@ interface ChatInterfaceProps {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory, onFanStoryUpdate, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: 'llm', text: `Hey fellow Rush fan! I see your story: "${fanStory}". How else did Rush impact your life?` }
+    { sender: 'llm', text: `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush talk! 🎸` }
   ]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
