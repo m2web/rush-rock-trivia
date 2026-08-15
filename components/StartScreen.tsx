@@ -27,9 +27,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart, onStartChat, hasFanS
         <button
           onClick={onStartChat}
           className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-10 rounded-full text-xl transform hover:scale-105 transition-all duration-300 ease-in-out shadow-lg hover:shadow-purple-500/50 cursor-pointer"
-          title="Share your Rush fan story"
+          title={hasFanStory ? 'Open Rush fan chat' : 'Share your Rush fan story'}
         >
-          🎸 How did you become a fan?
+          {hasFanStory ? '💬 Chat about Rush' : '🎸 How did you become a fan?'}
         </button>
       </div>
 
