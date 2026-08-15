@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MenuOverlay from './components/MenuOverlay';
 import { GameState, TriviaQuestion } from './types';
