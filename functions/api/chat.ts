@@ -91,9 +91,44 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
   return data.choices[0].message.content.trim();
 }
 
+// In-memory sliding-window IP rate limiter (max 5 requests per 60 seconds per IP)
+const ipRequestLogs = new Map<string, number[]>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_REQUESTS_PER_WINDOW = 5;
+const MAX_MESSAGE_LENGTH = 500;
+const MAX_SESSION_TURNS = 15;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (ipRequestLogs.get(ip) || []).filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+  
+  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    return false; // Rate limit exceeded
+  }
+  
+  timestamps.push(now);
+  ipRequestLogs.set(ip, timestamps);
+  return true;
+}
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const origin = context.request.headers.get('Origin') || '';
   const corsHeaders = getCorsHeaders(origin);
+
+  // Determine client IP for rate limiting
+  const clientIp = context.request.headers.get('CF-Connecting-IP') || 
+                   context.request.headers.get('X-Forwarded-For') || 
+                   'unknown-ip';
+
+  if (!checkRateLimit(clientIp)) {
+    return new Response(JSON.stringify({
+      error: 'Rate limit exceeded',
+      details: 'Too many messages sent. Please wait a minute before sending another message.'
+    }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+    });
+  }
 
   try {
     const useOpenAI = context.env.USE_OPENAI === 'true';
@@ -107,10 +142,30 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const request = context.request;
-    const { userMessage, fanStory } = await request.json() as { userMessage: string; fanStory: string };
+    const { userMessage, fanStory, turnCount } = await request.json() as { userMessage?: string; fanStory?: string; turnCount?: number };
 
-    if (!userMessage) {
+    if (!userMessage || typeof userMessage !== 'string' || !userMessage.trim()) {
       return new Response(JSON.stringify({ error: 'userMessage is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    if (userMessage.length > MAX_MESSAGE_LENGTH) {
+      return new Response(JSON.stringify({
+        error: 'Message too long',
+        details: `Messages are limited to ${MAX_MESSAGE_LENGTH} characters.`
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+    if (typeof turnCount === 'number' && turnCount > MAX_SESSION_TURNS) {
+      return new Response(JSON.stringify({
+        error: 'Turn limit reached',
+        details: `Maximum chat session limit of ${MAX_SESSION_TURNS} turns reached. Please start a new chat.`
+      }), {
         status: 400,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
