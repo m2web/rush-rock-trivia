@@ -12,31 +12,43 @@
 
 ## About
 
-Rush Rock Trivia is an AI-powered trivia application dedicated to the
-legendary Canadian progressive rock trio **Rush**. Test your knowledge about
-Geddy Lee, Alex Lifeson, and Neil Peart with challenging questions covering
-their extensive discography, band history, lyrics, and musical legacy.
+Rush Rock Trivia is an AI-powered trivia and fan community application
+dedicated to the legendary Canadian progressive rock trio **Rush**. Test your
+knowledge about Geddy Lee, Alex Lifeson, and Neil Peart with challenging
+questions covering their extensive discography, band history, lyrics, and musical
+legacy, or chat directly with a synthetic fellow Rush fan.
 
 ### Features
 
-- **📝 Rush Fan Story Modal**: Prompts the user for their Rush fan story before
-   chat/LLM interaction.
-- **🎫 Floating Fan Story Badge**: Always-visible badge displays the user’s Rush
-   fan story and updates if the story changes.
-- **💬 Start Chat & Chat Interface**: “Start Chat” button and chat UI, enabled
-   only if a fan story exists.
-- **🤖 LLM Contextual Chat**: All chat interactions with Gemini LLM include the
-   fan story as context. LLM replies are brief, friendly, and reference the user’s
-   fan experience.
-- **🧠 AI-Generated Questions**: Dynamic trivia questions powered by Google's
-   Gemini AI
-- **🔀 Randomized Answers**: Answer options are shuffled for each question
-- **🏆 Smart Scoring**: Track your performance with Rush-themed feedback
-- **🎨 Rush-Inspired Design**: Dark theme with band-inspired colors and styling
-- **🆕 Duplicate Prevention**: Ensures unique questions in each game session
-- **⚡ Real-time Feedback**: Immediate visual feedback for correct/incorrect
-   answers
-- **📱 Responsive Design**: Works perfectly on desktop and mobile devices
+- **:memo: Rush Fan Story Modal**: Captures each user's unique Rush fan story
+  upon entry, persisting it in local storage for personalized interactions.
+- **:pencil2: Fan Story Management**: View and update your fan story anytime via
+  the dedicated edit modal.
+- **:ticket: Floating Fan Story Badge**: An always-accessible floating badge
+  displays your active fan story and opens the update modal on click.
+- **:speech_balloon: Synthetic Rush Fan Chat**: Engage in interactive
+  conversations with an AI fan that loves Rush, powered by custom personality
+  prompting and verified band history.
+- **:robot: Grounded Contextual Chat**: AI chat responses integrate the user's
+  fan story and adhere to strict accuracy guardrails regarding band history,
+  album trivia, and the 2026 Fifty Something tour.
+- **:shield: Built-in Chat Guardrails**: In-memory sliding-window IP rate
+  limiting (5 requests/min), 500-character input caps with live countdown, and
+  a 15-turn session limit with one-click reset.
+- **:drum: Passing the Sticks Tribute**: Dedicated tribute section celebrating
+  the monumental legacy of Neil Peart and welcoming Anika Nilles.
+- **:brain: Dynamic AI-Generated Questions**: Dynamic trivia questions generated
+  by Google Gemini 2.5 Flash or OpenAI.
+- **:twisted_rightwards_arrows: Era Diversity & Shuffled Answers**: Balanced
+  coverage across 5 distinct Rush eras with shuffled multiple-choice answers.
+- **:trophy: Smart Rush-Themed Scoring**: Track your performance with
+  custom feedback messages inspired by classic Rush songs and lyrics.
+- **:art: Authentic Rush Aesthetic**: Atmospheric dark theme inspired by the
+  band's iconic album art and visuals.
+- **:zap: Real-time Feedback**: Instant visual confirmation for correct and
+  incorrect answers.
+- **:iphone: Responsive Layout**: Fully responsive experience optimized for
+  desktop, tablet, and mobile browsers.
 
 ## Quick Start
 
@@ -78,7 +90,7 @@ their extensive discography, band history, lyrics, and musical legacy.
 
    For Cloudflare Pages deployment:
    - Go to your Cloudflare Pages project dashboard
-   - Navigate to Settings → Environment variables
+   - Navigate to Settings -> Environment variables
    - If using **OpenAI** in production Pages Functions:
      - Add `OPENAI_API_KEY` and set `USE_OPENAI=true`
    - If using **Google Gemini** in production Pages Functions:
@@ -118,55 +130,73 @@ their extensive discography, band history, lyrics, and musical legacy.
    npm run pages:deploy
    ```
 
-## How to Play
+## How to Play & Chat
 
-1. **Start the Game**: Click "Begin the Test" on the welcome screen
-2. **Answer Questions**: Choose from 4 multiple-choice answers for each
-   question
-3. **Get Feedback**: See immediate visual feedback for your answers
-4. **Complete the Quiz**: Answer all 5 questions to see your final score
-5. **Play Again**: Challenge yourself with new AI-generated questions
+1. **Share Your Story**: When first prompted, enter how you became a Rush fan.
+2. **Start the Game**: Click "Begin the Test" on the welcome screen to start
+   trivia.
+3. **Answer Questions**: Choose from 4 multiple-choice answers for each
+   question.
+4. **Get Feedback**: Receive immediate visual feedback on your selections.
+5. **Complete the Quiz**: Answer all 5 questions to view your final score and
+   lyric rank.
+6. **Chat About Rush**: Click "Chat about Rush" or the floating fan badge anytime
+   to chat with the Synthetic Rush Fan AI.
 
 ## Technology Stack
 
 - **Frontend Framework**: React 19.2.0 with TypeScript
 - **Build Tool**: Vite 6.2.0
-- **Backend**: Cloudflare Pages Functions (secure API proxy)
-- **AI Service**: OpenAI `gpt-5-mini` OR Google Gemini 2.5 Flash (selectable)
+- **Backend**: Cloudflare Pages Functions (secure serverless API proxy)
+- **AI Providers**: OpenAI (`OPENAI_MODEL`) or Google Gemini (`GEMINI_MODEL`)
 - **LLM Evaluation**: [promptfoo](https://promptfoo.dev) (see `SyntheticHemispheres/prompt-foo/`)
-- **Styling**: Tailwind CSS (utility-first CSS framework)
-- **State Management**: React Hooks (useState, useCallback)
-- **Deployment**: Cloudflare Pages with edge computing
+- **Styling**: Tailwind CSS 4 with custom Rush themes
+- **State Management**: React Hooks (useState, useCallback, useEffect, useRef)
+- **Deployment**: Cloudflare Pages edge network
 
-## Security Features
+## Security & Reliability Features
 
-- **API Key Protection**: Gemini API key stored securely server-side
-- **Edge Computing**: Cloudflare Pages Functions run on the edge
-- **No Client Exposure**: API keys never exposed in client bundle
-- **Rate Limiting**: Built-in protection via Cloudflare infrastructure
-- **CORS Security**: Proper cross-origin request handling
+- **API Key Protection**: All AI keys remain securely on the serverless edge
+- **Sliding-Window Rate Limiting**: Max 5 requests per 60 seconds per IP address
+- **Input Length Caps**: Enforced 500-character message limit to prevent abuse
+- **Session Turn Limits**: Max 15 turns per chat session to manage resource usage
+- **Strict Role Separation**: System rules and user input are strictly segregated
+  to prevent prompt injection
+- **CORS Protection**: Origin validation restricted to allowed domains
 
 ## Project Structure
 
 ```text
-rush-rock-trivia/             # High-level view (partial tree; not all top-level dirs shown)
-├── components/               # Reusable UI components
-│   ├── StartScreen.tsx       # Welcome screen
-│   ├── QuestionCard.tsx      # Quiz question display
-│   ├── EndScreen.tsx         # Results screen
-│   ├── ChatInterface.tsx     # Rush fan chat UI
-│   ├── LoadingSpinner.tsx    # Loading indicator
-│   └── IconComponents.tsx   # Custom Rush-themed icons
-├── services/
-│   └── aiService.ts          # AI service (trivia + chat via /api/*)
-├── SyntheticHemispheres/
-│   └── prompt-foo/           # promptfoo LLM evaluation harness
-│       ├── promptfooconfig.yaml
-│       └── rush_full_eval.jsonl
-├── App.tsx                   # Main application component
-├── types.ts                  # TypeScript type definitions
-├── package.json              # Dependencies and scripts
-└── README.md                 # This file
+rush-rock-trivia/
+|-- components/                 # Reusable UI components
+|   |-- ChatInterface.tsx       # Synthetic Rush Fan chat interface
+|   |-- EndScreen.tsx           # Quiz results screen
+|   |-- IconComponents.tsx      # Custom Rush-themed SVG icons
+|   |-- LoadingSpinner.tsx      # Rush-themed loading spinner
+|   |-- MenuOverlay.tsx         # Slide-out navigation menu
+|   |-- PassingTheSticks.tsx    # Neil Peart / Anika Nilles tribute
+|   |-- QuestionCard.tsx        # Trivia question card
+|   |-- RushFanBadge.tsx        # Floating fan story badge
+|   |-- RushFanModal.tsx        # Initial fan story prompt modal
+|   |-- StartScreen.tsx         # Welcome screen with game & chat triggers
+|   `-- UpdateFanStoryModal.tsx # Fan story editing modal
+|-- functions/                  # Cloudflare Pages Functions (Edge API)
+|   |-- api/
+|   |   |-- chat.ts             # /api/chat endpoint (AI chat proxy)
+|   |   `-- trivia.ts           # /api/trivia endpoint (Trivia generator)
+|   |-- constants.ts            # Shared API constants and model IDs
+|   |-- errorNotifier.ts        # Error notification dispatch
+|   `-- types.ts                # Backend type definitions
+|-- services/
+|   `-- aiService.ts            # Client-side AI service wrapper
+|-- SyntheticHemispheres/
+|   `-- prompt-foo/             # promptfoo LLM evaluation harness
+|       |-- promptfooconfig.yaml
+|       `-- rush_full_eval.jsonl
+|-- App.tsx                     # Main application container
+|-- types.ts                    # Frontend TypeScript type definitions
+|-- package.json                # Dependencies and scripts
+`-- README.md                   # Project documentation
 ```
 
 ## AI Integration
@@ -174,28 +204,33 @@ rush-rock-trivia/             # High-level view (partial tree; not all top-level
 The application supports two AI providers, toggled via the `USE_OPENAI`
 environment variable:
 
-| OpenAI | `gpt-5.4-nano` | Toggle `USE_OPENAI=true` |
-| Google Gemini | `gemini-2.5-flash` | Default (or `USE_OPENAI=false`) |
+| Provider | Model | Configuration |
+| --- | --- | --- |
+| OpenAI | Configured `OPENAI_MODEL` | Set `USE_OPENAI=true` |
+| Google Gemini | Configured `GEMINI_MODEL` | Default (or `USE_OPENAI=false`) |
 
-- **Catalog & Era Diversity**: System prompt explicitly balances questions across 5 distinct eras of Rush history (1970s hard rock/prog, 1980s synth era, 1990s alt rock, 2000s/2010s late period, and live/gear/side projects)
-- **Truth Baseline Guardrail**: Embedded 44-fact reference sheet prevents hallucinations and invalid claims while allowing questions from the broader Rush universe
-- **Freshness & Temperature**: Generation temperature set to `0.8` for max question variety without repeating common tropes
-- **Structured Output**: JSON schema validation ensures consistent question format
-- **Error Handling**: Graceful fallback and validation ensuring exactly 3 distinct incorrect answers per question
-- **Contextual Chat**: Fan story passed as context to every LLM chat call
+- **Catalog & Era Diversity**: System prompt explicitly balances questions
+  across 5 distinct eras of Rush history (1970s hard rock/prog, 1980s synth
+  era, 1990s alt rock, 2000s/2010s late period, and live/gear/side projects).
+- **Truth Baseline Guardrail**: Embedded verified reference sheet prevents
+  hallucinations and invalid claims regarding band history and tour details.
+- **Freshness & Temperature**: Generation temperature set to `0.8` for maximum
+  question variety without sacrificing factual accuracy.
+- **Structured Output**: Strict JSON schema validation ensures reliable format.
+- **Contextual Fan Chat**: User fan stories are woven into chat context alongside
+  strict role guardrails.
 
 ## LLM Evaluation with Promptfoo
 
 The `SyntheticHemispheres/prompt-foo/` directory contains a
 [promptfoo](https://promptfoo.dev) evaluation harness used to evaluate and
-compare OpenAI model candidates before deploying to production.
+compare model candidates before deploying to production.
 
-- **Dataset**: `rush_full_eval.jsonl` — 20 Q&A pairs covering album concepts,
+- **Dataset**: `rush_full_eval.jsonl` -- 20 Q&A pairs covering album concepts,
   lyrical themes, band history, the 2026 reunion tour, and adversarial edge
-  cases (e.g. questions about nonexistent tour legs)
-- **Assertion type**: `factuality` — an LLM judge scores semantic accuracy
-  against ground truth, handling paraphrasing gracefully
-- **Providers evaluated**: `openai:gpt-4o-mini` vs `openai:gpt-5.4-mini`
+  cases.
+- **Assertion type**: `factuality` -- an LLM judge scores semantic accuracy
+  against ground truth, handling paraphrasing gracefully.
 
 To run the eval:
 
@@ -204,18 +239,6 @@ cd SyntheticHemispheres/prompt-foo
 npx promptfoo eval
 npx promptfoo view
 ```
-
-## Game Mechanics
-
-- **5 Questions per Game**: Perfect length for a quick trivia session
-- **Multiple Choice**: 4 options per question (1 correct, 3 incorrect)
-- **2-Second Feedback Delay**: Allows players to see answer results
-  before continuing
-- **Rush-Themed Scoring Messages**:
-  - Perfect Score: "A Modern Day Warrior! Perfect Score!"
-  - 80%+: "Closer to the Heart! Excellent job!"
-  - 50%+: "Working Man! A solid effort!"
-  - <50%: "Time Stand Still... Better luck next time!"
 
 ## Available Scripts
 
@@ -229,9 +252,9 @@ npm run pages:deploy # Deploy to Cloudflare Pages
 
 ## Documentation
 
-- [Code Documentation](CODE_DOCUMENTATION.md) — Detailed technical deep-dive into
-  the app architecture and logic.
-- [Future Feature Ideas](FEATURE_IDEAS.md) — Roadmap for upcoming Rush-themed
+- [Code Documentation](CODE_DOCUMENTATION.md) -- Detailed technical deep-dive
+  into app architecture and logic.
+- [Future Feature Ideas](FEATURE_IDEAS.md) -- Roadmap for upcoming Rush-themed
   modes and features.
 
 ## Contributing
@@ -258,7 +281,7 @@ Geddy Lee (bass, vocals, keyboards), Alex Lifeson (guitar), and Neil Peart
 philosophical lyrics, and virtuosic musicianship, Rush is considered one of
 the most influential progressive rock bands of all time.
 
-Now looking forward to their 2026 world tour with the new drummer Anika Nilles,
+Now looking forward to their 2026 world tour with drummer Anika Nilles,
 as the *Elder Race* returns to the stage.
 
 ---
