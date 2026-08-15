@@ -63,8 +63,6 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
 }
 
 async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string): Promise<string> {
-  const prompt = `${getSystemPrompt(fanStory)}\n\nUser: ${userMessage}`;
-
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -74,8 +72,8 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
     body: JSON.stringify({
       model: OPENAI_MODEL,
       messages: [
-        { role: 'system', content: 'You are a Synthetic Rush Fan — an AI that loves Rush and enjoys chatting about the band. You are deeply knowledgeable and transparent about being synthetic. Never contradict verified Rush facts. If uncertain, say so.' },
-        { role: 'user', content: prompt }
+        { role: 'system', content: getSystemPrompt(fanStory) },
+        { role: 'user', content: userMessage }
       ],
       max_completion_tokens: 200,
       temperature: 0.8,
@@ -93,6 +91,7 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
     throw new Error('Invalid response from OpenAI API');
   }
   return content.trim();
+}
 
 // In-memory sliding-window IP rate limiter (max 5 requests per 60 seconds per IP)
 const ipRequestLogs = new Map<string, number[]>();

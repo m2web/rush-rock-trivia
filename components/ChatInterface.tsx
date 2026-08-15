@@ -9,14 +9,14 @@ interface Message {
 
 interface ChatInterfaceProps {
   fanStory: string;
-  onFanStoryUpdate: (newStory: string) => void;
+  onFanStoryUpdate?: (newStory: string) => void;
   onClose: () => void;
 }
 
 const MAX_TURNS = 15;
 const MAX_INPUT_LENGTH = 500;
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory, onFanStoryUpdate, onClose }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory, onClose }) => {
   const initialGreeting = `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush talk! 🎸`;
 
   const [messages, setMessages] = useState<Message[]>([
