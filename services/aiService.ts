@@ -9,20 +9,27 @@ import { TriviaQuestion } from '../types';
  * Send a chat message via the secure /api/chat Pages Function.
  * The backend injects the API key server-side.
  */
-export async function sendChatMessage(userMessage: string, fanStory: string): Promise<string> {
+export async function sendChatMessage(userMessage: string, fanStory: string, turnCount?: number): Promise<string> {
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ userMessage, fanStory }),
+    body: JSON.stringify({ userMessage, fanStory, turnCount }),
   });
 
+  const data = await response.json().catch(() => ({}));
+
   if (!response.ok) {
+    if (data.details || data.error) {
+      throw new Error(data.details || data.error);
+    }
+    if (response.status === 429) {
+      throw new Error('Rate limit exceeded. Please wait a minute before sending another message.');
+    }
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  const data = await response.json();
   if (data.error) throw new Error(data.details || data.error);
   return data.reply;
 }
