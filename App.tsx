@@ -216,6 +216,7 @@ const App: React.FC = () => {
 
               {/* Update fan story modal -- triggered by badge click */}
               <UpdateFanStoryModal
+                key={fanStory}
                 isOpen={isUpdateModalOpen}
                 newStory={fanStory}
                 currentStory={fanStory}
