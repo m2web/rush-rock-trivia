@@ -88,8 +88,11 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
   }
 
   const data = await response.json() as any;
-  return data.choices[0].message.content.trim();
-}
+  const content = data?.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || !content.trim()) {
+    throw new Error('Invalid response from OpenAI API');
+  }
+  return content.trim();
 
 // In-memory sliding-window IP rate limiter (max 5 requests per 60 seconds per IP)
 const ipRequestLogs = new Map<string, number[]>();
