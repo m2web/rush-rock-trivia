@@ -82,7 +82,7 @@ prompts:
       - Ensure all 4 options are distinct.
 
 providers:
-  - id: google:gemini-2.5-flash
+  - id: google:gemini-3.6-flash
     config:
       apiKey: env:GEMINI_API_KEY
       temperature: 0.8

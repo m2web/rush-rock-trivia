@@ -38,7 +38,7 @@ legacy, or chat directly with a synthetic fellow Rush fan.
 - **:drum: Passing the Sticks Tribute**: Dedicated tribute section celebrating
   the monumental legacy of Neil Peart and welcoming Anika Nilles.
 - **:brain: Dynamic AI-Generated Questions**: Dynamic trivia questions generated
-  by Google Gemini 2.5 Flash or OpenAI.
+  by Google Gemini 3.6 Flash or OpenAI.
 - **:twisted_rightwards_arrows: Era Diversity & Shuffled Answers**: Balanced
   coverage across 5 distinct Rush eras with shuffled multiple-choice answers.
 - **:trophy: Smart Rush-Themed Scoring**: Track your performance with
