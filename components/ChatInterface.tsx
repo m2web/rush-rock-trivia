@@ -9,7 +9,6 @@ interface Message {
 
 interface ChatInterfaceProps {
   fanStory?: string;
-  onFanStoryUpdate?: (newStory: string) => void;
   onClose: () => void;
   onViewMeetups?: () => void;
   initialPrompt?: string;

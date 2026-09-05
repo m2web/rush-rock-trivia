@@ -220,6 +220,7 @@ function calculateDistanceMiles(lat1: number, lon1: number, lat2: number, lon2: 
 const allowedOrigins = [
   'https://rush2026.fyi',
   'https://www.rush2026.fyi',
+  'https://rush-rock-trivia.pages.dev',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
 ];
@@ -260,11 +261,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const latParam = url.searchParams.get('lat');
   const lonParam = url.searchParams.get('lon');
-  const userLat = latParam ? parseFloat(latParam) : (cf.latitude ? parseFloat(cf.latitude) : null);
-  const userLon = lonParam ? parseFloat(lonParam) : (cf.longitude ? parseFloat(cf.longitude) : null);
+  const rawLat = latParam ? parseFloat(latParam) : (cf.latitude ? parseFloat(cf.latitude) : null);
+  const rawLon = lonParam ? parseFloat(lonParam) : (cf.longitude ? parseFloat(cf.longitude) : null);
+  const userLat = typeof rawLat === 'number' && Number.isFinite(rawLat) ? rawLat : null;
+  const userLon = typeof rawLon === 'number' && Number.isFinite(rawLon) ? rawLon : null;
 
   const category = url.searchParams.get('category');
-  const maxDistance = url.searchParams.get('radius') ? parseFloat(url.searchParams.get('radius')!) : null;
+  const radiusParam = url.searchParams.get('radius');
+  const rawRadius = radiusParam ? parseFloat(radiusParam) : null;
+  const maxDistance = typeof rawRadius === 'number' && Number.isFinite(rawRadius) && rawRadius > 0 ? rawRadius : null;
 
   let meetups: Meetup[] = [];
   let isUsingFallback = false;
@@ -442,31 +447,40 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       status: initialStatus,
     };
 
-    // Save to Cloudflare D1 if available
-    if (context.env.DB) {
-      try {
-        await context.env.DB.prepare(`
-          INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).bind(
-          newMeetup.id,
-          newMeetup.name,
-          newMeetup.tour_city,
-          newMeetup.venue_name,
-          newMeetup.address ?? null,
-          newMeetup.latitude ?? null,
-          newMeetup.longitude ?? null,
-          newMeetup.event_date,
-          newMeetup.start_time ?? null,
-          newMeetup.description ?? null,
-          newMeetup.organizer_name ?? null,
-          newMeetup.rsvp_link ?? null,
-          newMeetup.category ?? 'tailgate',
-          newMeetup.status ?? 'approved'
-        ).run();
-      } catch (dbErr) {
-        console.warn('⚠️ [Cloudflare D1] Error writing meetup:', dbErr);
-      }
+    // Save to Cloudflare D1
+    if (!context.env.DB) {
+      return new Response(
+        JSON.stringify({ error: 'Database service unavailable. Meetup could not be saved.' }),
+        { status: 503, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    try {
+      await context.env.DB.prepare(`
+        INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(
+        newMeetup.id,
+        newMeetup.name,
+        newMeetup.tour_city,
+        newMeetup.venue_name,
+        newMeetup.address ?? null,
+        newMeetup.latitude ?? null,
+        newMeetup.longitude ?? null,
+        newMeetup.event_date,
+        newMeetup.start_time ?? null,
+        newMeetup.description ?? null,
+        newMeetup.organizer_name ?? null,
+        newMeetup.rsvp_link ?? null,
+        newMeetup.category ?? 'tailgate',
+        newMeetup.status ?? 'approved'
+      ).run();
+    } catch (dbErr: any) {
+      console.error('⚠️ [Cloudflare D1] Error writing meetup:', dbErr);
+      return new Response(
+        JSON.stringify({ error: 'Failed to save meetup to database', details: dbErr?.message }),
+        { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
     }
 
     return new Response(

@@ -63,9 +63,13 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
 
   const handleStartChat = useCallback((initialPrompt?: string) => {
     setPendingInitialPrompt(initialPrompt || '');
-    setIsChatOpen(true);
-    setActiveTab('chat');
-  }, []);
+    if (!fanStory && !initialPrompt) {
+      setIsFanModalOpen(true);
+    } else {
+      setIsChatOpen(true);
+      setActiveTab('chat');
+    }
+  }, [fanStory]);
 
   const handleBadgeClick = useCallback(() => {
     setIsUpdateModalOpen(true);
@@ -199,7 +203,6 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                     <h2 className="text-2xl font-bold mb-4 text-center">💬 Rush Fan Chat & Tour Concierge</h2>
                     <ChatInterface
                       fanStory={fanStory}
-                      onFanStoryUpdate={updateFanStory}
                       onClose={() => {
                         setIsChatOpen(false);
                         setActiveTab('trivia');
