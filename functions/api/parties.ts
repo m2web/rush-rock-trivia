@@ -266,6 +266,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       let query = 'SELECT * FROM meetups WHERE status = ?';
       const params: any[] = ['approved'];
 
+      if (queryCity) {
+        query += ' AND LOWER(tour_city) = LOWER(?)';
+        params.push(queryCity);
+      }
+
       if (category) {
         query += ' AND category = ?';
         params.push(category);
@@ -274,10 +279,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       query += ' ORDER BY event_date ASC LIMIT 100';
       const stmt = context.env.DB.prepare(query);
       const res = await stmt.bind(...params).all<Meetup>();
-      if (res.results && res.results.length > 0) {
+      if (res.results) {
         meetups = res.results;
-      } else {
-        meetups = [...FALLBACK_MEETUPS];
       }
     } catch (dbError) {
       console.warn('⚠️ [Cloudflare D1] Error reading meetups, using fallback:', dbError);
@@ -285,6 +288,17 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }
   } else {
     meetups = [...FALLBACK_MEETUPS];
+  }
+
+  // Apply city and category filters to fallback/in-memory data (D1 handles this via SQL)
+  if (!context.env.DB || meetups === FALLBACK_MEETUPS) {
+    if (queryCity) {
+      const cityLower = queryCity.toLowerCase();
+      meetups = meetups.filter(m => m.tour_city.toLowerCase() === cityLower);
+    }
+    if (category) {
+      meetups = meetups.filter(m => m.category === category);
+    }
   }
 
   // 3. Annotate with distance if user coordinates are known
@@ -299,13 +313,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       return m;
     });
 
-    // If city or radius filter is requested, filter accordingly
+    // If radius filter is requested, filter accordingly
     if (maxDistance !== null) {
       meetups = meetups.filter((m) => m.distance_miles !== undefined && m.distance_miles <= maxDistance);
     }
   }
 
-  // If a specific city was searched/detected, prioritize matches
+  // Sort by city match priority, then distance, then date
   if (detectedCity) {
     const cityLower = detectedCity.toLowerCase();
     meetups.sort((a, b) => {
@@ -327,7 +341,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         city: detectedCity,
         latitude: userLat,
         longitude: userLon,
-        source: queryCity || latParam ? 'query' : cf.city ? 'cloudflare_edge' : 'default',
+        source: queryCity || latParam || lonParam ? 'query' : cf.city ? 'cloudflare_edge' : 'default',
       },
       count: meetups.length,
       parties: meetups,
@@ -362,9 +376,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const newId = `meetup-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    let initialStatus: 'approved' | 'pending_review' = 'approved';
+    // Default to pending_review to prevent spam when no moderation key is available
+    let initialStatus: 'approved' | 'pending_review' = 'pending_review';
 
-    // Optional AI Moderation check using Gemini 3.6 Flash if API key is present
+    // AI Moderation check using Gemini 3.6 Flash — only approve if AI confirms legitimacy
     const apiKey = context.env.GEMINI_API_KEY || (context.env as any).GOOGLE_API_KEY;
     if (apiKey) {
       try {
@@ -389,12 +404,13 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
         if (aiResponse.ok) {
           const aiJson: any = await aiResponse.json();
           const parsed = JSON.parse(aiJson.candidates?.[0]?.content?.parts?.[0]?.text || '{}');
-          if (parsed.approved === false) {
-            initialStatus = 'pending_review';
+          if (parsed.approved === true) {
+            initialStatus = 'approved';
           }
         }
       } catch (modErr) {
         console.warn('AI moderation non-blocking error:', modErr);
+        // Leave as pending_review on moderation failure
       }
     }
 

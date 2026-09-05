@@ -59,7 +59,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
         }]
       }],
       generationConfig: {
-        maxOutputTokens: 1000,
+        maxOutputTokens: 400,
         temperature: 0.7,
       }
     })

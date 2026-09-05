@@ -204,7 +204,8 @@ export async function fetchTourParties(params?: {
     const response = await fetch(`/api/parties${query.toString() ? '?' + query.toString() : ''}`);
     if (response.ok) {
       const data = await response.json();
-      if (data && Array.isArray(data.parties) && data.parties.length > 0) {
+      // Accept the response whenever parties is a valid array, even if empty
+      if (data && Array.isArray(data.parties)) {
         return data;
       }
     }
@@ -212,7 +213,7 @@ export async function fetchTourParties(params?: {
     console.warn('Network error fetching live parties, using defaults:', err);
   }
 
-  // Safe fallback to default meetups if API is offline
+  // Safe fallback to default meetups only if API is unreachable or returned invalid data
   let filtered = [...DEFAULT_MEETUPS];
   if (params?.city && params.city !== 'All Cities') {
     filtered = filtered.filter(p => p.tour_city.toLowerCase() === params.city!.toLowerCase());

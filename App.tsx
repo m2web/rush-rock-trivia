@@ -62,9 +62,7 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
   }, [updateFanStory]);
 
   const handleStartChat = useCallback((initialPrompt?: string) => {
-    if (initialPrompt) {
-      setPendingInitialPrompt(initialPrompt);
-    }
+    setPendingInitialPrompt(initialPrompt || '');
     setIsChatOpen(true);
     setActiveTab('chat');
   }, []);

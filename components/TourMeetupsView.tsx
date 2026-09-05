@@ -81,10 +81,10 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
     setSubmitSuccess(null);
     try {
       const res = await submitTourParty(formData);
-      setSubmitSuccess(res.message || 'Meetup successfully posted!');
+      setSubmitSuccess(res.message || 'Meetup submitted!');
       setIsSubmitModalOpen(false);
-      // Prepend to current list
-      if (res.meetup) {
+      // Only prepend to visible list if the meetup was approved (not pending review)
+      if (res.meetup && res.meetup.status === 'approved') {
         setParties(prev => [res.meetup, ...prev]);
       }
       // Reset form
