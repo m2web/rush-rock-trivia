@@ -217,14 +217,22 @@ function calculateDistanceMiles(lat1: number, lon1: number, lat2: number, lon2: 
   return Math.round(R * c * 10) / 10;
 }
 
+const allowedOrigins = [
+  'https://rush2026.fyi',
+  'https://www.rush2026.fyi',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+];
+
 function getCorsHeaders(origin: string): Record<string, string> {
-  const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
-  const corsOrigin = allowedOrigins.includes(origin) ? origin : '*';
+  const isAllowed = allowedOrigins.includes(origin) || origin.endsWith('.rush-rock-trivia.pages.dev');
+  const corsOrigin = isAllowed ? origin : allowedOrigins[0];
   return {
     'Access-Control-Allow-Origin': corsOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
   };
 }
 
@@ -259,6 +267,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const maxDistance = url.searchParams.get('radius') ? parseFloat(url.searchParams.get('radius')!) : null;
 
   let meetups: Meetup[] = [];
+  let isUsingFallback = false;
 
   // 2. Fetch from Cloudflare D1 if available
   if (context.env.DB) {
@@ -285,13 +294,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     } catch (dbError) {
       console.warn('⚠️ [Cloudflare D1] Error reading meetups, using fallback:', dbError);
       meetups = [...FALLBACK_MEETUPS];
+      isUsingFallback = true;
     }
   } else {
     meetups = [...FALLBACK_MEETUPS];
+    isUsingFallback = true;
   }
 
   // Apply city and category filters to fallback/in-memory data (D1 handles this via SQL)
-  if (!context.env.DB || meetups === FALLBACK_MEETUPS) {
+  if (isUsingFallback) {
     if (queryCity) {
       const cityLower = queryCity.toLowerCase();
       meetups = meetups.filter(m => m.tour_city.toLowerCase() === cityLower);
@@ -304,7 +315,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // 3. Annotate with distance if user coordinates are known
   if (userLat !== null && userLon !== null) {
     meetups = meetups.map((m) => {
-      if (m.latitude && m.longitude) {
+      if (typeof m.latitude === 'number' && typeof m.longitude === 'number') {
         return {
           ...m,
           distance_miles: calculateDistanceMiles(userLat, userLon, m.latitude, m.longitude),
@@ -332,7 +343,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       return a.event_date.localeCompare(b.event_date);
     });
   } else if (userLat !== null && userLon !== null) {
-    meetups.sort((a, b) => (a.distance_miles || 99999) - (b.distance_miles || 99999));
+    meetups.sort((a, b) => (a.distance_miles ?? 99999) - (b.distance_miles ?? 99999));
   }
 
   return new Response(
@@ -442,16 +453,16 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
           newMeetup.name,
           newMeetup.tour_city,
           newMeetup.venue_name,
-          newMeetup.address || null,
-          newMeetup.latitude || null,
-          newMeetup.longitude || null,
+          newMeetup.address ?? null,
+          newMeetup.latitude ?? null,
+          newMeetup.longitude ?? null,
           newMeetup.event_date,
-          newMeetup.start_time || null,
-          newMeetup.description || null,
-          newMeetup.organizer_name || null,
-          newMeetup.rsvp_link || null,
-          newMeetup.category || 'tailgate',
-          newMeetup.status || 'approved'
+          newMeetup.start_time ?? null,
+          newMeetup.description ?? null,
+          newMeetup.organizer_name ?? null,
+          newMeetup.rsvp_link ?? null,
+          newMeetup.category ?? 'tailgate',
+          newMeetup.status ?? 'approved'
         ).run();
       } catch (dbErr) {
         console.warn('⚠️ [Cloudflare D1] Error writing meetup:', dbErr);

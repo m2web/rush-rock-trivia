@@ -218,6 +218,9 @@ export async function fetchTourParties(params?: {
   if (params?.city && params.city !== 'All Cities') {
     filtered = filtered.filter(p => p.tour_city.toLowerCase() === params.city!.toLowerCase());
   }
+  if (params?.category) {
+    filtered = filtered.filter(p => p.category === params.category);
+  }
 
   return {
     detectedLocation: { city: null, latitude: null, longitude: null, source: 'default' },

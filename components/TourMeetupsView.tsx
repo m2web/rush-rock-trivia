@@ -25,8 +25,6 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
   const [parties, setParties] = useState<Meetup[]>(DEFAULT_MEETUPS);
   const [selectedCity, setSelectedCity] = useState<string>('All Cities');
   const [detectedLocation, setDetectedLocation] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Modal for submitting a new meetup
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
@@ -49,10 +47,10 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
     try {
       const cityQuery = city && city !== 'All Cities' ? city : undefined;
       const data = await fetchTourParties({ city: cityQuery });
-      if (data?.parties && data.parties.length > 0) {
+      if (data && Array.isArray(data.parties)) {
         setParties(data.parties);
       }
-      if (data.detectedLocation?.city) {
+      if (data?.detectedLocation?.city) {
         setDetectedLocation(data.detectedLocation.city);
       }
     } catch (err: any) {
