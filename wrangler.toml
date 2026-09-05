@@ -14,4 +14,4 @@ USE_OPENAI = "true"
 [[d1_databases]]
 binding = "DB"
 database_name = "rush_fan_parties"
-database_id = "local-d1-rush-parties"
+database_id = "bb8df262-f34d-4920-989d-2da28d3bd769"
