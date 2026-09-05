@@ -8,21 +8,25 @@ interface Message {
 }
 
 interface ChatInterfaceProps {
-  fanStory: string;
+  fanStory?: string;
   onFanStoryUpdate?: (newStory: string) => void;
   onClose: () => void;
+  onViewMeetups?: () => void;
+  initialPrompt?: string;
 }
 
 const MAX_TURNS = 15;
 const MAX_INPUT_LENGTH = 500;
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory, onClose }) => {
-  const initialGreeting = `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush talk! 🎸`;
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, onViewMeetups, initialPrompt = '' }) => {
+  const initialGreeting = fanStory.trim()
+    ? `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush talk or 2026 tour details! 🎸`
+    : `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you about the holy triumvirate and the upcoming 2026 "Fifty Something" Tour! 🎸 Ask me anything about tour cities, pre-show tailgates, venues, or Rush lore!`;
 
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'llm', text: initialGreeting }
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(initialPrompt);
   const [userTurnCount, setUserTurnCount] = useState(0);
   const [isSending, setIsSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -75,8 +79,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory, onClose }) => {
   return (
     <div className="flex flex-col h-[60vh] max-h-[500px]">
       {/* Header Info & Turn Counter */}
-      <div className="flex items-center justify-between px-3 py-1 mb-2 bg-gray-900 rounded text-xs text-gray-400">
-        <span>Synthetic Rush Fan Chat</span>
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 mb-2 bg-gray-900 rounded text-xs text-gray-400 border border-gray-800">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-gray-300">💬 Tour Concierge</span>
+          {onViewMeetups && (
+            <button
+              onClick={onViewMeetups}
+              className="text-[11px] px-2.5 py-1 rounded-md bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 text-amber-300 font-bold transition cursor-pointer"
+            >
+              📍 Cities & Tours
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="text-[11px] px-2.5 py-1 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition cursor-pointer"
+          >
+            ⚡ Rock Trivia
+          </button>
+        </div>
         <div className="flex items-center gap-3">
           <span className={`px-2 py-0.5 rounded font-mono ${isLimitReached ? 'bg-red-900 text-red-200' : 'bg-gray-800 text-gray-300'}`}>
             Turns: {userTurnCount}/{MAX_TURNS}

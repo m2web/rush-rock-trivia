@@ -14,6 +14,7 @@ import RushFanModal from './components/RushFanModal';
 import RushFanBadge from './components/RushFanBadge';
 import UpdateFanStoryModal from './components/UpdateFanStoryModal';
 import ChatInterface from './components/ChatInterface';
+import TourMeetupsView from './components/TourMeetupsView';
 import './src/styles/passingthesticks.css';
 
 const TOTAL_QUESTIONS = 5;
@@ -23,8 +24,10 @@ const FAN_STORY_KEY = 'rushFanStory';
 // should be enforced server-side in the Pages Functions (429 + Retry-After)
 // and surfaced to the UI via the API response.
 
+type TabType = 'trivia' | 'meetups' | 'chat';
 
-const App: React.FC = () => {
+const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 'trivia' }) => {
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [gameState, setGameState] = useState<GameState>(GameState.START);
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -39,7 +42,7 @@ const App: React.FC = () => {
   const [isFanModalOpen, setIsFanModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [pendingChatAfterModal, setPendingChatAfterModal] = useState(false);
+  const [pendingInitialPrompt, setPendingInitialPrompt] = useState<string>('');
 
   // Save fan story to localStorage (no expiration)
   const updateFanStory = useCallback((story: string) => {
@@ -54,20 +57,17 @@ const App: React.FC = () => {
   const handleFanModalSubmit = useCallback((story: string) => {
     updateFanStory(story);
     setIsFanModalOpen(false);
-    if (pendingChatAfterModal && story) {
-      setIsChatOpen(true);
-      setPendingChatAfterModal(false);
-    }
-  }, [updateFanStory, pendingChatAfterModal]);
+    setIsChatOpen(true);
+    setActiveTab('chat');
+  }, [updateFanStory]);
 
-  const handleStartChat = useCallback(() => {
-    if (!fanStory) {
-      setPendingChatAfterModal(true);
-      setIsFanModalOpen(true);
-    } else {
-      setIsChatOpen(true);
+  const handleStartChat = useCallback((initialPrompt?: string) => {
+    if (initialPrompt) {
+      setPendingInitialPrompt(initialPrompt);
     }
-  }, [fanStory]);
+    setIsChatOpen(true);
+    setActiveTab('chat');
+  }, []);
 
   const handleBadgeClick = useCallback(() => {
     setIsUpdateModalOpen(true);
@@ -132,7 +132,15 @@ const App: React.FC = () => {
 
     switch (gameState) {
       case GameState.START:
-        return <StartScreen onStart={startGame} onStartChat={handleStartChat} hasFanStory={!!fanStory} error={error} />;
+        return (
+          <StartScreen
+            onStart={startGame}
+            onStartChat={handleStartChat}
+            onViewMeetups={() => setActiveTab('meetups')}
+            hasFanStory={!!fanStory}
+            error={error}
+          />
+        );
       case GameState.PLAYING:
         return (
           <>
@@ -149,19 +157,21 @@ const App: React.FC = () => {
       case GameState.FINISHED:
         return <EndScreen score={score} totalQuestions={TOTAL_QUESTIONS} onPlayAgain={handlePlayAgain} />;
       default:
-        return <StartScreen onStart={startGame} onStartChat={handleStartChat} hasFanStory={!!fanStory} />;
+        return (
+          <StartScreen
+            onStart={startGame}
+            onStartChat={handleStartChat}
+            onViewMeetups={() => setActiveTab('meetups')}
+            hasFanStory={!!fanStory}
+          />
+        );
     }
   };
 
 
   return (
-    <Router>
-      <>
-        {/* <MenuOverlay /> */}
-        <Routes>
-          <Route path="/" element={
-            <div className="min-h-screen bg-black text-white font-sans flex flex-col items-center justify-center p-4 pt-20">
-              <header className="mb-8 text-center">
+    <div className="min-h-screen bg-black text-white font-sans flex flex-col items-center justify-center p-4 pt-20">
+              <header className="mb-6 text-center">
                 <div className="mb-6 relative">
                   <img 
                     src="/images/Rush2026RedStar2.webp" 
@@ -177,14 +187,27 @@ const App: React.FC = () => {
                   Rock Trivia
                 </h1>
               </header>
+
               <main className="w-full max-w-2xl">
-                {isChatOpen && fanStory ? (
+                {activeTab === 'meetups' ? (
+                  <TourMeetupsView
+                    onBack={() => setActiveTab('trivia')}
+                    onAskFan={(prompt) => {
+                      handleStartChat(prompt);
+                    }}
+                  />
+                ) : isChatOpen || activeTab === 'chat' ? (
                   <div className="bg-gray-900 bg-opacity-90 p-6 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm">
-                    <h2 className="text-2xl font-bold mb-4 text-center">💬 Rush Fan Chat</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-center">💬 Rush Fan Chat & Tour Concierge</h2>
                     <ChatInterface
                       fanStory={fanStory}
                       onFanStoryUpdate={updateFanStory}
-                      onClose={() => setIsChatOpen(false)}
+                      onClose={() => {
+                        setIsChatOpen(false);
+                        setActiveTab('trivia');
+                      }}
+                      onViewMeetups={() => setActiveTab('meetups')}
+                      initialPrompt={pendingInitialPrompt}
                     />
                   </div>
                 ) : (
@@ -193,16 +216,14 @@ const App: React.FC = () => {
               </main>
               <footer className="mt-8 text-center text-gray-400 text-sm">
                 <p>The Elder Race is returning in 2026-2027! 😊🤘.</p>
-                <p>Questions generated by Google's Gemini AI.</p>
-                <p>&nbsp;</p>
               </footer>
 
               {/* Floating chat button visible on all screens during quiz/results */}
-              {!isChatOpen && gameState !== GameState.START && (
+              {!isChatOpen && activeTab !== 'chat' && gameState !== GameState.START && (
                 <button
-                  onClick={handleStartChat}
+                  onClick={() => handleStartChat()}
                   className="fixed bottom-4 left-4 z-40 py-3 px-5 rounded-full text-lg font-bold shadow-lg bg-purple-600 hover:bg-purple-700 text-white hover:scale-105 cursor-pointer transition-all duration-200"
-                  title="💬 Chat / Fan Story"
+                  title="💬 Chat with Synthetic Rush Fan"
                 >
                   💬 Chat
                 </button>
@@ -211,7 +232,7 @@ const App: React.FC = () => {
               {/* Fan story badge -- click to edit */}
               <RushFanBadge story={fanStory} onClick={handleBadgeClick} />
 
-              {/* Fan story modal -- first visit or when chat attempted without story */}
+              {/* Fan story modal -- triggered when user wants to share/edit origin story */}
               <RushFanModal isOpen={isFanModalOpen} onSubmit={handleFanModalSubmit} initialStory={fanStory} />
 
               {/* Update fan story modal -- triggered by badge click */}
@@ -224,12 +245,23 @@ const App: React.FC = () => {
                 onCancel={() => setIsUpdateModalOpen(false)}
               />
             </div>
-          } />
-          <Route path="/passingthesticks" element={<PassingTheSticks />} />
-        </Routes>
-      </>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<RushRockTriviaApp initialTab="trivia" />} />
+        <Route path="/cities" element={<RushRockTriviaApp initialTab="meetups" />} />
+        <Route path="/tours" element={<RushRockTriviaApp initialTab="meetups" />} />
+        <Route path="/meetups" element={<RushRockTriviaApp initialTab="meetups" />} />
+        <Route path="/chat" element={<RushRockTriviaApp initialTab="chat" />} />
+        <Route path="/passingthesticks" element={<PassingTheSticks />} />
+        <Route path="*" element={<RushRockTriviaApp initialTab="trivia" />} />
+      </Routes>
     </Router>
   );
-}
+};
 
 export default App;
