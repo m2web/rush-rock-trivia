@@ -76,7 +76,7 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     id: 'pittsburgh-01',
     name: 'Steel City Working Men Meetup (New Tour Date)',
     tour_city: 'Pittsburgh',
-    venue_name: 'Souper Bowl Bar & Grill',
+    venue_name: 'Souper Bowl Bar & Grill (Across from PPG Paints Arena)',
     address: '910 5th Ave, Pittsburgh, PA 15219',
     event_date: '2026-11-15',
     start_time: '16:00',

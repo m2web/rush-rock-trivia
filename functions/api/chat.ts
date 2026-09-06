@@ -84,7 +84,7 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
+      'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
       model: OPENAI_MODEL,

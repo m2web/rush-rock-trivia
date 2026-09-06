@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MenuOverlay from './components/MenuOverlay';
 import { GameState, TriviaQuestion } from './types';
 // AI service – routes all calls through Cloudflare Pages Functions
 import { getPreloadedQuestions } from './services/aiService';
@@ -8,7 +7,6 @@ import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';
 import LoadingSpinner from './components/LoadingSpinner';
-import { RushLogo } from './components/IconComponents';
 import PassingTheSticks from './components/PassingTheSticks';
 import RushFanModal from './components/RushFanModal';
 import RushFanBadge from './components/RushFanBadge';
@@ -193,12 +191,15 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
               <main className="w-full max-w-2xl">
                 {activeTab === 'meetups' ? (
                   <TourMeetupsView
-                    onBack={() => setActiveTab('trivia')}
+                    onBack={() => {
+                      setIsChatOpen(false);
+                      setActiveTab('trivia');
+                    }}
                     onAskFan={(prompt) => {
                       handleStartChat(prompt);
                     }}
                   />
-                ) : isChatOpen || activeTab === 'chat' ? (
+                ) : activeTab === 'chat' ? (
                   <div className="bg-gray-900 bg-opacity-90 p-6 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm">
                     <h2 className="text-2xl font-bold mb-4 text-center">💬 Rush Fan Chat & Tour Concierge</h2>
                     <ChatInterface
@@ -207,7 +208,10 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                         setIsChatOpen(false);
                         setActiveTab('trivia');
                       }}
-                      onViewMeetups={() => setActiveTab('meetups')}
+                      onViewMeetups={() => {
+                        setIsChatOpen(false);
+                        setActiveTab('meetups');
+                      }}
                       initialPrompt={pendingInitialPrompt}
                     />
                   </div>

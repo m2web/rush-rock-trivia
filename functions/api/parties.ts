@@ -50,7 +50,7 @@ const FALLBACK_MEETUPS: Meetup[] = [
     longitude: -79.3957,
     event_date: '2026-08-14',
     start_time: '23:00',
-    description: 'Post-concert afterparty featuring live Rush cover set by YYZ Tribute band. Late night food & drinks.',
+    description: 'Post-concert afterparty featuring live Rush cover set by YYZ Tribute band. Late night poutine & drinks.',
     organizer_name: 'Toronto Rush Faithful',
     rsvp_link: 'https://horseshoetavern.com/events',
     category: 'tribute_band',
@@ -372,6 +372,31 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   );
 };
 
+// In-memory sliding-window IP rate limiter for meetup submissions (max 3 submissions per 60 seconds per IP)
+const postIpRequestLogs = new Map<string, number[]>();
+const POST_RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_POSTS_PER_WINDOW = 3;
+
+const MAX_NAME_LENGTH = 100;
+const MAX_VENUE_LENGTH = 100;
+const MAX_CITY_LENGTH = 50;
+const MAX_DESCRIPTION_LENGTH = 1000;
+const MAX_ORGANIZER_LENGTH = 100;
+const MAX_RSVP_LENGTH = 250;
+
+function checkPostRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (postIpRequestLogs.get(ip) || []).filter(ts => now - ts < POST_RATE_LIMIT_WINDOW_MS);
+
+  if (timestamps.length >= MAX_POSTS_PER_WINDOW) {
+    return false;
+  }
+
+  timestamps.push(now);
+  postIpRequestLogs.set(ip, timestamps);
+  return true;
+}
+
 /**
  * POST /api/parties
  * Allows fans to submit new meetups with AI moderation guardrails.
@@ -380,6 +405,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const origin = context.request.headers.get('Origin') || '';
   const corsHeaders = getCorsHeaders(origin);
 
+  // Rate limiting to prevent submission spam
+  const clientIp = context.request.headers.get('CF-Connecting-IP') ||
+                   context.request.headers.get('X-Forwarded-For') ||
+                   'unknown-ip';
+
+  if (!checkPostRateLimit(clientIp)) {
+    return new Response(JSON.stringify({
+      error: 'Rate limit exceeded',
+      details: 'Too many meetup submissions. Please wait a minute before posting again.'
+    }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': '60', ...corsHeaders }
+    });
+  }
+
   try {
     const body = (await context.request.json()) as Partial<Meetup>;
 
@@ -387,6 +427,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!body.name || !body.tour_city || !body.venue_name || !body.event_date) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields: name, tour_city, venue_name, and event_date are required.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    // Validate maximum field lengths to prevent abuse
+    if (
+      body.name.length > MAX_NAME_LENGTH ||
+      body.venue_name.length > MAX_VENUE_LENGTH ||
+      body.tour_city.length > MAX_CITY_LENGTH ||
+      (body.description && body.description.length > MAX_DESCRIPTION_LENGTH) ||
+      (body.organizer_name && body.organizer_name.length > MAX_ORGANIZER_LENGTH) ||
+      (body.rsvp_link && body.rsvp_link.length > MAX_RSVP_LENGTH)
+    ) {
+      return new Response(
+        JSON.stringify({ error: 'Payload exceeds maximum field character limits.' }),
         { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
