@@ -20,6 +20,16 @@ const CITIES = [
   'Los Angeles',
 ];
 
+const isSafeUrl = (url?: string): boolean => {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) => {
   // Pre-initialize with verified defaults so it never renders blank
   const [parties, setParties] = useState<Meetup[]>(DEFAULT_MEETUPS);
@@ -289,7 +299,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                       💬 Ask Synthetic Fan
                     </button>
                   )}
-                  {party.rsvp_link && (
+                  {party.rsvp_link && isSafeUrl(party.rsvp_link) && (
                     <a
                       href={party.rsvp_link}
                       target="_blank"

@@ -121,6 +121,16 @@ const MAX_REQUESTS_PER_WINDOW = 5;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_SESSION_TURNS = 15;
 
+function sanitizePromptField(val: unknown): string {
+  if (!val || typeof val !== 'string') return '';
+  return val
+    .replace(/<\/?[^>]+(>|$)/g, '') // strip any HTML/XML tags including </verified_meetup_data>
+    .replace(/[<>]/g, '')           // strip any remaining angle brackets
+    .replace(/[\r\n\t]+/g, ' ')     // collapse newlines and tabs to keep on single line
+    .replace(/"/g, "'")             // normalize quotes
+    .trim();
+}
+
 function getClientIp(request: Request): string {
   const cfConnectingIp = request.headers.get('CF-Connecting-IP');
   if (cfConnectingIp && cfConnectingIp.trim()) {
@@ -225,9 +235,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           'SELECT name, tour_city, venue_name, event_date, start_time, category FROM meetups WHERE status = ? ORDER BY event_date ASC LIMIT 25'
         ).bind('approved').all<any>();
         if (dbResult.results && dbResult.results.length > 0) {
-          meetupsContext = dbResult.results.map((m: any) =>
-            `- ${m.event_date} (${m.tour_city} @ ${m.venue_name}): "${m.name}" [${m.start_time || ''}]`
-          ).join('\n');
+          meetupsContext = dbResult.results.map((m: any) => {
+            const date = sanitizePromptField(m.event_date);
+            const city = sanitizePromptField(m.tour_city);
+            const venue = sanitizePromptField(m.venue_name);
+            const name = sanitizePromptField(m.name);
+            const time = sanitizePromptField(m.start_time);
+            return `- ${date} (${city} @ ${venue}): "${name}" [${time}]`;
+          }).join('\n');
         }
       } catch (dbErr) {
         console.warn('Failed to query meetups for chat:', dbErr);

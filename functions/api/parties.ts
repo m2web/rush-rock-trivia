@@ -193,6 +193,15 @@ const MAX_RSVP_LENGTH = 250;
 const VALID_CATEGORIES = ['tailgate', 'pub_crawl', 'tribute_band', 'listening_party'] as const;
 type MeetupCategory = typeof VALID_CATEGORIES[number];
 
+function isValidHttpUrl(str: string): boolean {
+  try {
+    const url = new URL(str);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 function getClientIp(request: Request): string {
   const cfConnectingIp = request.headers.get('CF-Connecting-IP');
   if (cfConnectingIp && cfConnectingIp.trim()) {
@@ -300,6 +309,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       validatedLon = parsedLon;
     }
 
+    // Validate rsvp_link format if provided to prevent javascript: / data: XSS vectors
+    let validatedRsvpLink: string | undefined = undefined;
+    if (body.rsvp_link && body.rsvp_link.trim()) {
+      const trimmedLink = body.rsvp_link.trim();
+      if (!isValidHttpUrl(trimmedLink)) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid rsvp_link. Must be a valid HTTP or HTTPS URL.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+      validatedRsvpLink = trimmedLink;
+    }
+
     const newId = `meetup-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     // Default to pending_review to prevent spam when no moderation key is available
     let initialStatus: 'approved' | 'pending_review' = 'pending_review';
@@ -355,7 +377,7 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       start_time: body.start_time || '16:00',
       description: body.description?.trim(),
       organizer_name: body.organizer_name?.trim() || 'Rush Fan',
-      rsvp_link: body.rsvp_link?.trim(),
+      rsvp_link: validatedRsvpLink,
       category,
       status: initialStatus,
     };
