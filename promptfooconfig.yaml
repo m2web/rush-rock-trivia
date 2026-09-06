@@ -1,0 +1,32 @@
+description: "Rush Trivia Evaluation: Gemini 3.6 Flash vs. Gemini 3.7 Flash"
+
+prompts:
+  - |
+    You are an expert on the progressive rock band Rush.
+    Answer the following question accurately, clearly, and concisely:
+
+    Question: {{question}}
+
+providers:
+  - id: "google:gemini-3.6-flash"
+    label: "Gemini 3.6 Flash"
+    config:
+      temperature: 0.2
+
+  - id: "google:gemini-3.7-flash"
+    label: "Gemini 3.7 Flash"
+    config:
+      temperature: 0.2
+
+defaultTest:
+  assert:
+    - type: llm-rubric
+      value: |
+        The response accurately answers the question and conveys the key factual points found in the ground truth:
+        "{{ground_truth}}"
+
+tests: file://data/25.Rush_full_eval_formatted.jsonl
+
+outputPath:
+  - ./reports/rush_eval_report.html
+  - ./reports/rush_eval_report.json
