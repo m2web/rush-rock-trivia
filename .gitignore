@@ -34,3 +34,6 @@ API_KEY_EXPOSURE_COMPARISON.md
 
 # Admin guide (local only)
 ADMIN_GUIDE.md
+
+# Admin helper scripts (local only)
+scripts/
