@@ -1,18 +1,6 @@
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
-import { getClientIp } from '../utils/request';
-
-const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
-
-function getCorsHeaders(origin: string) {
-  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
-  return {
-    'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Vary': 'Origin',
-  };
-}
+import { getClientIp, getCorsHeaders } from '../utils/request';
 
 function sanitizePromptField(val: unknown): string {
   if (!val || typeof val !== 'string') return '';
@@ -135,6 +123,16 @@ const MAX_SESSION_TURNS = 15;
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
+
+  // Opportunistic cleanup of stale IP entries when the map grows
+  if (ipRequestLogs.size > 100) {
+    for (const [loggedIp, loggedTimestamps] of ipRequestLogs.entries()) {
+      if (loggedTimestamps.length === 0 || now - loggedTimestamps[loggedTimestamps.length - 1] >= RATE_LIMIT_WINDOW_MS) {
+        ipRequestLogs.delete(loggedIp);
+      }
+    }
+  }
+
   const timestamps = (ipRequestLogs.get(ip) || []).filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
   
   if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {

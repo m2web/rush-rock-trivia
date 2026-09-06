@@ -3,7 +3,7 @@
 
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL } from '../constants';
-import { getClientIp } from '../utils/request';
+import { getClientIp, getCorsHeaders } from '../utils/request';
 
 import type { Meetup } from '../../data/defaultMeetups';
 import { DEFAULT_MEETUPS } from '../../data/defaultMeetups';
@@ -24,25 +24,6 @@ function calculateDistanceMiles(lat1: number, lon1: number, lat2: number, lon2: 
   return Math.round(R * c * 10) / 10;
 }
 
-const allowedOrigins = [
-  'https://rush2026.fyi',
-  'https://www.rush2026.fyi',
-  'https://rush-rock-trivia.pages.dev',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-];
-
-function getCorsHeaders(origin: string): Record<string, string> {
-  const isAllowed = allowedOrigins.includes(origin) || origin.endsWith('.rush-rock-trivia.pages.dev');
-  const corsOrigin = isAllowed ? origin : allowedOrigins[0];
-  return {
-    'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Max-Age': '86400',
-    'Vary': 'Origin',
-  };
-}
 
 export const onRequestOptions: PagesFunction<Env> = async (context) => {
   const origin = context.request.headers.get('Origin') || '';
@@ -224,6 +205,16 @@ function isValidTime(timeStr: string): boolean {
 
 function checkPostRateLimit(ip: string): boolean {
   const now = Date.now();
+
+  // Opportunistic cleanup of stale IP entries when the map grows
+  if (postIpRequestLogs.size > 100) {
+    for (const [loggedIp, loggedTimestamps] of postIpRequestLogs.entries()) {
+      if (loggedTimestamps.length === 0 || now - loggedTimestamps[loggedTimestamps.length - 1] >= POST_RATE_LIMIT_WINDOW_MS) {
+        postIpRequestLogs.delete(loggedIp);
+      }
+    }
+  }
+
   const timestamps = (postIpRequestLogs.get(ip) || []).filter(ts => now - ts < POST_RATE_LIMIT_WINDOW_MS);
 
   if (timestamps.length >= MAX_POSTS_PER_WINDOW) {
@@ -257,9 +248,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
   }
 
-  let body: Partial<Meetup>;
+  let rawBody: unknown;
   try {
-    body = (await context.request.json()) as Partial<Meetup>;
+    rawBody = await context.request.json();
   } catch {
     return new Response(
       JSON.stringify({ error: 'Invalid JSON payload in request body.' }),
@@ -267,23 +258,82 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     );
   }
 
+  if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
+    return new Response(
+      JSON.stringify({ error: 'Request body must be a JSON object.' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    );
+  }
+
+  const body = rawBody as Record<string, unknown>;
+
   try {
-    // Validate required fields (reject empty strings or whitespace-only values)
-    if (!body.name?.trim() || !body.tour_city?.trim() || !body.venue_name?.trim() || !body.event_date?.trim()) {
+    // Validate required string fields exist and are strings
+    if (
+      typeof body.name !== 'string' ||
+      typeof body.tour_city !== 'string' ||
+      typeof body.venue_name !== 'string' ||
+      typeof body.event_date !== 'string'
+    ) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: name, tour_city, venue_name, and event_date are required and cannot be empty.' }),
+        JSON.stringify({ error: 'Missing required fields: name, tour_city, venue_name, and event_date must be strings.' }),
         { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
 
+    const trimmedName = body.name.trim();
+    const trimmedCity = body.tour_city.trim();
+    const trimmedVenue = body.venue_name.trim();
+    const trimmedDate = body.event_date.trim();
+
+    if (!trimmedName || !trimmedCity || !trimmedVenue || !trimmedDate) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields: name, tour_city, venue_name, and event_date cannot be empty.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    // Validate optional string fields if provided
+    let trimmedDesc: string | undefined = undefined;
+    if (body.description !== undefined && body.description !== null) {
+      if (typeof body.description !== 'string') {
+        return new Response(
+          JSON.stringify({ error: 'Invalid field: description must be a string if provided.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+      trimmedDesc = body.description.trim() || undefined;
+    }
+
+    let trimmedOrganizer: string | undefined = undefined;
+    if (body.organizer_name !== undefined && body.organizer_name !== null) {
+      if (typeof body.organizer_name !== 'string') {
+        return new Response(
+          JSON.stringify({ error: 'Invalid field: organizer_name must be a string if provided.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+      trimmedOrganizer = body.organizer_name.trim() || undefined;
+    }
+
+    let trimmedAddress: string | undefined = undefined;
+    if (body.address !== undefined && body.address !== null) {
+      if (typeof body.address !== 'string') {
+        return new Response(
+          JSON.stringify({ error: 'Invalid field: address must be a string if provided.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+      trimmedAddress = body.address.trim() || undefined;
+    }
+
     // Validate maximum field lengths to prevent abuse
     if (
-      body.name.length > MAX_NAME_LENGTH ||
-      body.venue_name.length > MAX_VENUE_LENGTH ||
-      body.tour_city.length > MAX_CITY_LENGTH ||
-      (body.description && body.description.length > MAX_DESCRIPTION_LENGTH) ||
-      (body.organizer_name && body.organizer_name.length > MAX_ORGANIZER_LENGTH) ||
-      (body.rsvp_link && body.rsvp_link.length > MAX_RSVP_LENGTH)
+      trimmedName.length > MAX_NAME_LENGTH ||
+      trimmedVenue.length > MAX_VENUE_LENGTH ||
+      trimmedCity.length > MAX_CITY_LENGTH ||
+      (trimmedDesc && trimmedDesc.length > MAX_DESCRIPTION_LENGTH) ||
+      (trimmedOrganizer && trimmedOrganizer.length > MAX_ORGANIZER_LENGTH)
     ) {
       return new Response(
         JSON.stringify({ error: 'Payload exceeds maximum field character limits.' }),
@@ -292,7 +342,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     // Validate event_date format (YYYY-MM-DD)
-    const trimmedDate = body.event_date.trim();
     if (!isValidDate(trimmedDate)) {
       return new Response(
         JSON.stringify({ error: 'Invalid event_date. Must be a valid calendar date in YYYY-MM-DD format.' }),
@@ -302,15 +351,50 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     // Validate start_time format (HH:MM) if provided
     let validatedStartTime = '16:00';
-    if (body.start_time && body.start_time.trim()) {
-      const trimmedTime = body.start_time.trim();
-      if (!isValidTime(trimmedTime)) {
+    if (body.start_time !== undefined && body.start_time !== null) {
+      if (typeof body.start_time !== 'string') {
         return new Response(
-          JSON.stringify({ error: 'Invalid start_time. Must be in HH:MM (24-hour) format (e.g., 16:00).' }),
+          JSON.stringify({ error: 'Invalid field: start_time must be a string if provided.' }),
           { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
         );
       }
-      validatedStartTime = trimmedTime;
+      const trimmedTime = body.start_time.trim();
+      if (trimmedTime) {
+        if (!isValidTime(trimmedTime)) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid start_time. Must be in HH:MM (24-hour) format (e.g., 16:00).' }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          );
+        }
+        validatedStartTime = trimmedTime;
+      }
+    }
+
+    // Validate rsvp_link format if provided to prevent javascript: / data: XSS vectors
+    let validatedRsvpLink: string | undefined = undefined;
+    if (body.rsvp_link !== undefined && body.rsvp_link !== null) {
+      if (typeof body.rsvp_link !== 'string') {
+        return new Response(
+          JSON.stringify({ error: 'Invalid field: rsvp_link must be a string if provided.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+      const trimmedLink = body.rsvp_link.trim();
+      if (trimmedLink) {
+        if (trimmedLink.length > MAX_RSVP_LENGTH) {
+          return new Response(
+            JSON.stringify({ error: 'Payload exceeds maximum field character limits.' }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          );
+        }
+        if (!isValidHttpUrl(trimmedLink)) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid rsvp_link. Must be a valid HTTP or HTTPS URL.' }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          );
+        }
+        validatedRsvpLink = trimmedLink;
+      }
     }
 
     // Validate latitude / longitude if provided
@@ -338,19 +422,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       validatedLon = parsedLon;
     }
 
-    // Validate rsvp_link format if provided to prevent javascript: / data: XSS vectors
-    let validatedRsvpLink: string | undefined = undefined;
-    if (body.rsvp_link && body.rsvp_link.trim()) {
-      const trimmedLink = body.rsvp_link.trim();
-      if (!isValidHttpUrl(trimmedLink)) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid rsvp_link. Must be a valid HTTP or HTTPS URL.' }),
-          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-        );
-      }
-      validatedRsvpLink = trimmedLink;
-    }
-
     const newId = `meetup-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
     // Default to pending_review to prevent spam when no moderation key is available
     let initialStatus: 'approved' | 'pending_review' = 'pending_review';
@@ -361,10 +432,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       try {
         const modPrompt = `Analyze the following submitted Rush fan meetup for a rock band fan website.
 Ensure it is a genuine, appropriate event relating to Rush, live music, fan tailgates, or tribute bands. Reject hate speech, spam, unrelated promotions, or explicit content.
-Title: "${body.name}"
-Description: "${body.description || ''}"
-Venue: "${body.venue_name}"
-City: "${body.tour_city}"
+Title: "${trimmedName}"
+Description: "${trimmedDesc || ''}"
+Venue: "${trimmedVenue}"
+City: "${trimmedCity}"
 
 Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reason"}`;
 
@@ -390,22 +461,22 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       }
     }
 
-    const category: MeetupCategory = (body.category && (VALID_CATEGORIES as readonly string[]).includes(body.category))
+    const category: MeetupCategory = (typeof body.category === 'string' && (VALID_CATEGORIES as readonly string[]).includes(body.category))
       ? (body.category as MeetupCategory)
       : 'tailgate';
 
     const newMeetup: Meetup = {
       id: newId,
-      name: body.name.trim(),
-      tour_city: body.tour_city.trim(),
-      venue_name: body.venue_name.trim(),
-      address: body.address?.trim(),
+      name: trimmedName,
+      tour_city: trimmedCity,
+      venue_name: trimmedVenue,
+      address: trimmedAddress,
       latitude: validatedLat,
       longitude: validatedLon,
       event_date: trimmedDate,
       start_time: validatedStartTime,
-      description: body.description?.trim(),
-      organizer_name: body.organizer_name?.trim() || 'Rush Fan',
+      description: trimmedDesc,
+      organizer_name: trimmedOrganizer || 'Rush Fan',
       rsvp_link: validatedRsvpLink,
       category,
       status: initialStatus,
