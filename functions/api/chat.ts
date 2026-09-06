@@ -158,7 +158,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       details: 'Too many messages sent. Please wait a minute before sending another message.'
     }), {
       status: 429,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      headers: { 'Content-Type': 'application/json', 'Retry-After': '60', ...corsHeaders }
     });
   }
 
@@ -247,8 +247,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   } catch (error) {
     console.error('Error generating chat response:', error);
     return new Response(JSON.stringify({
-      error: 'Failed to generate chat response',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      error: 'Failed to generate chat response'
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders }

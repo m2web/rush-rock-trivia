@@ -218,7 +218,7 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                 )}
               </main>
               <footer className="mt-8 text-center text-gray-400 text-sm">
-                <p>The Elder Race is returning in 2026-2027! 😊🤘.</p>
+                <p>The Elder Race is returning in 2026-2027! 😊🤘</p>
               </footer>
 
               {/* Floating chat button visible on all screens during quiz/results */}

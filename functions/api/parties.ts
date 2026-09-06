@@ -513,7 +513,7 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
     } catch (dbErr: any) {
       console.error('⚠️ [Cloudflare D1] Error writing meetup:', dbErr);
       return new Response(
-        JSON.stringify({ error: 'Failed to save meetup to database', details: dbErr?.message }),
+        JSON.stringify({ error: 'Failed to save meetup to database.' }),
         { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }
@@ -530,8 +530,9 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       }
     );
   } catch (err: any) {
+    console.error('Failed to submit meetup:', err);
     return new Response(
-      JSON.stringify({ error: 'Failed to submit meetup', details: err.message }),
+      JSON.stringify({ error: 'Failed to submit meetup.' }),
       { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
   }
