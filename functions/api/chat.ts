@@ -13,8 +13,19 @@ function getCorsHeaders(origin: string) {
   };
 }
 
+function sanitizePromptField(val: unknown): string {
+  if (!val || typeof val !== 'string') return '';
+  return val
+    .replace(/<\/?[^>]+(>|$)/g, '') // strip any HTML/XML tags including </verified_meetup_data>
+    .replace(/[<>]/g, '')           // strip any remaining angle brackets
+    .replace(/[\r\n\t]+/g, ' ')     // collapse newlines and tabs to keep on single line
+    .replace(/"/g, "'")             // normalize quotes
+    .trim();
+}
+
 function getSystemPrompt(fanStory: string, meetupsContext?: string): string {
-  return `You are a Synthetic Rush Fan — an AI that absolutely loves Rush, enjoys deep-cut band discussions, and acts as a helpful "Tour Concierge" for the 2026 "Fifty Something" Tour. You are enthusiastic, deeply knowledgeable, and transparent about being synthetic. The user is a real Rush fan. Their Rush fan story is: "${fanStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers brief, warm, and concise — typically 2-3 sentences.
+  const sanitizedStory = sanitizePromptField(fanStory);
+  return `You are a Synthetic Rush Fan — an AI that absolutely loves Rush, enjoys deep-cut band discussions, and acts as a helpful "Tour Concierge" for the 2026 "Fifty Something" Tour. You are enthusiastic, deeply knowledgeable, and transparent about being synthetic. The user is a real Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers brief, warm, and concise — typically 2-3 sentences.
 
 Focus the conversation on deep-dive Rush trivia, recording lore, AND helping fans find 2026 tour gatherings, pre-show tailgates, and tribute band afterparties.
 
@@ -120,16 +131,6 @@ const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 5;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_SESSION_TURNS = 15;
-
-function sanitizePromptField(val: unknown): string {
-  if (!val || typeof val !== 'string') return '';
-  return val
-    .replace(/<\/?[^>]+(>|$)/g, '') // strip any HTML/XML tags including </verified_meetup_data>
-    .replace(/[<>]/g, '')           // strip any remaining angle brackets
-    .replace(/[\r\n\t]+/g, ' ')     // collapse newlines and tabs to keep on single line
-    .replace(/"/g, "'")             // normalize quotes
-    .trim();
-}
 
 function getClientIp(request: Request): string {
   const cfConnectingIp = request.headers.get('CF-Connecting-IP');

@@ -67,8 +67,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const latParam = url.searchParams.get('lat');
   const lonParam = url.searchParams.get('lon');
-  const rawLat = latParam ? parseFloat(latParam) : (cf.latitude ? parseFloat(cf.latitude) : null);
-  const rawLon = lonParam ? parseFloat(lonParam) : (cf.longitude ? parseFloat(cf.longitude) : null);
+  const rawLat = latParam !== null && latParam !== ''
+    ? parseFloat(latParam)
+    : (cf.latitude !== undefined && cf.latitude !== null && cf.latitude !== '' ? parseFloat(cf.latitude) : null);
+  const rawLon = lonParam !== null && lonParam !== ''
+    ? parseFloat(lonParam)
+    : (cf.longitude !== undefined && cf.longitude !== null && cf.longitude !== '' ? parseFloat(cf.longitude) : null);
   const userLat = typeof rawLat === 'number' && Number.isFinite(rawLat) ? rawLat : null;
   const userLon = typeof rawLon === 'number' && Number.isFinite(rawLon) ? rawLon : null;
 

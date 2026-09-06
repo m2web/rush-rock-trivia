@@ -6,17 +6,17 @@ export interface Meetup {
   name: string;
   tour_city: string;
   venue_name: string;
-  address?: string;
-  latitude?: number;
-  longitude?: number;
+  address?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   event_date: string;
-  start_time?: string;
-  description?: string;
-  organizer_name?: string;
-  rsvp_link?: string;
-  category?: 'tailgate' | 'pub_crawl' | 'tribute_band' | 'listening_party';
-  status?: 'approved' | 'pending_review';
-  distance_miles?: number;
+  start_time?: string | null;
+  description?: string | null;
+  organizer_name?: string | null;
+  rsvp_link?: string | null;
+  category?: 'tailgate' | 'pub_crawl' | 'tribute_band' | 'listening_party' | null;
+  status?: 'approved' | 'pending_review' | null;
+  distance_miles?: number | null;
 }
 
 export const DEFAULT_MEETUPS: Meetup[] = [
