@@ -179,7 +179,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const request = context.request;
-    const { userMessage, fanStory, turnCount } = await request.json() as { userMessage?: string; fanStory?: string; turnCount?: number };
+    let body: { userMessage?: string; fanStory?: string; turnCount?: number };
+    try {
+      body = (await request.json()) as { userMessage?: string; fanStory?: string; turnCount?: number };
+    } catch {
+      return new Response(JSON.stringify({ error: 'Invalid JSON payload in request body' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+    const { userMessage, fanStory, turnCount } = body;
 
     if (!userMessage || typeof userMessage !== 'string' || !userMessage.trim()) {
       return new Response(JSON.stringify({ error: 'userMessage is required' }), {

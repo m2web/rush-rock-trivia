@@ -241,9 +241,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
   }
 
+  let body: Partial<Meetup>;
   try {
-    const body = (await context.request.json()) as Partial<Meetup>;
+    body = (await context.request.json()) as Partial<Meetup>;
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'Invalid JSON payload in request body.' }),
+      { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+    );
+  }
 
+  try {
     // Validate required fields (reject empty strings or whitespace-only values)
     if (!body.name?.trim() || !body.tour_city?.trim() || !body.venue_name?.trim() || !body.event_date?.trim()) {
       return new Response(
@@ -343,7 +351,7 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       address: body.address?.trim(),
       latitude: validatedLat,
       longitude: validatedLon,
-      event_date: body.event_date,
+      event_date: body.event_date.trim(),
       start_time: body.start_time || '16:00',
       description: body.description?.trim(),
       organizer_name: body.organizer_name?.trim() || 'Rush Fan',
