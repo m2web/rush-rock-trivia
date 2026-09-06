@@ -1,0 +1,5 @@
+# Cloudflare Pages 301 Redirects
+/tours.html /cities.html 301
+
+# SPA Fallback for client-side routing
+/* /index.html 200

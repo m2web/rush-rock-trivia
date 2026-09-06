@@ -1,0 +1,7 @@
+# Project Rules & Preferences
+
+## Promptfoo Execution
+- Always execute Promptfoo evaluations with the `--env-file .env` flag to ensure API keys and environment variables from the `.env` file are explicitly loaded:
+  ```powershell
+  npx promptfoo eval --env-file .env
+  ```

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rush 2026-2027 Tour Cities, Meetups & AI Concierge | Rush Rock Trivia</title>
+  <link rel="canonical" href="https://rush2026.fyi/cities.html" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <style>
+    :root {
+      --bg: #09090b;
+      --card-bg: rgba(24, 24, 27, 0.95);
+      --border: #27272a;
+      --accent-red: #dc2626;
+      --accent-amber: #d97706;
+      --accent-purple: #9333ea;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .logo-wrapper {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .logo-wrapper img {
+      max-width: 320px;
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+      mask-image: radial-gradient(ellipse at center, black 25%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.05) 85%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 25%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.4) 55%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.05) 85%, transparent 100%);
+    }
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-red {
+      background-color: var(--accent-red);
+      color: white;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+    }
+    .btn-red:hover {
+      background-color: #b91c1c;
+      transform: translateY(-1px);
+    }
+    .btn-purple {
+      background-color: rgba(147, 51, 234, 0.25);
+      border-color: rgba(168, 85, 247, 0.5);
+      color: #d8b4fe;
+    }
+    .btn-purple:hover {
+      background-color: rgba(147, 51, 234, 0.45);
+      transform: translateY(-1px);
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    .guide-card {
+      border-color: rgba(217, 119, 6, 0.4);
+      background: rgba(18, 18, 20, 0.95);
+    }
+    .guide-card h2 {
+      color: #fbbf24;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .step-box {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .step-box strong {
+      display: block;
+      color: #f4f4f5;
+      margin-bottom: 0.25rem;
+    }
+    .city-card {
+      border: 1px solid #27272a;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #141416;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .city-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: rgba(220, 38, 38, 0.25);
+      border: 1px solid rgba(220, 38, 38, 0.4);
+      color: #fca5a5;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.35rem;
+      display: inline-block;
+      width: fit-content;
+    }
+    .city-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .city-venue {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo-wrapper">
+        <a href="/">
+          <img src="/images/Rush2026RedStar2.webp" alt="Rush 2026 Red Star Logo" />
+        </a>
+      </div>
+      <h1>2026-2027 Tour Cities & Fan Gatherings</h1>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">The Fifty Something Tour • Tailgates, Meetups & Concierge</p>
+    </header>
+
+    <div class="nav-bar">
+      <a href="/chat" class="btn btn-purple">💬 Chat with Synthetic Rush Fan</a>
+      <a href="/" class="btn btn-red">⚡ Begin Rock Trivia</a>
+    </div>
+
+    <!-- Fan Directions Card -->
+    <div class="card guide-card">
+      <h2>🧭 Directions: How Tour Meetups & AI Concierge Work</h2>
+      <p style="font-size: 0.9rem; color: #d4d4d8; line-height: 1.5;">
+        Welcome to the 2026-2027 Fifty Something Tour fan portal! You do <strong>not</strong> need to create an account or sign in to browse tour stops, find tailgate parties, or chat with our AI fan concierge.
+      </p>
+      <div class="grid-3">
+        <div class="step-box">
+          <strong style="color: #fbbf24;">1. Explore Tour Stops</strong>
+          Check verified dates and fan meetup locations across North America below.
+        </div>
+        <div class="step-box">
+          <strong style="color: #c084fc;">2. Ask the Concierge</strong>
+          Click <a href="/chat" style="color: #e9d5ff; font-weight: bold;">Chat with Synthetic Fan</a> anytime for instant answers on hotels, venues, parking, and Rush lore.
+        </div>
+        <div class="step-box">
+          <strong style="color: #4ade80;">3. Test Your Knowledge</strong>
+          Put your Rush album and tour knowledge to the test with our 5-question Rock Trivia test.
+        </div>
+      </div>
+    </div>
+
+    <!-- Sample / Test Data Notice Banner -->
+    <div class="card" style="border: 1px dashed #d97706; background: rgba(120, 53, 15, 0.25);">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 1.5rem;">🧪</span>
+        <div>
+          <strong style="color: #fbbf24; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">Community Sample &amp; Test Demonstrations</strong>
+          <p style="color: #d4d4d8; font-size: 0.82rem; margin-top: 0.25rem; line-height: 1.4;">
+            Dates and gatherings below are <strong>community sample data</strong> while awaiting official tour announcements. Fans are welcome to create and post actual events in the app!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tour Cities & Meetups Overview -->
+    <div class="card">
+      <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">📍 Confirmed Tour Cities & Venues (Sample Schedule)</h2>
+
+      <div class="city-card">
+        <div class="city-badge">Oct 23, 2026</div>
+        <div class="city-name">Cincinnati, OH — Heritage Bank Center</div>
+        <div class="city-venue">Fan Gathering: <strong>Queen City Riverfront Rush Rally</strong> at The Banks (15:30)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Oct 1, 2026</div>
+        <div class="city-name">Houston, TX — Toyota Center</div>
+        <div class="city-venue">Fan Gathering: <strong>Space City Rush Tailgate</strong> at Toyota Center Plaza (16:30)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Oct 21, 2026</div>
+        <div class="city-name">St. Louis, MO — Enterprise Center</div>
+        <div class="city-venue">Fan Gathering: <strong>Gateway Arch Rush Rally</strong> at Enterprise Center Atrium (16:00)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Nov 15, 2026</div>
+        <div class="city-name">Pittsburgh, PA — PPG Paints Arena</div>
+        <div class="city-venue">Fan Gathering: <strong>Steel City Working Men Meetup</strong> at The Souper Bowl (16:00)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Aug 14, 2026</div>
+        <div class="city-name">Toronto, ON — Scotiabank Arena</div>
+        <div class="city-venue">Fan Gathering: <strong>RushCon Toronto Gathering</strong> at The Loose Moose (15:00) & Horseshoe Tavern Afterparty (23:00)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Aug 22, 2026</div>
+        <div class="city-name">Chicago, IL — United Center</div>
+        <div class="city-venue">Fan Gathering: <strong>Windy City Pre-Show Tailgate & BBQ</strong> at United Center Lot C (14:00)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Sep 5, 2026</div>
+        <div class="city-name">New York, NY — Madison Square Garden</div>
+        <div class="city-venue">Fan Gathering: <strong>Subdivisions Pub Crawl NYC</strong> at The Pennsy (16:00)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Sep 12, 2026</div>
+        <div class="city-name">Cleveland, OH — Rocket Mortgage FieldHouse</div>
+        <div class="city-venue">Fan Gathering: <strong>Neil Peart Tribute Meetup</strong> at Rock Hall Plaza (12:00)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Sep 18, 2026</div>
+        <div class="city-name">Boston, MA — TD Garden</div>
+        <div class="city-venue">Fan Gathering: <strong>Causeway Street Fan Crawl</strong> at The Fours (16:00)</div>
+      </div>
+
+      <div class="city-card">
+        <div class="city-badge">Jun 7, 2026</div>
+        <div class="city-name">Los Angeles, CA — Kia Forum</div>
+        <div class="city-venue">Fan Gathering: <strong>Southern California Signals Tailgate</strong> at Forum Lot E (14:00)</div>
+      </div>
+    </div>
+
+    <!-- Call to Action Banner -->
+    <div class="card" style="text-align: center; border-color: rgba(147, 51, 234, 0.5);">
+      <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Have questions about show logistics or meeting other fans?</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+        The Synthetic Rush Fan AI knows all about tour venues, setlists, and local spots.
+      </p>
+      <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+        <a href="/chat" class="btn btn-purple">💬 Open Fan Chat & Concierge</a>
+        <a href="/" class="btn btn-red">⚡ Play Rock Trivia</a>
+      </div>
+    </div>
+
+    <footer>
+      <p>The Elder Race is returning in 2026-2027! 😊🤘</p>
+    </footer>
+  </div>
+</body>
+</html>
