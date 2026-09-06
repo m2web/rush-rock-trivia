@@ -1,4 +1,4 @@
--- Seed data for Rush 2026 "Fifty Something" Tour Fan Parties & Meetups
+-- Seed data for Rush 2026-2027 "Fifty Something" Tour Fan Parties & Meetups
 -- Includes original tour stops + newly added Fall 2026 arena dates
 
 INSERT OR IGNORE INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)

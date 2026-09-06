@@ -1,4 +1,4 @@
--- Cloudflare D1 Schema: Rush 2026 Fan Parties & Meetups
+-- Cloudflare D1 Schema: Rush 2026-2027 Fan Parties & Meetups
 
 CREATE TABLE IF NOT EXISTS meetups (
   id TEXT PRIMARY KEY,

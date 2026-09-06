@@ -133,7 +133,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
 
         {onAskFan && (
           <button
-            onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026 tour?")}
+            onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026-2027 tour?")}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/50 text-purple-200 text-xs font-bold transition shadow cursor-pointer"
           >
             💬 Ask Synthetic Rush Fan →
@@ -145,7 +145,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-bold mb-2">
-            📍 2026 FIFTY SOMETHING TOUR
+            📍 2026-2027 FIFTY SOMETHING TOUR
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-wide">Tour Gatherings & Meetups</h2>
           <p className="text-sm text-gray-300 mt-1">
@@ -169,7 +169,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
           <span className="text-[11px] text-gray-400 bg-gray-900 px-2.5 py-0.5 rounded-full border border-gray-800">No login required to view</span>
         </div>
         <p className="leading-relaxed">
-          Welcome to the fan meetup hub for the <strong>2026 Fifty Something Tour</strong>! Here fans can find or organize pre-show tailgates, meetups, and tribute band concerts across all confirmed tour cities.
+          Welcome to the fan meetup hub for the <strong>2026-2027 Fifty Something Tour</strong>! Here fans can find or organize pre-show tailgates, meetups, and tribute band concerts across all confirmed tour cities.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
           <div className="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
@@ -328,7 +328,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
         <div className="flex items-center gap-2">
           {onAskFan && (
             <button
-              onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026 tour?")}
+              onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026-2027 tour?")}
               className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow cursor-pointer"
             >
               💬 Chat with Synthetic Fan

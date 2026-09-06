@@ -1,4 +1,4 @@
-// Baseline fallback seed dataset for Rush 2026 Tour Fan Meetups & Gatherings
+// Baseline fallback seed dataset for Rush 2026-2027 Tour Fan Meetups & Gatherings
 // Used as in-memory fallback for client services and Cloudflare Pages Functions when D1 is offline
 
 export interface Meetup {

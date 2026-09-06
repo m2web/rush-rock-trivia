@@ -1,4 +1,4 @@
-// Cloudflare Pages Function for Rush 2026 Fan Parties & Meetup Discovery
+// Cloudflare Pages Function for Rush 2026-2027 Fan Parties & Meetup Discovery
 // Backed by Cloudflare D1 with edge location awareness and AI moderation
 
 import { PagesFunction, Env } from '../types';
