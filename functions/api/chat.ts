@@ -117,11 +117,25 @@ const MAX_REQUESTS_PER_WINDOW = 5;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_SESSION_TURNS = 15;
 
+function getClientIp(request: Request): string {
+  const cfConnectingIp = request.headers.get('CF-Connecting-IP');
+  if (cfConnectingIp && cfConnectingIp.trim()) {
+    return cfConnectingIp.trim();
+  }
+  const xForwardedFor = request.headers.get('X-Forwarded-For');
+  if (xForwardedFor) {
+    const firstIp = xForwardedFor.split(',')[0].trim();
+    if (firstIp) return firstIp;
+  }
+  return 'unknown-ip';
+}
+
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
   const timestamps = (ipRequestLogs.get(ip) || []).filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
   
   if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+    ipRequestLogs.set(ip, timestamps);
     return false; // Rate limit exceeded
   }
   
@@ -135,9 +149,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const corsHeaders = getCorsHeaders(origin);
 
   // Determine client IP for rate limiting
-  const clientIp = context.request.headers.get('CF-Connecting-IP') || 
-                   context.request.headers.get('X-Forwarded-For') || 
-                   'unknown-ip';
+  const clientIp = getClientIp(context.request);
 
   if (!checkRateLimit(clientIp)) {
     return new Response(JSON.stringify({
