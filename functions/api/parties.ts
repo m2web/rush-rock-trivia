@@ -3,6 +3,7 @@
 
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL } from '../constants';
+import { getClientIp } from '../utils/request';
 
 import type { Meetup } from '../../data/defaultMeetups';
 import { DEFAULT_MEETUPS } from '../../data/defaultMeetups';
@@ -206,17 +207,19 @@ function isValidHttpUrl(str: string): boolean {
   }
 }
 
-function getClientIp(request: Request): string {
-  const cfConnectingIp = request.headers.get('CF-Connecting-IP');
-  if (cfConnectingIp && cfConnectingIp.trim()) {
-    return cfConnectingIp.trim();
-  }
-  const xForwardedFor = request.headers.get('X-Forwarded-For');
-  if (xForwardedFor) {
-    const firstIp = xForwardedFor.split(',')[0].trim();
-    if (firstIp) return firstIp;
-  }
-  return 'unknown-ip';
+function isValidDate(dateStr: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  const [yearStr, monthStr, dayStr] = dateStr.split('-');
+  const year = parseInt(yearStr, 10);
+  const month = parseInt(monthStr, 10);
+  const day = parseInt(dayStr, 10);
+  if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+  const d = new Date(year, month - 1, day);
+  return d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day;
+}
+
+function isValidTime(timeStr: string): boolean {
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(timeStr);
 }
 
 function checkPostRateLimit(ip: string): boolean {
@@ -286,6 +289,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         JSON.stringify({ error: 'Payload exceeds maximum field character limits.' }),
         { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
+    }
+
+    // Validate event_date format (YYYY-MM-DD)
+    const trimmedDate = body.event_date.trim();
+    if (!isValidDate(trimmedDate)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid event_date. Must be a valid calendar date in YYYY-MM-DD format.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+      );
+    }
+
+    // Validate start_time format (HH:MM) if provided
+    let validatedStartTime = '16:00';
+    if (body.start_time && body.start_time.trim()) {
+      const trimmedTime = body.start_time.trim();
+      if (!isValidTime(trimmedTime)) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid start_time. Must be in HH:MM (24-hour) format (e.g., 16:00).' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+      validatedStartTime = trimmedTime;
     }
 
     // Validate latitude / longitude if provided
@@ -377,8 +402,8 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       address: body.address?.trim(),
       latitude: validatedLat,
       longitude: validatedLon,
-      event_date: body.event_date.trim(),
-      start_time: body.start_time || '16:00',
+      event_date: trimmedDate,
+      start_time: validatedStartTime,
       description: body.description?.trim(),
       organizer_name: body.organizer_name?.trim() || 'Rush Fan',
       rsvp_link: validatedRsvpLink,

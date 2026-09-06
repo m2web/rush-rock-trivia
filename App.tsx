@@ -137,7 +137,6 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
             onStart={startGame}
             onStartChat={handleStartChat}
             onViewMeetups={() => setActiveTab('meetups')}
-            hasFanStory={!!fanStory}
             error={error}
           />
         );
@@ -162,7 +161,6 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
             onStart={startGame}
             onStartChat={handleStartChat}
             onViewMeetups={() => setActiveTab('meetups')}
-            hasFanStory={!!fanStory}
           />
         );
     }

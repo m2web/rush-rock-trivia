@@ -1,5 +1,6 @@
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
+import { getClientIp } from '../utils/request';
 
 const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
 
@@ -131,19 +132,6 @@ const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 5;
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_SESSION_TURNS = 15;
-
-function getClientIp(request: Request): string {
-  const cfConnectingIp = request.headers.get('CF-Connecting-IP');
-  if (cfConnectingIp && cfConnectingIp.trim()) {
-    return cfConnectingIp.trim();
-  }
-  const xForwardedFor = request.headers.get('X-Forwarded-For');
-  if (xForwardedFor) {
-    const firstIp = xForwardedFor.split(',')[0].trim();
-    if (firstIp) return firstIp;
-  }
-  return 'unknown-ip';
-}
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
