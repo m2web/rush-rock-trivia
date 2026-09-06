@@ -128,7 +128,7 @@ VALUES
   'Riverfront patio gathering steps away from Heritage Bank Center. Rush trivia, craft taps, and fan prize giveaways.',
   'Ohio Valley Rush Fanatics',
   'https://rush.com/tour',
-  'tailgate',
+  'pub_crawl',
   'approved'
 ),
 (

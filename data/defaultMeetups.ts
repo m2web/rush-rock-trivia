@@ -145,7 +145,7 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     description: 'Riverfront patio gathering steps away from Heritage Bank Center. Rush trivia, craft taps, and fan prize giveaways.',
     organizer_name: 'Ohio Valley Rush Fanatics',
     rsvp_link: 'https://rush.com/tour',
-    category: 'tailgate',
+    category: 'pub_crawl',
     status: 'approved'
   },
   {
