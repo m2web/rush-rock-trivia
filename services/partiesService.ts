@@ -1,7 +1,9 @@
 // Client service for querying and submitting Rush 2026 Tour Fan Meetups & Gatherings
 
-export { Meetup, DEFAULT_MEETUPS } from '../data/defaultMeetups';
-import { Meetup, DEFAULT_MEETUPS } from '../data/defaultMeetups';
+export type { Meetup } from '../data/defaultMeetups';
+export { DEFAULT_MEETUPS } from '../data/defaultMeetups';
+import type { Meetup } from '../data/defaultMeetups';
+import { DEFAULT_MEETUPS } from '../data/defaultMeetups';
 
 export interface PartiesResponse {
   detectedLocation: {

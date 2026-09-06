@@ -4,8 +4,9 @@
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL } from '../constants';
 
-import { Meetup, DEFAULT_MEETUPS } from '../../data/defaultMeetups';
-export { Meetup };
+import type { Meetup } from '../../data/defaultMeetups';
+import { DEFAULT_MEETUPS } from '../../data/defaultMeetups';
+export type { Meetup };
 
 // Helper: Haversine distance in miles
 function calculateDistanceMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -243,10 +244,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const body = (await context.request.json()) as Partial<Meetup>;
 
-    // Validate required fields
-    if (!body.name || !body.tour_city || !body.venue_name || !body.event_date) {
+    // Validate required fields (reject empty strings or whitespace-only values)
+    if (!body.name?.trim() || !body.tour_city?.trim() || !body.venue_name?.trim() || !body.event_date?.trim()) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: name, tour_city, venue_name, and event_date are required.' }),
+        JSON.stringify({ error: 'Missing required fields: name, tour_city, venue_name, and event_date are required and cannot be empty.' }),
         { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
       );
     }

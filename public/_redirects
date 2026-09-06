@@ -1,0 +1,3 @@
+# Cloudflare Pages 301 Redirects
+/tours.html /cities.html 301
+/tours /cities.html 301
