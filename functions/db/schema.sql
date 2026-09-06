@@ -18,6 +18,6 @@ CREATE TABLE IF NOT EXISTS meetups (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_meetups_city ON meetups(tour_city);
+CREATE INDEX IF NOT EXISTS idx_meetups_city ON meetups(tour_city COLLATE NOCASE);
 CREATE INDEX IF NOT EXISTS idx_meetups_date ON meetups(event_date);
 CREATE INDEX IF NOT EXISTS idx_meetups_status ON meetups(status);

@@ -347,10 +347,15 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
 
       {/* SUBMIT MEETUP MODAL */}
       {isSubmitModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="submit-meetup-modal-title"
+        >
           <div className="bg-gray-900 border border-gray-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
-              <h3 className="text-xl font-bold text-white">Post a Rush Tour Gathering</h3>
+              <h3 id="submit-meetup-modal-title" className="text-xl font-bold text-white">Post a Rush Tour Gathering</h3>
               <button
                 onClick={() => setIsSubmitModalOpen(false)}
                 aria-label="Close modal"

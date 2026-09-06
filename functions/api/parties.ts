@@ -73,7 +73,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       const params: any[] = ['approved'];
 
       if (queryCity) {
-        query += ' AND LOWER(tour_city) = LOWER(?)';
+        query += ' AND tour_city = ? COLLATE NOCASE';
         params.push(queryCity);
       }
 
