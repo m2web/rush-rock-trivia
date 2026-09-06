@@ -91,9 +91,12 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
       const res = await submitTourParty(formData);
       setSubmitSuccess(res.message || 'Meetup submitted!');
       setIsSubmitModalOpen(false);
-      // Only prepend to visible list if the meetup was approved (not pending review)
+      // Only prepend to visible list if the meetup was approved (not pending review) AND matches current city filter
       if (res.meetup && res.meetup.status === 'approved') {
-        setParties(prev => [res.meetup, ...prev]);
+        const matchesCity = selectedCity === 'All Cities' || res.meetup.tour_city.toLowerCase() === selectedCity.toLowerCase();
+        if (matchesCity) {
+          setParties(prev => [res.meetup, ...prev]);
+        }
       }
       // Reset form
       setFormData({
@@ -188,7 +191,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
       {submitSuccess && (
         <div className="mb-6 p-3 rounded-xl bg-green-900/50 border border-green-500/50 text-green-300 text-sm flex justify-between items-center">
           <span>✅ {submitSuccess}</span>
-          <button onClick={() => setSubmitSuccess(null)} className="text-green-400 hover:text-white font-bold ml-2">✕</button>
+          <button onClick={() => setSubmitSuccess(null)} aria-label="Dismiss notification" className="text-green-400 hover:text-white font-bold ml-2 cursor-pointer">✕</button>
         </div>
       )}
 
@@ -350,6 +353,8 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
               <h3 className="text-xl font-bold text-white">Post a Rush Tour Gathering</h3>
               <button
                 onClick={() => setIsSubmitModalOpen(false)}
+                aria-label="Close modal"
+                title="Close"
                 className="text-gray-400 hover:text-white font-bold text-lg cursor-pointer"
               >
                 ✕

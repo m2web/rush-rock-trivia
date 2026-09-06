@@ -1,5 +1,5 @@
-// Canonical source of truth for Rush 2026 Tour Fan Meetups & Gatherings
-// Used by both client services and Cloudflare Pages Functions
+// Baseline fallback seed dataset for Rush 2026 Tour Fan Meetups & Gatherings
+// Used as in-memory fallback for client services and Cloudflare Pages Functions when D1 is offline
 
 export interface Meetup {
   id: string;

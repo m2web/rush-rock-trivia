@@ -115,6 +115,8 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
 }
 
 // In-memory sliding-window IP rate limiter (max 5 requests per 60 seconds per IP)
+// Note: In-memory Map provides lightweight, low-latency edge rate limiting per Cloudflare isolate.
+// For strict cross-isolate guarantees, a persistent store (e.g., KV or Durable Object) can be used.
 const ipRequestLogs = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 5;

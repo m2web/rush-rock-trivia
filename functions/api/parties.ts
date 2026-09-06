@@ -165,6 +165,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 };
 
 // In-memory sliding-window IP rate limiter for meetup submissions (max 3 submissions per 60 seconds per IP)
+// Note: In-memory Map provides lightweight, low-latency edge rate limiting per Cloudflare isolate.
+// For strict cross-isolate guarantees, a persistent store (e.g., KV or Durable Object) can be used.
 const postIpRequestLogs = new Map<string, number[]>();
 const POST_RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_POSTS_PER_WINDOW = 3;
