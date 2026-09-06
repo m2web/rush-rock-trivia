@@ -154,9 +154,32 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
         </div>
         <button
           onClick={() => setIsSubmitModalOpen(true)}
-          className="self-start sm:self-auto px-5 py-2.5 rounded-full bg-amber-600 hover:bg-amber-500 text-black font-extrabold text-xs uppercase tracking-wider transition transform hover:scale-105 shadow-lg shadow-amber-900/40 cursor-pointer"
+          className="self-start sm:self-auto px-5 py-2.5 rounded-full bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-extrabold text-xs uppercase tracking-wider transition transform hover:scale-105 shadow-lg shadow-red-900/40 cursor-pointer"
         >
-          + Post a Gathering
+          + Create Actual Event
+        </button>
+      </div>
+
+      {/* Sample / Test Data Notice & Call to Create Real Events */}
+      <div className="mb-6 p-4 rounded-xl bg-amber-950/40 border-2 border-dashed border-amber-500/60 text-xs text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">🧪</span>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold uppercase tracking-wide text-amber-300 text-[11px] bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40">
+                Community Demonstration & Sample Data
+              </span>
+            </div>
+            <p className="mt-1 text-gray-300 text-xs leading-relaxed">
+              Dates and gatherings listed below are currently <strong>sample test demonstrations</strong> while awaiting official tour announcements. Fans are invited to create and submit <strong>actual fan events</strong>!
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => setIsSubmitModalOpen(true)}
+          className="whitespace-nowrap px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-md transition transform hover:scale-105 cursor-pointer"
+        >
+          ✨ Create Actual Event →
         </button>
       </div>
 
@@ -253,6 +276,15 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-800 text-gray-300">
                       {party.category?.replace('_', ' ')}
                     </span>
+                    {party.id.startsWith('meetup-') ? (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-green-600/30 border border-green-500/50 text-green-300">
+                        ⭐ Actual Event
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-600/20 border border-amber-500/30 text-amber-300/90" title="Demonstration sample data">
+                        🧪 Sample Demo
+                      </span>
+                    )}
                     {party.distance_miles !== undefined && (
                       <span className="text-[10px] text-gray-400 font-medium">
                         • {party.distance_miles} miles away
@@ -354,13 +386,16 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
           aria-labelledby="submit-meetup-modal-title"
         >
           <div className="bg-gray-900 border border-gray-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
-              <h3 id="submit-meetup-modal-title" className="text-xl font-bold text-white">Post a Rush Tour Gathering</h3>
+            <div className="flex justify-between items-start mb-4 border-b border-gray-800 pb-3">
+              <div>
+                <h3 id="submit-meetup-modal-title" className="text-xl font-bold text-white">Create an Actual Fan Event</h3>
+                <p className="text-xs text-amber-300/90 mt-0.5">Post a real tailgate, tribute gig, pub crawl, or listening party for fellow fans.</p>
+              </div>
               <button
                 onClick={() => setIsSubmitModalOpen(false)}
                 aria-label="Close modal"
                 title="Close"
-                className="text-gray-400 hover:text-white font-bold text-lg cursor-pointer"
+                className="text-gray-400 hover:text-white font-bold text-lg cursor-pointer ml-3"
               >
                 ✕
               </button>
@@ -498,9 +533,9 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-black font-bold shadow-lg transition cursor-pointer"
+                  className="px-6 py-2 rounded-lg bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold shadow-lg transition cursor-pointer"
                 >
-                  {isSubmitting ? 'Posting...' : 'Publish Meetup'}
+                  {isSubmitting ? 'Posting...' : 'Publish Actual Event'}
                 </button>
               </div>
             </form>
