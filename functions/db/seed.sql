@@ -1,13 +1,16 @@
 -- Seed data for Rush 2026-2027 "Fifty Something" Tour Fan Parties & Meetups
 -- Includes original tour stops + newly added Fall 2026 arena dates
 
-INSERT OR IGNORE INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)
+-- Marked as is_example = 1 for demonstration/example purposes
+
+INSERT INTO meetups (id, name, tour_city, venue_name, venue_url, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status, is_example)
 VALUES
 (
   'toronto-01',
-  'RushCon Toronto Pre-Show Gathering',
+  '[Example] RushCon Toronto Pre-Show Gathering',
   'Toronto',
   'The Loose Moose Tap & Grill',
+  'https://theloosemoose.ca',
   '146 Front St W, Toronto, ON M5J 1G2',
   43.6456,
   -79.3849,
@@ -17,13 +20,15 @@ VALUES
   'RushCon Fan Club',
   'https://rushcon.org/toronto2026',
   'tailgate',
-  'approved'
+  'approved',
+  1
 ),
 (
   'toronto-02',
-  'YYZ Tribute Band Afterparty',
+  '[Example] YYZ Tribute Band Afterparty',
   'Toronto',
   'Horseshoe Tavern',
+  'https://horseshoetavern.com',
   '370 Queen St W, Toronto, ON M5V 2A2',
   43.6499,
   -79.3957,
@@ -33,13 +38,15 @@ VALUES
   'Toronto Rush Faithful',
   'https://horseshoetavern.com/events',
   'tribute_band',
-  'approved'
+  'approved',
+  1
 ),
 (
   'chicago-01',
-  'Windy City Pre-Show Tailgate & BBQ',
+  '[Example] Windy City Pre-Show Tailgate & BBQ',
   'Chicago',
   'United Center Lot C',
+  'https://www.unitedcenter.com',
   '1901 W Madison St, Chicago, IL 60612',
   41.8807,
   -87.6742,
@@ -49,13 +56,15 @@ VALUES
   'Midwest Rush Mob',
   'https://facebook.com/groups/midwestrushfans',
   'tailgate',
-  'approved'
+  'approved',
+  1
 ),
 (
   'nyc-01',
-  'Subdivisions Pub Crawl NYC',
+  '[Example] Subdivisions Pub Crawl NYC',
   'New York',
   'The Pennsy Food Hall & Bar',
+  'https://www.thepennsy.nyc',
   '2 Pennsylvania Plaza, New York, NY 10121',
   40.7505,
   -73.9934,
@@ -65,13 +74,15 @@ VALUES
   'NYC Rush Meetup Group',
   'https://meetup.com/nyc-rush-fans',
   'pub_crawl',
-  'approved'
+  'approved',
+  1
 ),
 (
   'cleveland-01',
-  'Rock & Roll Hall of Fame Neil Peart Tribute Meetup',
+  '[Example] Rock & Roll Hall of Fame Neil Peart Tribute Meetup',
   'Cleveland',
   'Rock & Roll Hall of Fame Plaza',
+  'https://www.rockhall.com',
   '1100 E 9th St, Cleveland, OH 44114',
   41.5085,
   -81.6954,
@@ -81,13 +92,15 @@ VALUES
   'Cleveland Rush Section',
   'https://rockhall.com/events',
   'listening_party',
-  'approved'
+  'approved',
+  1
 ),
 (
   'houston-01',
-  'Space City Rush Tailgate (New Tour Date)',
+  '[Example] Space City Rush Tailgate (New Tour Date)',
   'Houston',
   'Toyota Center Plaza',
+  'https://www.toyotacenter.com',
   '1510 Polk St, Houston, TX 77002',
   29.7522,
   -95.3621,
@@ -97,13 +110,15 @@ VALUES
   'Lone Star Rush Society',
   'https://rush.com/tour',
   'tailgate',
-  'approved'
+  'approved',
+  1
 ),
 (
   'stlouis-01',
-  'Gateway Arch Fan Gathering (New Tour Date)',
+  '[Example] Gateway Arch Fan Gathering (New Tour Date)',
   'St. Louis',
   'Enterprise Center Atrium & Beer Garden',
+  'https://www.enterprisecenter.com',
   '1401 Clark Ave, St. Louis, MO 63103',
   38.6268,
   -90.2026,
@@ -113,13 +128,15 @@ VALUES
   'Gateway Rush Legion',
   'https://rush.com/tour',
   'pub_crawl',
-  'approved'
+  'approved',
+  1
 ),
 (
   'cincinnati-01',
-  'Queen City Riverfront Rush Rally (New Tour Date)',
+  '[Example] Queen City Riverfront Rush Rally (New Tour Date)',
   'Cincinnati',
   'The Banks on Freedom Way',
+  'https://thebankscincy.com',
   '100 Joe Nuxhall Way, Cincinnati, OH 45202',
   39.0975,
   -84.5090,
@@ -129,13 +146,15 @@ VALUES
   'Ohio Valley Rush Fanatics',
   'https://rush.com/tour',
   'pub_crawl',
-  'approved'
+  'approved',
+  1
 ),
 (
   'pittsburgh-01',
-  'Steel City Working Men Meetup (New Tour Date)',
+  '[Example] Steel City Working Men Meetup (New Tour Date)',
   'Pittsburgh',
   'Souper Bowl Bar & Grill (Across from PPG Paints Arena)',
+  'https://www.ppgpaintsarena.com',
   '910 5th Ave, Pittsburgh, PA 15219',
   40.4395,
   -79.9893,
@@ -145,13 +164,15 @@ VALUES
   'Pittsburgh Rush Coalition',
   'https://rush.com/tour',
   'pub_crawl',
-  'approved'
+  'approved',
+  1
 ),
 (
   'la-01',
-  'Southern California Signals Tailgate',
+  '[Example] Southern California Signals Tailgate',
   'Los Angeles',
   'Kia Forum Parking Lot E',
+  'https://thekiaforum.com',
   '3900 W Manchester Blvd, Inglewood, CA 90305',
   33.9583,
   -118.3419,
@@ -161,13 +182,15 @@ VALUES
   'SoCal Rush Family',
   'https://rush.com/tour',
   'tailgate',
-  'approved'
+  'approved',
+  1
 ),
 (
   'boston-01',
-  'Causeway Street Fan Crawl',
+  '[Example] Causeway Street Fan Crawl',
   'Boston',
   'The Fours Bar & Hub on Causeway',
+  'https://thehuboncauseway.com',
   '52 Causeway St, Boston, MA 02114',
   42.3662,
   -71.0621,
@@ -177,5 +200,22 @@ VALUES
   'New England Rush Syndicate',
   'https://rush.com/tour',
   'pub_crawl',
-  'approved'
-);
+  'approved',
+  1
+)
+ON CONFLICT(id) DO UPDATE SET
+  name = excluded.name,
+  tour_city = excluded.tour_city,
+  venue_name = excluded.venue_name,
+  venue_url = excluded.venue_url,
+  address = excluded.address,
+  latitude = excluded.latitude,
+  longitude = excluded.longitude,
+  event_date = excluded.event_date,
+  start_time = excluded.start_time,
+  description = excluded.description,
+  organizer_name = excluded.organizer_name,
+  rsvp_link = excluded.rsvp_link,
+  category = excluded.category,
+  status = excluded.status,
+  is_example = excluded.is_example;

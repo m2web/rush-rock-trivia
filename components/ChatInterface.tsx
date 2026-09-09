@@ -19,8 +19,8 @@ const MAX_INPUT_LENGTH = 500;
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, onViewMeetups, initialPrompt = '' }) => {
   const initialGreeting = fanStory.trim()
-    ? `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush talk or 2026-2027 tour details! 🎸`
-    : `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you about the holy triumvirate and the upcoming 2026-2027 "Fifty Something" Tour! 🎸 Ask me anything about tour cities, pre-show tailgates, venues, or Rush lore!`;
+    ? `Hey there! I'm The Tour Archivist — a fellow Rush fan thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush history or 2026-2027 tour details! 🎸`
+    : `Hey there! I'm The Tour Archivist — thrilled to chat with you about the holy triumvirate and the upcoming 2026-2027 "Fifty Something" Tour! 🎸 Ask me anything about tour cities, pre-show tailgates, venues, or Rush lore!`;
 
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'llm', text: initialGreeting }
@@ -61,7 +61,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, o
       const llmResponse = await sendChatMessage(text, fanStory, nextTurnCount);
       setMessages(prev => [...prev, { sender: 'llm', text: llmResponse }]);
     } catch (err) {
-      const errText = err instanceof Error ? err.message : 'Sorry, there was an error contacting the AI.';
+      const errText = err instanceof Error ? err.message : 'Sorry, there was an error contacting The Tour Archivist.';
       setErrorMessage(errText);
       setMessages(prev => [...prev, { sender: 'llm', text: `[Error]: ${errText}` }]);
     } finally {
@@ -80,7 +80,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, o
       {/* Header Info & Turn Counter */}
       <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 mb-2 bg-gray-900 rounded text-xs text-gray-400 border border-gray-800">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-gray-300">💬 Tour Concierge</span>
+          <span className="font-bold text-gray-300">💬 The Tour Archivist</span>
           {onViewMeetups && (
             <button
               onClick={onViewMeetups}

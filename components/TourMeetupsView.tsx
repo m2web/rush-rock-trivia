@@ -44,6 +44,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
     name: '',
     tour_city: 'Cincinnati',
     venue_name: '',
+    venue_url: '',
     address: '',
     event_date: '2026-10-23',
     start_time: '16:00',
@@ -103,6 +104,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
         name: '',
         tour_city: 'Cincinnati',
         venue_name: '',
+        venue_url: '',
         address: '',
         event_date: '2026-10-23',
         start_time: '16:00',
@@ -136,7 +138,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
             onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026-2027 tour?")}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/50 text-purple-200 text-xs font-bold transition shadow cursor-pointer"
           >
-            💬 Ask Synthetic Rush Fan →
+            💬 Ask Tour Archivist →
           </button>
         )}
       </div>
@@ -160,18 +162,18 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
         </button>
       </div>
 
-      {/* Sample / Test Data Notice & Call to Create Real Events */}
+      {/* Example Data Notice & Call to Create Real Events */}
       <div className="mb-6 p-4 rounded-xl bg-amber-950/40 border-2 border-dashed border-amber-500/60 text-xs text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
         <div className="flex items-start gap-3">
-          <span className="text-2xl">🧪</span>
+          <span className="text-2xl">📋</span>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold uppercase tracking-wide text-amber-300 text-[11px] bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40">
-                Community Demonstration & Sample Data
+                Community Demonstration & Example Data
               </span>
             </div>
             <p className="mt-1 text-gray-300 text-xs leading-relaxed">
-              Dates and gatherings listed below are currently <strong>sample test demonstrations</strong> while awaiting official tour announcements. Fans are invited to create and submit <strong>actual fan events</strong>!
+              Meetups marked as <strong className="text-amber-300">🧪 Example Data</strong> are community demonstrations. Fans and organizers are encouraged to submit <strong>actual fan events</strong>!
             </p>
           </div>
         </div>
@@ -187,7 +189,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
       <div className="mb-6 p-4 rounded-xl bg-gray-950/80 border border-amber-500/30 text-xs text-gray-300 space-y-3 shadow-inner">
         <div className="flex items-center justify-between">
           <h3 className="text-amber-400 font-bold text-sm flex items-center gap-1.5">
-            <span>🧭</span> Directions: How Tour Meetups & AI Concierge Work
+            <span>🧭</span> Directions: How Tour Meetups & The Archivist Work
           </h3>
           <span className="text-[11px] text-gray-400 bg-gray-900 px-2.5 py-0.5 rounded-full border border-gray-800">No login required to view</span>
         </div>
@@ -200,8 +202,8 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
             Click any city button below to see tailgates, pub crawls, and venue locations.
           </div>
           <div className="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
-            <strong className="text-purple-300 block mb-1">2. Ask the Tour Concierge</strong>
-            Click <strong className="text-purple-200">"Ask Synthetic Fan"</strong> anytime to get instant AI answers on parking, venues, and local advice—no origin story required.
+            <strong className="text-purple-300 block mb-1">2. Ask The Tour Archivist</strong>
+            Click <strong className="text-purple-200">"Ask Tour Archivist"</strong> anytime to get instant answers on parking, venues, and local advice—no origin story required.
           </div>
           <div className="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
             <strong className="text-green-300 block mb-1">3. Host a Meetup?</strong>
@@ -276,13 +278,13 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-800 text-gray-300">
                       {party.category?.replace('_', ' ')}
                     </span>
-                    {party.id.startsWith('meetup-') ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-green-600/30 border border-green-500/50 text-green-300">
-                        ⭐ Actual Event
+                    {party.is_example === 1 || party.is_example === true || party.name.startsWith('[Example]') || !party.id.startsWith('meetup-') ? (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-600/20 border border-amber-500/30 text-amber-300/90" title="Demonstration example data">
+                        🧪 Example Data
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-600/20 border border-amber-500/30 text-amber-300/90" title="Demonstration sample data">
-                        🧪 Sample Demo
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-green-600/30 border border-green-500/50 text-green-300">
+                        ⭐ Actual Event
                       </span>
                     )}
                     {party.distance_miles !== undefined && (
@@ -303,7 +305,20 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
               <div className="text-xs text-gray-300 mb-3 flex items-start gap-1.5">
                 <span className="text-amber-400">📍</span>
                 <span>
-                  <strong>{party.venue_name}</strong>
+                  {party.venue_url && isSafeUrl(party.venue_url) ? (
+                    <a
+                      href={party.venue_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-amber-300 hover:text-amber-200 underline decoration-amber-500/50 hover:decoration-amber-300 transition-colors inline-flex items-center gap-1"
+                      title="Visit venue website"
+                    >
+                      {party.venue_name}
+                      <span className="text-[10px] text-amber-400">↗</span>
+                    </a>
+                  ) : (
+                    <strong>{party.venue_name}</strong>
+                  )}
                   {party.address ? ` — ${party.address}` : ''}
                 </span>
               </div>
@@ -329,9 +344,9 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                         )
                       }
                       className="px-3 py-1.5 rounded-lg bg-purple-900/40 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 text-xs font-semibold transition cursor-pointer"
-                      title="Ask the Synthetic Rush Fan about this event"
+                      title="Ask The Tour Archivist about this event"
                     >
-                      💬 Ask Synthetic Fan
+                      💬 Ask Archivist
                     </button>
                   )}
                   {party.rsvp_link && isSafeUrl(party.rsvp_link) && (
@@ -355,7 +370,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
       <div className="mt-8 p-4 rounded-xl bg-gray-950/80 border border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
         <div>
           <div className="text-xs text-gray-400">Have questions about tour dates, venues, or local gatherings?</div>
-          <div className="text-sm font-bold text-white">Ask the Synthetic Rush Fan Concierge</div>
+          <div className="text-sm font-bold text-white">Ask The Tour Archivist</div>
         </div>
         <div className="flex items-center gap-2">
           {onAskFan && (
@@ -363,7 +378,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
               onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026-2027 tour?")}
               className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow cursor-pointer"
             >
-              💬 Chat with Synthetic Fan
+              💬 Chat with Tour Archivist
             </button>
           )}
           {onBack && (
@@ -484,6 +499,17 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                   placeholder="e.g. 100 Joe Nuxhall Way, Cincinnati, OH"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full p-2.5 rounded-lg bg-gray-950 border border-gray-700 text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-bold mb-1">Venue Website URL (Optional)</label>
+                <input
+                  type="url"
+                  placeholder="e.g. https://thebankscincy.com"
+                  value={formData.venue_url}
+                  onChange={(e) => setFormData({ ...formData, venue_url: e.target.value })}
                   className="w-full p-2.5 rounded-lg bg-gray-950 border border-gray-700 text-white focus:outline-none focus:border-amber-500"
                 />
               </div>

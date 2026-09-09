@@ -19,6 +19,7 @@ function formatMeetupsForPrompt(meetups: Array<{
   venue_name: string;
   name: string;
   start_time?: string | null;
+  is_example?: boolean | number | null;
 }>): string {
   return meetups.map((m) => {
     const date = sanitizePromptField(m.event_date);
@@ -26,13 +27,21 @@ function formatMeetupsForPrompt(meetups: Array<{
     const venue = sanitizePromptField(m.venue_name);
     const name = sanitizePromptField(m.name);
     const time = sanitizePromptField(m.start_time);
-    return `- ${date} (${city} @ ${venue}): "${name}" [${time}]`;
+    const isExample = m.is_example === 1 || m.is_example === true || (m.name && m.name.startsWith('[Example]'));
+    const tag = isExample ? ' [Community Example Demonstration]' : ' [Confirmed Fan Event]';
+    return `- ${date} (${city} @ ${venue}): "${name}" [${time}]${tag}`;
   }).join('\n');
 }
 
 function getSystemPrompt(fanStory: string, meetupsContext?: string): string {
   const sanitizedStory = sanitizePromptField(fanStory);
-  return `You are a Synthetic Rush Fan — an AI that absolutely loves Rush, enjoys deep-cut band discussions, and acts as a helpful "Tour Concierge" for the 2026-2027 "Fifty Something" Tour. You are enthusiastic, deeply knowledgeable, and transparent about being synthetic. The user is a real Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers brief, warm, and concise — typically 2-3 sentences.
+  return `You are The Tour Archivist — a passionate fellow fan and curator who deeply loves Rush, enjoys deep-cut band discussions, and helps fans navigate the 2026-2027 "Fifty Something" Tour. You are enthusiastic, welcoming, and deeply knowledgeable about the band's history and tour stops. The user is a fellow Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond as an expert fellow fan, referencing their story if relevant. Keep your answers brief, warm, and concise — typically 2-3 sentences.
+
+CIVILITY & COMMUNITY STANDARDS:
+- Always maintain an impeccably polite, respectful, and civil tone. Treat every fan with kindness and courtesy.
+- Never engage in hostility, insults, mockery, personal attacks, or vulgarity.
+- If a user expresses frustration, disagreement, or raises controversial or uncivil topics, respond gracefully, de-escalate calmly, and gently steer the conversation back to the music, tour logistics, or shared appreciation of Rush.
+- Keep the community atmosphere inclusive and welcoming for fans of all eras.
 
 Focus the conversation on deep-dive Rush trivia, recording lore, AND helping fans find 2026-2027 tour gatherings, pre-show tailgates, and tribute band afterparties.
 
@@ -227,7 +236,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (context.env.DB) {
       try {
         const dbResult = await context.env.DB.prepare(
-          'SELECT name, tour_city, venue_name, event_date, start_time, category FROM meetups WHERE status = ? ORDER BY event_date ASC LIMIT 25'
+          'SELECT name, tour_city, venue_name, event_date, start_time, category, is_example FROM meetups WHERE status = ? ORDER BY event_date ASC LIMIT 25'
         ).bind('approved').all<any>();
         if (dbResult.results && dbResult.results.length > 0) {
           meetupsContext = formatMeetupsForPrompt(dbResult.results);

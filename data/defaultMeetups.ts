@@ -6,6 +6,7 @@ export interface Meetup {
   name: string;
   tour_city: string;
   venue_name: string;
+  venue_url?: string | null;
   address?: string | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -17,14 +18,16 @@ export interface Meetup {
   category?: 'tailgate' | 'pub_crawl' | 'tribute_band' | 'listening_party' | null;
   status?: 'approved' | 'pending_review' | null;
   distance_miles?: number | null;
+  is_example?: boolean | number | null;
 }
 
 export const DEFAULT_MEETUPS: Meetup[] = [
   {
     id: 'toronto-01',
-    name: 'RushCon Toronto Pre-Show Gathering',
+    name: '[Example] RushCon Toronto Pre-Show Gathering',
     tour_city: 'Toronto',
     venue_name: 'The Loose Moose Tap & Grill',
+    venue_url: 'https://theloosemoose.ca',
     address: '146 Front St W, Toronto, ON M5J 1G2',
     latitude: 43.6456,
     longitude: -79.3849,
@@ -34,13 +37,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'RushCon Fan Club',
     rsvp_link: 'https://rushcon.org/toronto2026',
     category: 'tailgate',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'toronto-02',
-    name: 'YYZ Tribute Band Afterparty',
+    name: '[Example] YYZ Tribute Band Afterparty',
     tour_city: 'Toronto',
     venue_name: 'Horseshoe Tavern',
+    venue_url: 'https://horseshoetavern.com',
     address: '370 Queen St W, Toronto, ON M5V 2A2',
     latitude: 43.6499,
     longitude: -79.3957,
@@ -50,13 +55,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'Toronto Rush Faithful',
     rsvp_link: 'https://horseshoetavern.com/events',
     category: 'tribute_band',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'chicago-01',
-    name: 'Windy City Pre-Show Tailgate & BBQ',
+    name: '[Example] Windy City Pre-Show Tailgate & BBQ',
     tour_city: 'Chicago',
     venue_name: 'United Center Lot C',
+    venue_url: 'https://www.unitedcenter.com',
     address: '1901 W Madison St, Chicago, IL 60612',
     latitude: 41.8807,
     longitude: -87.6742,
@@ -66,13 +73,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'Midwest Rush Mob',
     rsvp_link: 'https://facebook.com/groups/midwestrushfans',
     category: 'tailgate',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'nyc-01',
-    name: 'Subdivisions Pub Crawl NYC',
+    name: '[Example] Subdivisions Pub Crawl NYC',
     tour_city: 'New York',
     venue_name: 'The Pennsy Food Hall & Bar',
+    venue_url: 'https://www.thepennsy.nyc',
     address: '2 Pennsylvania Plaza, New York, NY 10121',
     latitude: 40.7505,
     longitude: -73.9934,
@@ -82,13 +91,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'NYC Rush Meetup Group',
     rsvp_link: 'https://meetup.com/nyc-rush-fans',
     category: 'pub_crawl',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'cleveland-01',
-    name: 'Rock & Roll Hall of Fame Neil Peart Tribute Meetup',
+    name: '[Example] Rock & Roll Hall of Fame Neil Peart Tribute Meetup',
     tour_city: 'Cleveland',
     venue_name: 'Rock & Roll Hall of Fame Plaza',
+    venue_url: 'https://www.rockhall.com',
     address: '1100 E 9th St, Cleveland, OH 44114',
     latitude: 41.5085,
     longitude: -81.6954,
@@ -98,13 +109,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'Cleveland Rush Section',
     rsvp_link: 'https://rockhall.com/events',
     category: 'listening_party',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'houston-01',
-    name: 'Space City Rush Tailgate (New Tour Date)',
+    name: '[Example] Space City Rush Tailgate (New Tour Date)',
     tour_city: 'Houston',
     venue_name: 'Toyota Center Plaza',
+    venue_url: 'https://www.toyotacenter.com',
     address: '1510 Polk St, Houston, TX 77002',
     latitude: 29.7522,
     longitude: -95.3621,
@@ -114,13 +127,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'Lone Star Rush Society',
     rsvp_link: 'https://rush.com/tour',
     category: 'tailgate',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'stlouis-01',
-    name: 'Gateway Arch Fan Gathering (New Tour Date)',
+    name: '[Example] Gateway Arch Fan Gathering (New Tour Date)',
     tour_city: 'St. Louis',
     venue_name: 'Enterprise Center Atrium & Beer Garden',
+    venue_url: 'https://www.enterprisecenter.com',
     address: '1401 Clark Ave, St. Louis, MO 63103',
     latitude: 38.6268,
     longitude: -90.2026,
@@ -130,13 +145,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'Gateway Rush Legion',
     rsvp_link: 'https://rush.com/tour',
     category: 'pub_crawl',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'cincinnati-01',
-    name: 'Queen City Riverfront Rush Rally (New Tour Date)',
+    name: '[Example] Queen City Riverfront Rush Rally (New Tour Date)',
     tour_city: 'Cincinnati',
     venue_name: 'The Banks on Freedom Way',
+    venue_url: 'https://thebankscincy.com',
     address: '100 Joe Nuxhall Way, Cincinnati, OH 45202',
     latitude: 39.0975,
     longitude: -84.5090,
@@ -146,13 +163,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'Ohio Valley Rush Fanatics',
     rsvp_link: 'https://rush.com/tour',
     category: 'pub_crawl',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'pittsburgh-01',
-    name: 'Steel City Working Men Meetup (New Tour Date)',
+    name: '[Example] Steel City Working Men Meetup (New Tour Date)',
     tour_city: 'Pittsburgh',
     venue_name: 'Souper Bowl Bar & Grill (Across from PPG Paints Arena)',
+    venue_url: 'https://www.ppgpaintsarena.com',
     address: '910 5th Ave, Pittsburgh, PA 15219',
     latitude: 40.4395,
     longitude: -79.9893,
@@ -162,13 +181,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'Pittsburgh Rush Coalition',
     rsvp_link: 'https://rush.com/tour',
     category: 'pub_crawl',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'la-01',
-    name: 'Southern California Signals Tailgate',
+    name: '[Example] Southern California Signals Tailgate',
     tour_city: 'Los Angeles',
     venue_name: 'Kia Forum Parking Lot E',
+    venue_url: 'https://thekiaforum.com',
     address: '3900 W Manchester Blvd, Inglewood, CA 90305',
     latitude: 33.9583,
     longitude: -118.3419,
@@ -178,13 +199,15 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'SoCal Rush Family',
     rsvp_link: 'https://rush.com/tour',
     category: 'tailgate',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   },
   {
     id: 'boston-01',
-    name: 'Causeway Street Fan Crawl',
+    name: '[Example] Causeway Street Fan Crawl',
     tour_city: 'Boston',
     venue_name: 'The Fours Bar & Hub on Causeway',
+    venue_url: 'https://thehuboncauseway.com',
     address: '52 Causeway St, Boston, MA 02114',
     latitude: 42.3662,
     longitude: -71.0621,
@@ -194,6 +217,7 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     organizer_name: 'New England Rush Syndicate',
     rsvp_link: 'https://rush.com/tour',
     category: 'pub_crawl',
-    status: 'approved'
+    status: 'approved',
+    is_example: 1
   }
 ];
