@@ -173,6 +173,7 @@ const MAX_POSTS_PER_WINDOW = 3;
 
 const MAX_NAME_LENGTH = 100;
 const MAX_VENUE_LENGTH = 100;
+const MAX_VENUE_URL_LENGTH = 250;
 const MAX_CITY_LENGTH = 50;
 const MAX_DESCRIPTION_LENGTH = 1000;
 const MAX_ORGANIZER_LENGTH = 100;
@@ -399,6 +400,33 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       }
     }
 
+    // Validate venue_url format if provided to prevent javascript: / data: XSS vectors
+    let validatedVenueUrl: string | undefined = undefined;
+    if (body.venue_url !== undefined && body.venue_url !== null) {
+      if (typeof body.venue_url !== 'string') {
+        return new Response(
+          JSON.stringify({ error: 'Invalid field: venue_url must be a string if provided.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+      const trimmedVenueUrl = body.venue_url.trim();
+      if (trimmedVenueUrl) {
+        if (trimmedVenueUrl.length > MAX_VENUE_URL_LENGTH) {
+          return new Response(
+            JSON.stringify({ error: 'Payload exceeds maximum field character limits.' }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          );
+        }
+        if (!isValidHttpUrl(trimmedVenueUrl)) {
+          return new Response(
+            JSON.stringify({ error: 'Invalid venue_url. Must be a valid HTTP or HTTPS URL.' }),
+            { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+          );
+        }
+        validatedVenueUrl = trimmedVenueUrl;
+      }
+    }
+
     // Validate latitude / longitude if provided
     let validatedLat: number | undefined = undefined;
     if (body.latitude !== undefined && body.latitude !== null && (body.latitude as unknown) !== '') {
@@ -472,6 +500,7 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       name: trimmedName,
       tour_city: trimmedCity,
       venue_name: trimmedVenue,
+      venue_url: validatedVenueUrl,
       address: trimmedAddress,
       latitude: validatedLat,
       longitude: validatedLon,
@@ -495,13 +524,14 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
 
     try {
       await context.env.DB.prepare(`
-        INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status, is_example)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        INSERT INTO meetups (id, name, tour_city, venue_name, venue_url, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status, is_example)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
       `).bind(
         newMeetup.id,
         newMeetup.name,
         newMeetup.tour_city,
         newMeetup.venue_name,
+        newMeetup.venue_url ?? null,
         newMeetup.address ?? null,
         newMeetup.latitude ?? null,
         newMeetup.longitude ?? null,
@@ -514,7 +544,7 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
         newMeetup.status ?? 'approved'
       ).run();
     } catch (dbErr: any) {
-      // Fallback for pre-migration schema if is_example column does not yet exist
+      // Fallback for pre-migration schema if venue_url or is_example column does not yet exist
       try {
         await context.env.DB.prepare(`
           INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)

@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS meetups (
   name TEXT NOT NULL,
   tour_city TEXT NOT NULL,
   venue_name TEXT NOT NULL,
+  venue_url TEXT,                      -- Venue website URL (optional)
   address TEXT,
   latitude REAL,
   longitude REAL,

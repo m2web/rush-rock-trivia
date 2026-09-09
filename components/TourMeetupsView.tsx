@@ -44,6 +44,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
     name: '',
     tour_city: 'Cincinnati',
     venue_name: '',
+    venue_url: '',
     address: '',
     event_date: '2026-10-23',
     start_time: '16:00',
@@ -103,6 +104,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
         name: '',
         tour_city: 'Cincinnati',
         venue_name: '',
+        venue_url: '',
         address: '',
         event_date: '2026-10-23',
         start_time: '16:00',
@@ -303,7 +305,20 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
               <div className="text-xs text-gray-300 mb-3 flex items-start gap-1.5">
                 <span className="text-amber-400">📍</span>
                 <span>
-                  <strong>{party.venue_name}</strong>
+                  {party.venue_url && isSafeUrl(party.venue_url) ? (
+                    <a
+                      href={party.venue_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-amber-300 hover:text-amber-200 underline decoration-amber-500/50 hover:decoration-amber-300 transition-colors inline-flex items-center gap-1"
+                      title="Visit venue website"
+                    >
+                      {party.venue_name}
+                      <span className="text-[10px] text-amber-400">↗</span>
+                    </a>
+                  ) : (
+                    <strong>{party.venue_name}</strong>
+                  )}
                   {party.address ? ` — ${party.address}` : ''}
                 </span>
               </div>
@@ -484,6 +499,17 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                   placeholder="e.g. 100 Joe Nuxhall Way, Cincinnati, OH"
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full p-2.5 rounded-lg bg-gray-950 border border-gray-700 text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-bold mb-1">Venue Website URL (Optional)</label>
+                <input
+                  type="url"
+                  placeholder="e.g. https://thebankscincy.com"
+                  value={formData.venue_url}
+                  onChange={(e) => setFormData({ ...formData, venue_url: e.target.value })}
                   className="w-full p-2.5 rounded-lg bg-gray-950 border border-gray-700 text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
