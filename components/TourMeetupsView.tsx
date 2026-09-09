@@ -160,18 +160,18 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
         </button>
       </div>
 
-      {/* Sample / Test Data Notice & Call to Create Real Events */}
+      {/* Example Data Notice & Call to Create Real Events */}
       <div className="mb-6 p-4 rounded-xl bg-amber-950/40 border-2 border-dashed border-amber-500/60 text-xs text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
         <div className="flex items-start gap-3">
-          <span className="text-2xl">🧪</span>
+          <span className="text-2xl">📋</span>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-extrabold uppercase tracking-wide text-amber-300 text-[11px] bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40">
-                Community Demonstration & Sample Data
+                Community Demonstration & Example Data
               </span>
             </div>
             <p className="mt-1 text-gray-300 text-xs leading-relaxed">
-              Dates and gatherings listed below are currently <strong>sample test demonstrations</strong> while awaiting official tour announcements. Fans are invited to create and submit <strong>actual fan events</strong>!
+              Meetups marked as <strong className="text-amber-300">🧪 Example Data</strong> are community demonstrations. Fans and organizers are encouraged to submit <strong>actual fan events</strong>!
             </p>
           </div>
         </div>
@@ -276,13 +276,13 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-800 text-gray-300">
                       {party.category?.replace('_', ' ')}
                     </span>
-                    {party.id.startsWith('meetup-') ? (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-green-600/30 border border-green-500/50 text-green-300">
-                        ⭐ Actual Event
+                    {party.is_example === 1 || party.is_example === true || party.name.startsWith('[Example]') || !party.id.startsWith('meetup-') ? (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-600/20 border border-amber-500/30 text-amber-300/90" title="Demonstration example data">
+                        🧪 Example Data
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-600/20 border border-amber-500/30 text-amber-300/90" title="Demonstration sample data">
-                        🧪 Sample Demo
+                      <span className="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-green-600/30 border border-green-500/50 text-green-300">
+                        ⭐ Actual Event
                       </span>
                     )}
                     {party.distance_miles !== undefined && (

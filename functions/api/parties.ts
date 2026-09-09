@@ -482,6 +482,7 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
       rsvp_link: validatedRsvpLink,
       category,
       status: initialStatus,
+      is_example: 0,
     };
 
     // Save to Cloudflare D1
@@ -494,8 +495,8 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
 
     try {
       await context.env.DB.prepare(`
-        INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status, is_example)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
       `).bind(
         newMeetup.id,
         newMeetup.name,
@@ -513,11 +514,34 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
         newMeetup.status ?? 'approved'
       ).run();
     } catch (dbErr: any) {
-      console.error('⚠️ [Cloudflare D1] Error writing meetup:', dbErr);
-      return new Response(
-        JSON.stringify({ error: 'Failed to save meetup to database.' }),
-        { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
-      );
+      // Fallback for pre-migration schema if is_example column does not yet exist
+      try {
+        await context.env.DB.prepare(`
+          INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).bind(
+          newMeetup.id,
+          newMeetup.name,
+          newMeetup.tour_city,
+          newMeetup.venue_name,
+          newMeetup.address ?? null,
+          newMeetup.latitude ?? null,
+          newMeetup.longitude ?? null,
+          newMeetup.event_date,
+          newMeetup.start_time ?? null,
+          newMeetup.description ?? null,
+          newMeetup.organizer_name ?? null,
+          newMeetup.rsvp_link ?? null,
+          newMeetup.category ?? 'tailgate',
+          newMeetup.status ?? 'approved'
+        ).run();
+      } catch (fallbackErr: any) {
+        console.error('⚠️ [Cloudflare D1] Error writing meetup:', fallbackErr);
+        return new Response(
+          JSON.stringify({ error: 'Failed to save meetup to database.' }),
+          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
     }
 
     return new Response(

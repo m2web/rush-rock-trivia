@@ -19,6 +19,7 @@ function formatMeetupsForPrompt(meetups: Array<{
   venue_name: string;
   name: string;
   start_time?: string | null;
+  is_example?: boolean | number | null;
 }>): string {
   return meetups.map((m) => {
     const date = sanitizePromptField(m.event_date);
@@ -26,7 +27,9 @@ function formatMeetupsForPrompt(meetups: Array<{
     const venue = sanitizePromptField(m.venue_name);
     const name = sanitizePromptField(m.name);
     const time = sanitizePromptField(m.start_time);
-    return `- ${date} (${city} @ ${venue}): "${name}" [${time}]`;
+    const isExample = m.is_example === 1 || m.is_example === true || (m.name && m.name.startsWith('[Example]'));
+    const tag = isExample ? ' [Community Example Demonstration]' : ' [Confirmed Fan Event]';
+    return `- ${date} (${city} @ ${venue}): "${name}" [${time}]${tag}`;
   }).join('\n');
 }
 
@@ -227,7 +230,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (context.env.DB) {
       try {
         const dbResult = await context.env.DB.prepare(
-          'SELECT name, tour_city, venue_name, event_date, start_time, category FROM meetups WHERE status = ? ORDER BY event_date ASC LIMIT 25'
+          'SELECT name, tour_city, venue_name, event_date, start_time, category, is_example FROM meetups WHERE status = ? ORDER BY event_date ASC LIMIT 25'
         ).bind('approved').all<any>();
         if (dbResult.results && dbResult.results.length > 0) {
           meetupsContext = formatMeetupsForPrompt(dbResult.results);
