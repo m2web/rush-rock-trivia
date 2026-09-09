@@ -3,7 +3,7 @@
 
 -- Marked as is_example = 1 for demonstration/example purposes
 
-INSERT OR IGNORE INTO meetups (id, name, tour_city, venue_name, venue_url, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status, is_example)
+INSERT INTO meetups (id, name, tour_city, venue_name, venue_url, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status, is_example)
 VALUES
 (
   'toronto-01',
@@ -202,4 +202,20 @@ VALUES
   'pub_crawl',
   'approved',
   1
-);
+)
+ON CONFLICT(id) DO UPDATE SET
+  name = excluded.name,
+  tour_city = excluded.tour_city,
+  venue_name = excluded.venue_name,
+  venue_url = excluded.venue_url,
+  address = excluded.address,
+  latitude = excluded.latitude,
+  longitude = excluded.longitude,
+  event_date = excluded.event_date,
+  start_time = excluded.start_time,
+  description = excluded.description,
+  organizer_name = excluded.organizer_name,
+  rsvp_link = excluded.rsvp_link,
+  category = excluded.category,
+  status = excluded.status,
+  is_example = excluded.is_example;

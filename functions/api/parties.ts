@@ -544,7 +544,22 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
         newMeetup.status ?? 'approved'
       ).run();
     } catch (dbErr: any) {
-      // Fallback for pre-migration schema if venue_url or is_example column does not yet exist
+      const errMessage = String(dbErr?.message || dbErr || '');
+      const isMissingColumnError =
+        (/no such column/i.test(errMessage) || /has no column named/i.test(errMessage)) &&
+        (/venue_url/i.test(errMessage) || /is_example/i.test(errMessage));
+
+      if (!isMissingColumnError) {
+        console.error('⚠️ [Cloudflare D1] Error writing meetup to database:', dbErr);
+        return new Response(
+          JSON.stringify({ error: 'Failed to save meetup to database.' }),
+          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
+        );
+      }
+
+      // If the error was specifically caused by a pre-migration schema missing venue_url or is_example,
+      // attempt the legacy insert fallback and log clearly.
+      console.warn('⚠️ [Cloudflare D1] Primary insert failed due to pre-migration schema column absence. Attempting legacy insert fallback. Cause:', dbErr);
       try {
         await context.env.DB.prepare(`
           INSERT INTO meetups (id, name, tour_city, venue_name, address, latitude, longitude, event_date, start_time, description, organizer_name, rsvp_link, category, status)
@@ -565,8 +580,9 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
           newMeetup.category ?? 'tailgate',
           newMeetup.status ?? 'approved'
         ).run();
+        console.warn('⚠️ [Cloudflare D1] Meetup saved using legacy fallback. Please run migration to add venue_url and is_example columns.');
       } catch (fallbackErr: any) {
-        console.error('⚠️ [Cloudflare D1] Error writing meetup:', fallbackErr);
+        console.error('⚠️ [Cloudflare D1] Legacy fallback insert also failed:', fallbackErr);
         return new Response(
           JSON.stringify({ error: 'Failed to save meetup to database.' }),
           { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
