@@ -138,7 +138,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
             onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026-2027 tour?")}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/50 text-purple-200 text-xs font-bold transition shadow cursor-pointer"
           >
-            💬 Ask Tour Concierge →
+            💬 Ask Tour Archivist →
           </button>
         )}
       </div>
@@ -189,7 +189,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
       <div className="mb-6 p-4 rounded-xl bg-gray-950/80 border border-amber-500/30 text-xs text-gray-300 space-y-3 shadow-inner">
         <div className="flex items-center justify-between">
           <h3 className="text-amber-400 font-bold text-sm flex items-center gap-1.5">
-            <span>🧭</span> Directions: How Tour Meetups & Concierge Work
+            <span>🧭</span> Directions: How Tour Meetups & The Archivist Work
           </h3>
           <span className="text-[11px] text-gray-400 bg-gray-900 px-2.5 py-0.5 rounded-full border border-gray-800">No login required to view</span>
         </div>
@@ -202,8 +202,8 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
             Click any city button below to see tailgates, pub crawls, and venue locations.
           </div>
           <div className="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
-            <strong className="text-purple-300 block mb-1">2. Ask the Tour Concierge</strong>
-            Click <strong className="text-purple-200">"Ask Tour Concierge"</strong> anytime to get instant answers on parking, venues, and local advice—no origin story required.
+            <strong className="text-purple-300 block mb-1">2. Ask The Tour Archivist</strong>
+            Click <strong className="text-purple-200">"Ask Tour Archivist"</strong> anytime to get instant answers on parking, venues, and local advice—no origin story required.
           </div>
           <div className="bg-gray-900/80 p-2.5 rounded-lg border border-gray-800">
             <strong className="text-green-300 block mb-1">3. Host a Meetup?</strong>
@@ -344,9 +344,9 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                         )
                       }
                       className="px-3 py-1.5 rounded-lg bg-purple-900/40 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 text-xs font-semibold transition cursor-pointer"
-                      title="Ask the Tour Concierge about this event"
+                      title="Ask The Tour Archivist about this event"
                     >
-                      💬 Ask Concierge
+                      💬 Ask Archivist
                     </button>
                   )}
                   {party.rsvp_link && isSafeUrl(party.rsvp_link) && (
@@ -370,7 +370,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
       <div className="mt-8 p-4 rounded-xl bg-gray-950/80 border border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
         <div>
           <div className="text-xs text-gray-400">Have questions about tour dates, venues, or local gatherings?</div>
-          <div className="text-sm font-bold text-white">Ask the Tour Concierge</div>
+          <div className="text-sm font-bold text-white">Ask The Tour Archivist</div>
         </div>
         <div className="flex items-center gap-2">
           {onAskFan && (
@@ -378,7 +378,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
               onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026-2027 tour?")}
               className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow cursor-pointer"
             >
-              💬 Chat with Tour Concierge
+              💬 Chat with Tour Archivist
             </button>
           )}
           {onBack && (

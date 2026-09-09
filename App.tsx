@@ -199,7 +199,7 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                   />
                 ) : activeTab === 'chat' ? (
                   <div className="bg-gray-900 bg-opacity-90 p-6 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm">
-                    <h2 className="text-2xl font-bold mb-4 text-center">💬 Rush Fan Chat & Tour Concierge</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-center">💬 Rush Fan Chat & The Tour Archivist</h2>
                     <ChatInterface
                       fanStory={fanStory}
                       onClose={() => {
@@ -226,7 +226,7 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                 <button
                   onClick={() => handleStartChat()}
                   className="fixed bottom-4 left-4 z-40 py-3 px-5 rounded-full text-lg font-bold shadow-lg bg-purple-600 hover:bg-purple-700 text-white hover:scale-105 cursor-pointer transition-all duration-200"
-                  title="💬 Chat with Tour Concierge"
+                  title="💬 Chat with The Tour Archivist"
                 >
                   💬 Chat
                 </button>
