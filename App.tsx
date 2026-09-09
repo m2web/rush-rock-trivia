@@ -226,7 +226,7 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                 <button
                   onClick={() => handleStartChat()}
                   className="fixed bottom-4 left-4 z-40 py-3 px-5 rounded-full text-lg font-bold shadow-lg bg-purple-600 hover:bg-purple-700 text-white hover:scale-105 cursor-pointer transition-all duration-200"
-                  title="💬 Chat with Synthetic Rush Fan"
+                  title="💬 Chat with Tour Concierge"
                 >
                   💬 Chat
                 </button>

@@ -134,7 +134,7 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
     return data.questions;
   } catch (error) {
     console.error("Error fetching multiple trivia questions:", error);
-    throw new Error("Failed to generate valid trivia questions from the AI model.");
+    throw new Error("Failed to load trivia questions. Please try again.");
   }
 }
 

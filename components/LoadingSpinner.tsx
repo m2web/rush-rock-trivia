@@ -6,7 +6,7 @@ const LoadingSpinner: React.FC = () => {
   const loadingMessages = [
     "Begin the day with a friendly voice...",
     "We only stop for the best!",
-    "...takes time for AI to research and form the Rush trivia questions...",
+    "...takes time to research and form the deepest Rush trivia questions...",
     "Living in the Limelight...",
     "Time Stand Still while we prepare...",
     "Working through the Subdivisions...",

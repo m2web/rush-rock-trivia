@@ -41,9 +41,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ onStart, onStartChat, onViewM
         <button
           onClick={onStartChat}
           className="w-full sm:w-auto bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 border border-purple-500/50 font-bold py-2.5 px-6 rounded-full text-sm transform hover:scale-105 transition-all duration-200 shadow-md cursor-pointer"
-          title="Chat with Synthetic Rush Fan"
+          title="Chat with Tour Concierge"
         >
-          💬 Chat with Synthetic Fan
+          💬 Tour Concierge
         </button>
       </div>
     </div>

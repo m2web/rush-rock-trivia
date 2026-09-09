@@ -19,8 +19,8 @@ const MAX_INPUT_LENGTH = 500;
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, onViewMeetups, initialPrompt = '' }) => {
   const initialGreeting = fanStory.trim()
-    ? `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush talk or 2026-2027 tour details! 🎸`
-    : `Hey there! I'm a Synthetic Rush Fan — an AI that absolutely loves Rush and is thrilled to chat with you about the holy triumvirate and the upcoming 2026-2027 "Fifty Something" Tour! 🎸 Ask me anything about tour cities, pre-show tailgates, venues, or Rush lore!`;
+    ? `Hey there! I'm your Rush Tour Concierge — a huge Rush fan thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush talk or 2026-2027 tour details! 🎸`
+    : `Hey there! I'm your Rush Tour Concierge — thrilled to chat with you about the holy triumvirate and the upcoming 2026-2027 "Fifty Something" Tour! 🎸 Ask me anything about tour cities, pre-show tailgates, venues, or Rush lore!`;
 
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'llm', text: initialGreeting }
@@ -61,7 +61,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, o
       const llmResponse = await sendChatMessage(text, fanStory, nextTurnCount);
       setMessages(prev => [...prev, { sender: 'llm', text: llmResponse }]);
     } catch (err) {
-      const errText = err instanceof Error ? err.message : 'Sorry, there was an error contacting the AI.';
+      const errText = err instanceof Error ? err.message : 'Sorry, there was an error contacting the Tour Concierge.';
       setErrorMessage(errText);
       setMessages(prev => [...prev, { sender: 'llm', text: `[Error]: ${errText}` }]);
     } finally {
