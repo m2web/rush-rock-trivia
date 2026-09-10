@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Meetup, DEFAULT_MEETUPS, fetchTourParties, submitTourParty } from '../services/partiesService';
 
 interface TourMeetupsViewProps {
+  onAskArchivist?: (initialPrompt?: string) => void;
   onAskFan?: (initialPrompt?: string) => void;
   onBack?: () => void;
 }
@@ -30,7 +31,8 @@ const isSafeUrl = (url?: string): boolean => {
   }
 };
 
-const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) => {
+const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskArchivist, onAskFan, onBack }) => {
+  const askArchivistHandler = onAskArchivist || onAskFan;
   // Pre-initialize with verified defaults so it never renders blank
   const [parties, setParties] = useState<Meetup[]>(DEFAULT_MEETUPS);
   const [selectedCity, setSelectedCity] = useState<string>('All Cities');
@@ -336,10 +338,10 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                   Organized by: <strong className="text-gray-200">{party.organizer_name || 'Rush Fan'}</strong>
                 </div>
                 <div className="flex items-center gap-2">
-                  {onAskFan && (
+                  {askArchivistHandler && (
                     <button
                       onClick={() =>
-                        onAskFan(
+                        askArchivistHandler(
                           `Tell me more about the "${party.name}" at ${party.venue_name} in ${party.tour_city} on ${party.event_date}. What should fans know?`
                         )
                       }
@@ -374,9 +376,9 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
           <div className="text-sm font-bold text-white">Ask The Tour Archivist</div>
         </div>
         <div className="flex items-center gap-2">
-          {onAskFan && (
+          {askArchivistHandler && (
             <button
-              onClick={() => onAskFan("What fan parties or tailgates are happening for the 2026-2027 tour?")}
+              onClick={() => askArchivistHandler("What fan parties or tailgates are happening for the 2026-2027 tour?")}
               className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition shadow cursor-pointer"
             >
               💬 Chat with Tour Archivist

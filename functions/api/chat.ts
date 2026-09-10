@@ -61,20 +61,40 @@ function formatMeetupsForPrompt(meetups: Array<{
   }).join('\n\n');
 }
 
-function getSystemPrompt(fanStory: string, meetupsContext?: string): string {
+function getFanSystemPrompt(fanStory: string): string {
+  const sanitizedStory = sanitizePromptField(fanStory);
+
+  return `You are a Synthetic Rush Fan — the ultimate passionate, knowledgeable, and friendly Rush fanatic! You deeply love the holy triumvirate (Geddy Lee, Alex Lifeson, and Neil Peart). You love deep-cut discussions, album track analyses, lyrical interpretations, musical virtuosity, concert memories, and connecting with fellow fans. The user is a fellow Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond warmly and enthusiastically as an expert peer, referencing their fan story when relevant.
+
+COMMUNITY & CIVILITY STANDARDS:
+- Always maintain an enthusiastic, friendly, respectful, and civil tone.
+- Never engage in hostility, elitism, snobbery, insults, mockery, or vulgarity.
+- Welcome fans whether they love 70s prog epics, 80s synth era, 90s alternative rock, or later masterpieces like Clockwork Angels.
+- If a user expresses frustration or disagreement, respond gracefully and steer the conversation back to celebrating the music, lyrics, and memories.
+
+CRITICAL ACCURACY RULES:
+- The 2026-2027 "Fifty Something" tour features Geddy Lee, Alex Lifeson, drummer Anika Nilles, and keyboardist Loren Gold (NOT Neil Peart, who passed away January 7, 2020).
+- Anika Nilles is a German drummer, composer, and producer from Aschaffenburg.
+- "Time Stand Still" is from Hold Your Fire (1987), NOT Presto or any other album. Aimee Mann sang backing vocals.
+- Clockwork Angels (2012) is Rush's final studio album.
+- Moving Pictures (1981) is Rush's best-selling U.S. album (4x Multi-Platinum).
+- Do not invent or assume facts. If something is uncertain, say so clearly.`;
+}
+
+function getArchivistSystemPrompt(fanStory: string, meetupsContext?: string): string {
   const sanitizedStory = sanitizePromptField(fanStory);
   const fallbackActual = DEFAULT_MEETUPS.filter(
     (m) => (m.is_example === 0 || m.is_example === false) && !m.name.startsWith('[Example]')
   );
   const actualEventsData = meetupsContext || formatMeetupsForPrompt(fallbackActual);
 
-  return `You are The Tour Archivist — a passionate fellow fan and curator who deeply loves Rush, enjoys deep-cut band discussions, and helps fans navigate the 2026-2027 "Fifty Something" Tour. You are enthusiastic, welcoming, and deeply knowledgeable about the band's history and tour stops. The user is a fellow Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond as an expert fellow fan, referencing their story if relevant.
+  return `You are The Tour Archivist — a dedicated tour guide, historian, and concert curator who helps Rush fans navigate the 2026-2027 "Fifty Something" Tour. You are enthusiastic, welcoming, and deeply knowledgeable about tour stops, venues, dates, and confirmed fan gatherings. The user is a fellow Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond as a helpful tour curator and fellow fan, referencing their story if relevant.
 
 CIVILITY & COMMUNITY STANDARDS:
 - Always maintain an impeccably polite, respectful, and civil tone. Treat every fan with kindness and courtesy.
 - Never engage in hostility, insults, mockery, personal attacks, or vulgarity.
-- If a user expresses frustration, disagreement, or raises controversial or uncivil topics, respond gracefully, de-escalate calmly, and gently steer the conversation back to the music, tour logistics, or shared appreciation of Rush.
-- Keep the community atmosphere inclusive and welcoming for fans of all eras.
+- If a user expresses frustration, disagreement, or raises controversial or uncivil topics, respond gracefully, de-escalate calmly, and gently steer the conversation back to tour logistics, concert planning, and shared appreciation of Rush.
+- Keep the community atmosphere inclusive and welcoming for fans attending all tour dates.
 
 PRIMARY SOURCE OF TRUTH — CLOUDFLARE D1 ACTUAL EVENT DATA:
 The data inside <verified_actual_events> represents confirmed, actual fan gatherings queried directly from our production Cloudflare D1 database (demonstration/example data has been removed).
@@ -100,8 +120,15 @@ CRITICAL ACCURACY RULES:
 - Do not invent or assume facts. If something is uncertain, say so clearly.`;
 }
 
-async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, meetupsContext?: string): Promise<string> {
-  const prompt = `${getSystemPrompt(fanStory, meetupsContext)}\n\nUser: ${userMessage}`;
+function getSystemPrompt(persona: 'fan' | 'archivist', fanStory: string, meetupsContext?: string): string {
+  if (persona === 'archivist') {
+    return getArchivistSystemPrompt(fanStory, meetupsContext);
+  }
+  return getFanSystemPrompt(fanStory);
+}
+
+async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'archivist', meetupsContext?: string): Promise<string> {
+  const prompt = `${getSystemPrompt(persona, fanStory, meetupsContext)}\n\nUser: ${userMessage}`;
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
     method: 'POST',
@@ -135,7 +162,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
   return data.candidates[0].content.parts[0].text;
 }
 
-async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string, meetupsContext?: string): Promise<string> {
+async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'archivist', meetupsContext?: string): Promise<string> {
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -145,7 +172,7 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
     body: JSON.stringify({
       model: OPENAI_MODEL,
       messages: [
-        { role: 'system', content: getSystemPrompt(fanStory, meetupsContext) },
+        { role: 'system', content: getSystemPrompt(persona, fanStory, meetupsContext) },
         { role: 'user', content: userMessage }
       ],
       max_completion_tokens: 600,
@@ -230,9 +257,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const request = context.request;
-    let body: { userMessage?: string; fanStory?: string; turnCount?: number };
+    let body: { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'archivist' };
     try {
-      body = (await request.json()) as { userMessage?: string; fanStory?: string; turnCount?: number };
+      body = (await request.json()) as { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'archivist' };
     } catch {
       return new Response(JSON.stringify({ error: 'Invalid JSON payload in request body' }), {
         status: 400,
@@ -240,6 +267,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
     const { userMessage, fanStory, turnCount } = body;
+    const persona: 'fan' | 'archivist' = body.persona === 'archivist' ? 'archivist' : 'fan';
 
     if (!userMessage || typeof userMessage !== 'string' || !userMessage.trim()) {
       return new Response(JSON.stringify({ error: 'userMessage is required' }), {
@@ -268,9 +296,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    // Query confirmed actual meetups from Cloudflare D1 (excluding examples)
+    // Query confirmed actual meetups from Cloudflare D1 (excluding examples) for archivist persona
     let meetupsContext: string | undefined;
-    if (context.env.DB) {
+    if (persona === 'archivist' && context.env.DB) {
       try {
         const dbResult = await context.env.DB.prepare(
           `SELECT name, tour_city, venue_name, address, event_date, start_time, description, organizer_name, rsvp_link, category, is_example
@@ -288,8 +316,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const reply = useOpenAI
-      ? await callOpenAIChat(apiKey, userMessage, fanStory || '', meetupsContext)
-      : await callGeminiChat(apiKey, userMessage, fanStory || '', meetupsContext);
+      ? await callOpenAIChat(apiKey, userMessage, fanStory || '', persona, meetupsContext)
+      : await callGeminiChat(apiKey, userMessage, fanStory || '', persona, meetupsContext);
 
     return new Response(JSON.stringify({ reply }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }

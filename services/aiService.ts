@@ -9,13 +9,20 @@ import { TriviaQuestion } from '../types';
  * Send a chat message via the secure /api/chat Pages Function.
  * The backend injects the API key server-side.
  */
-export async function sendChatMessage(userMessage: string, fanStory: string, turnCount?: number): Promise<string> {
+export type ChatPersona = 'fan' | 'archivist';
+
+export async function sendChatMessage(
+  userMessage: string,
+  fanStory: string,
+  turnCount?: number,
+  persona: ChatPersona = 'fan'
+): Promise<string> {
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ userMessage, fanStory, turnCount }),
+    body: JSON.stringify({ userMessage, fanStory, turnCount, persona }),
   });
 
   const data = await response.json().catch(() => ({}));
