@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState, useCallback, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { GameState, TriviaQuestion } from './types';
 // AI service – routes all calls through Cloudflare Pages Functions
 import { getPreloadedQuestions } from './services/aiService';
@@ -25,6 +25,9 @@ const FAN_STORY_KEY = 'rushFanStory';
 type TabType = 'trivia' | 'meetups' | 'chat';
 
 const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 'trivia' }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [gameState, setGameState] = useState<GameState>(GameState.START);
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -42,6 +45,21 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [pendingInitialPrompt, setPendingInitialPrompt] = useState<string>('');
 
+  // Keep activeTab and view state in sync with URL route
+  useEffect(() => {
+    const path = location.pathname.toLowerCase();
+    if (path === '/chat') {
+      setActiveTab('chat');
+      setIsChatOpen(true);
+    } else if (path === '/cities' || path === '/tours' || path === '/meetups') {
+      setActiveTab('meetups');
+      setIsChatOpen(false);
+    } else if (path === '/' && activeTab !== 'trivia') {
+      setActiveTab('trivia');
+      setIsChatOpen(false);
+    }
+  }, [location.pathname]);
+
   // Save fan story to localStorage (no expiration)
   const updateFanStory = useCallback((story: string) => {
     setFanStory(story);
@@ -57,17 +75,27 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
     setIsFanModalOpen(false);
     setIsChatOpen(true);
     setActiveTab('chat');
-  }, [updateFanStory]);
+    navigate('/chat');
+  }, [updateFanStory, navigate]);
 
   const handleStartChat = useCallback((initialPrompt?: string) => {
     setPendingInitialPrompt(initialPrompt || '');
-    if (!fanStory && !initialPrompt) {
-      setIsFanModalOpen(true);
-    } else {
-      setIsChatOpen(true);
-      setActiveTab('chat');
-    }
-  }, [fanStory]);
+    setIsChatOpen(true);
+    setActiveTab('chat');
+    navigate('/chat');
+  }, [navigate]);
+
+  const handleViewMeetups = useCallback(() => {
+    setIsChatOpen(false);
+    setActiveTab('meetups');
+    navigate('/cities');
+  }, [navigate]);
+
+  const handleBackToTrivia = useCallback(() => {
+    setIsChatOpen(false);
+    setActiveTab('trivia');
+    navigate('/');
+  }, [navigate]);
 
   const handleBadgeClick = useCallback(() => {
     setIsUpdateModalOpen(true);
@@ -135,8 +163,8 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
         return (
           <StartScreen
             onStart={startGame}
-            onStartChat={handleStartChat}
-            onViewMeetups={() => setActiveTab('meetups')}
+            onStartChat={() => handleStartChat()}
+            onViewMeetups={handleViewMeetups}
             error={error}
           />
         );
@@ -159,8 +187,8 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
         return (
           <StartScreen
             onStart={startGame}
-            onStartChat={handleStartChat}
-            onViewMeetups={() => setActiveTab('meetups')}
+            onStartChat={() => handleStartChat()}
+            onViewMeetups={handleViewMeetups}
           />
         );
     }
@@ -189,27 +217,18 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
               <main className="w-full max-w-2xl">
                 {activeTab === 'meetups' ? (
                   <TourMeetupsView
-                    onBack={() => {
-                      setIsChatOpen(false);
-                      setActiveTab('trivia');
-                    }}
+                    onBack={handleBackToTrivia}
                     onAskFan={(prompt) => {
                       handleStartChat(prompt);
                     }}
                   />
                 ) : activeTab === 'chat' ? (
                   <div className="bg-gray-900 bg-opacity-90 p-6 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm">
-                    <h2 className="text-2xl font-bold mb-4 text-center">💬 Rush Fan Chat & The Tour Archivist</h2>
+                    <h2 className="text-2xl font-bold mb-4 text-center">💬 Synthetic Fan Chat & The Tour Archivist</h2>
                     <ChatInterface
                       fanStory={fanStory}
-                      onClose={() => {
-                        setIsChatOpen(false);
-                        setActiveTab('trivia');
-                      }}
-                      onViewMeetups={() => {
-                        setIsChatOpen(false);
-                        setActiveTab('meetups');
-                      }}
+                      onClose={handleBackToTrivia}
+                      onViewMeetups={handleViewMeetups}
                       initialPrompt={pendingInitialPrompt}
                     />
                   </div>
@@ -226,9 +245,9 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                 <button
                   onClick={() => handleStartChat()}
                   className="fixed bottom-4 left-4 z-40 py-3 px-5 rounded-full text-lg font-bold shadow-lg bg-purple-600 hover:bg-purple-700 text-white hover:scale-105 cursor-pointer transition-all duration-200"
-                  title="💬 Chat with The Tour Archivist"
+                  title="💬 Chat with Synthetic Fan & The Tour Archivist"
                 >
-                  💬 Chat
+                  💬 Synthetic Fan Chat
                 </button>
               )}
 
