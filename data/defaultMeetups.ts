@@ -160,8 +160,8 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     event_date: '2026-10-23',
     start_time: '16:30',
     description: 'The Plan at a Glance: 4:30–5:30 PM Pre-Crawl Fuel & Drinks at The Filson Queen City Kitchen & Bar | 5:30–6:15 PM Classic Tavern Pours at The Blind Pig | 6:15–7:00 PM European Brews & Snacks at Taste of Belgium - The Banks | 7:00–7:30 PM Arena Entry at Heritage Bank Center | 7:30–10:45 PM Rush Live in Concert | 11:00 PM–Late Post-Show Party & Nightcap at Tin Roof',
-    organizer_name: 'Ohio Valley Rush Fanatics',
-    rsvp_link: null,
+    organizer_name: 'Mark McFadden',
+    rsvp_link: 'https://markmcfadden.net',
     category: 'pub_crawl',
     status: 'approved',
     is_example: 0
