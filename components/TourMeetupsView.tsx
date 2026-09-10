@@ -278,7 +278,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-800 text-gray-300">
                       {party.category?.replace('_', ' ')}
                     </span>
-                    {party.is_example === 1 || party.is_example === true || party.name.startsWith('[Example]') || !party.id.startsWith('meetup-') ? (
+                    {party.is_example === 1 || party.is_example === true || party.name.startsWith('[Example]') ? (
                       <span className="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-600/20 border border-amber-500/30 text-amber-300/90" title="Demonstration example data">
                         🧪 Example Data
                       </span>
