@@ -106,7 +106,7 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     event_date: '2026-09-17',
     start_time: '16:00',
     description: 'East 4th Street pub crawl before AND after the 7:30 PM Rush Fifty Something tour show at Rocket Arena!',
-    organizer_name: 'Cleveland Rush Section',
+    organizer_name: 'Mark McFadden',
     rsvp_link: 'https://east4thstreet.com',
     category: 'pub_crawl',
     status: 'approved',

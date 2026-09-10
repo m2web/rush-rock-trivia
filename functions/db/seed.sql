@@ -89,7 +89,7 @@ VALUES
   '2026-09-17',
   '16:00',
   'East 4th Street pub crawl before AND after the 7:30 PM Rush Fifty Something tour show at Rocket Arena!',
-  'Cleveland Rush Section',
+  'Mark McFadden',
   'https://east4thstreet.com',
   'pub_crawl',
   'approved',
