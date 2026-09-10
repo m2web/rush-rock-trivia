@@ -333,21 +333,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
               {/* Actions Footer */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-800 text-xs">
                 <div className="text-gray-400 text-[11px]">
-                  Organized by:{' '}
-                  {party.organizer_name === 'Mark McFadden' ? (
-                    <a
-                      href="https://markmcfadden.net"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-amber-300 hover:text-amber-200 underline decoration-amber-500/50 hover:decoration-amber-300 transition-colors inline-flex items-center gap-0.5"
-                      title="Visit organizer website"
-                    >
-                      Mark McFadden
-                      <span className="text-[10px] text-amber-400">↗</span>
-                    </a>
-                  ) : (
-                    <strong className="text-gray-200">{party.organizer_name || 'Rush Fan'}</strong>
-                  )}
+                  Organized by: <strong className="text-gray-200">{party.organizer_name || 'Rush Fan'}</strong>
                 </div>
                 <div className="flex items-center gap-2">
                   {onAskFan && (
@@ -369,8 +355,9 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskFan, onBack }) =
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-black font-bold text-xs transition cursor-pointer"
+                      title="Visit venue & area website for details"
                     >
-                      RSVP / Info →
+                      Venue Info →
                     </a>
                   )}
                 </div>

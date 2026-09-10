@@ -144,7 +144,7 @@ VALUES
   '16:30',
   'The Plan at a Glance: 4:30–5:30 PM Pre-Crawl Fuel & Drinks at The Filson Queen City Kitchen & Bar | 5:30–6:15 PM Classic Tavern Pours at The Blind Pig | 6:15–7:00 PM European Brews & Snacks at Taste of Belgium - The Banks | 7:00–7:30 PM Arena Entry at Heritage Bank Center | 7:30–10:45 PM Rush Live in Concert | 11:00 PM–Late Post-Show Party & Nightcap at Tin Roof',
   'Mark McFadden',
-  'https://markmcfadden.net',
+  'https://thebankscincy.com/',
   'pub_crawl',
   'approved',
   0
