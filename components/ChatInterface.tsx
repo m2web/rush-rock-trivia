@@ -11,13 +11,14 @@ interface ChatInterfaceProps {
   fanStory?: string;
   onClose: () => void;
   onViewMeetups?: () => void;
+  onBackToTrivia?: () => void;
   initialPrompt?: string;
 }
 
 const MAX_TURNS = 15;
 const MAX_INPUT_LENGTH = 500;
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, onViewMeetups, initialPrompt = '' }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, onViewMeetups, onBackToTrivia, initialPrompt = '' }) => {
   const initialGreeting = fanStory.trim()
     ? `Hey there! I'm The Tour Archivist — a fellow Rush fan thrilled to chat with you! I see your story: "${fanStory}". Let's dive into some Rush history or 2026-2027 tour details! 🎸`
     : `Hey there! I'm The Tour Archivist — thrilled to chat with you about the holy triumvirate and the upcoming 2026-2027 "Fifty Something" Tour! 🎸 Ask me anything about tour cities, pre-show tailgates, venues, or Rush lore!`;
@@ -89,12 +90,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, o
               📍 Cities & Tours
             </button>
           )}
-          <button
-            onClick={onClose}
-            className="text-[11px] px-2.5 py-1 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition cursor-pointer"
-          >
-            ⚡ Rock Trivia
-          </button>
+          {onBackToTrivia && (
+            <button
+              onClick={onBackToTrivia}
+              className="text-[11px] px-2.5 py-1 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition cursor-pointer"
+            >
+              ⚡ Rock Trivia
+            </button>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <span className={`px-2 py-0.5 rounded font-mono ${isLimitReached ? 'bg-red-900 text-red-200' : 'bg-gray-800 text-gray-300'}`}>
@@ -176,8 +179,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ fanStory = '', onClose, o
             {isSending ? '...' : 'Send'}
           </button>
           <button
-            className="ml-2 text-gray-400 hover:text-white text-2xl font-bold focus:outline-none"
+            className="ml-2 text-gray-400 hover:text-white text-2xl font-bold focus:outline-none cursor-pointer"
             aria-label="Close Chat"
+            title="Return to Cities & Tours"
             onClick={onClose}
           >
             ×

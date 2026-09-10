@@ -227,8 +227,9 @@ const RushRockTriviaApp: React.FC<{ initialTab?: TabType }> = ({ initialTab = 't
                     <h2 className="text-2xl font-bold mb-4 text-center">💬 Synthetic Fan Chat & The Tour Archivist</h2>
                     <ChatInterface
                       fanStory={fanStory}
-                      onClose={handleBackToTrivia}
+                      onClose={handleViewMeetups}
                       onViewMeetups={handleViewMeetups}
+                      onBackToTrivia={handleBackToTrivia}
                       initialPrompt={pendingInitialPrompt}
                     />
                   </div>
