@@ -151,7 +151,7 @@ VALUES
 ),
 (
   'meetup-1789088479283-00qjw',
-  'Covington Rush Meetup',
+  'Cincy Downtown Rush Meetup',
   'Cincinnati',
   'Igby''s',
   'https://www.igbysbar.com/',

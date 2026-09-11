@@ -168,7 +168,7 @@ export const DEFAULT_MEETUPS: Meetup[] = [
   },
   {
     id: 'meetup-1789088479283-00qjw',
-    name: 'Covington Rush Meetup',
+    name: 'Cincy Downtown Rush Meetup',
     tour_city: 'Cincinnati',
     venue_name: "Igby's",
     venue_url: 'https://www.igbysbar.com/',
