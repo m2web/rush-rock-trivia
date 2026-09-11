@@ -145,6 +145,22 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskArchivist, onAsk
         )}
       </div>
 
+      {/* Prominent Create Event CTA Banner */}
+      <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-red-900/60 via-amber-900/40 to-red-900/60 border-2 border-amber-500/50 shadow-lg shadow-red-900/30">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="text-center sm:text-left">
+            <h3 className="text-lg font-extrabold text-white tracking-wide">🎸 Hosting a Pre-Show Tailgate or Fan Meetup?</h3>
+            <p className="text-xs text-gray-300 mt-1">Post your actual event so fellow Rush fans in your city can find it and join you!</p>
+          </div>
+          <button
+            onClick={() => setIsSubmitModalOpen(true)}
+            className="whitespace-nowrap px-6 py-3 rounded-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-extrabold text-sm uppercase tracking-wider transition transform hover:scale-105 shadow-lg shadow-red-900/50 cursor-pointer animate-pulse hover:animate-none"
+          >
+            ✨ Create Your Event
+          </button>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -398,7 +414,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskArchivist, onAsk
       {/* SUBMIT MEETUP MODAL */}
       {isSubmitModalOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 pt-8 overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="submit-meetup-modal-title"
