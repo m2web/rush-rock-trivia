@@ -61,9 +61,9 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
       setActiveTab('chat');
       setChatPersona('fan');
       setIsChatOpen(true);
-    } else if (path === '/archivist' || path === '/archivist-chat') {
+    } else if (path === '/digital-man' || path === '/digitalman' || path === '/digital-man-chat' || path === '/archivist' || path === '/archivist-chat') {
       setActiveTab('chat');
-      setChatPersona('archivist');
+      setChatPersona('digital-man');
       setIsChatOpen(true);
     } else if (path === '/cities' || path === '/tours' || path === '/meetups') {
       setActiveTab('meetups');
@@ -104,16 +104,16 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
     navigate('/chat');
   }, [navigate]);
 
-  const handleStartArchivistChat = useCallback((initialPrompt?: string) => {
+  const handleStartDigitalManChat = useCallback((initialPrompt?: string) => {
     setPendingInitialPrompt(initialPrompt || '');
-    setChatPersona('archivist');
+    setChatPersona('digital-man');
     setIsChatOpen(true);
     setActiveTab('chat');
-    navigate('/archivist');
+    navigate('/digital-man');
   }, [navigate]);
 
   const handleCloseChat = useCallback(() => {
-    if (chatPersona === 'archivist') {
+    if (chatPersona === 'digital-man' || chatPersona === 'archivist') {
       handleViewMeetups();
     } else {
       handleBackToTrivia();
@@ -247,14 +247,14 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
                 {activeTab === 'meetups' ? (
                   <TourMeetupsView
                     onBack={handleBackToTrivia}
-                    onAskArchivist={(prompt) => {
-                      handleStartArchivistChat(prompt);
+                    onAskDigitalMan={(prompt) => {
+                      handleStartDigitalManChat(prompt);
                     }}
                   />
                 ) : activeTab === 'chat' ? (
                   <div className="bg-gray-900 bg-opacity-90 p-6 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm">
                     <h2 className="text-2xl font-bold mb-4 text-center">
-                      {chatPersona === 'archivist' ? '🧭 The Tour Archivist Chat' : '💬 Synthetic Fan Chat'}
+                      {chatPersona === 'digital-man' || chatPersona === 'archivist' ? '🧭 The Digital Man Chat' : '💬 Synthetic Fan Chat'}
                     </h2>
                     <ChatInterface
                       fanStory={fanStory}
@@ -312,8 +312,11 @@ const App: React.FC = () => {
         <Route path="/tours" element={<RushRockTriviaApp initialTab="meetups" />} />
         <Route path="/meetups" element={<RushRockTriviaApp initialTab="meetups" />} />
         <Route path="/chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="fan" />} />
-        <Route path="/archivist" element={<RushRockTriviaApp initialTab="chat" initialPersona="archivist" />} />
-        <Route path="/archivist-chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="archivist" />} />
+        <Route path="/digital-man" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
+        <Route path="/digital-man-chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
+        <Route path="/digitalman" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
+        <Route path="/archivist" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
+        <Route path="/archivist-chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
         <Route path="/passingthesticks" element={<PassingTheSticks />} />
         <Route path="*" element={<RushRockTriviaApp initialTab="trivia" />} />
       </Routes>

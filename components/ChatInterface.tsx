@@ -27,12 +27,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onBackToTrivia,
   initialPrompt = '',
 }) => {
-  const isArchivist = persona === 'archivist';
+  const isDigitalMan = persona === 'digital-man' || persona === 'archivist';
 
-  const initialGreeting = isArchivist
+  const initialGreeting = isDigitalMan
     ? fanStory.trim()
-      ? `Hey there! I'm The Tour Archivist — thrilled to help you navigate the 2026-2027 "Fifty Something" Tour! 🎸 I see your story: "${fanStory}". Ask me anything about tour cities, confirmed tailgates, venues, or logistics!`
-      : `Hey there! I'm The Tour Archivist — your guide to the 2026-2027 "Fifty Something" Tour! 🎸 Ask me anything about tour dates, venues, confirmed fan tailgates, pub crawls, or local advice!`
+      ? `Hey there! I'm The Digital Man — thrilled to help you navigate the 2026-2027 "Fifty Something" Tour! 🎸 I see your story: "${fanStory}". Ask me anything about tour cities, confirmed tailgates, venues, or logistics!`
+      : `Hey there! I'm The Digital Man — your guide to the 2026-2027 "Fifty Something" Tour! 🎸 Ask me anything about tour dates, venues, confirmed fan tailgates, pub crawls, or local advice!`
     : fanStory.trim()
       ? `Hey there! I'm your fellow Synthetic Rush Fan! 🎸 I see your story: "${fanStory}". Let's dive deep into Rush albums, favorite tracks, lyrics, and Neil's philosophy! What's on your mind?`
       : `Hey there! I'm your fellow Synthetic Rush Fan! 🎸 What Rush album, era, or deep track do you want to talk about? Let's geek out over the holy triumvirate!`;
@@ -83,7 +83,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const llmResponse = await sendChatMessage(text, fanStory, nextTurnCount, persona);
       setMessages(prev => [...prev, { sender: 'llm', text: llmResponse }]);
     } catch (err) {
-      const companionName = isArchivist ? 'The Tour Archivist' : 'Synthetic Fan';
+      const companionName = isDigitalMan ? 'The Digital Man' : 'Synthetic Fan';
       const errText = err instanceof Error ? err.message : `Sorry, there was an error contacting ${companionName}.`;
       setErrorMessage(errText);
       setMessages(prev => [...prev, { sender: 'llm', text: `[Error]: ${errText}` }]);
@@ -104,7 +104,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 mb-2 bg-gray-900 rounded text-xs text-gray-400 border border-gray-800">
         <div className="flex items-center gap-2">
           <span className="font-bold text-gray-300">
-            {isArchivist ? '🧭 The Tour Archivist' : '💬 Synthetic Fan Chat'}
+            {isDigitalMan ? '🧭 The Digital Man' : '💬 Synthetic Fan Chat'}
           </span>
           {onViewMeetups && (
             <button
@@ -150,7 +150,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {isSending && (
           <div className="mb-3 flex justify-start">
             <div className="px-4 py-2 rounded-2xl bg-gray-700 text-gray-400 italic text-sm animate-pulse">
-              {isArchivist ? 'Consulting tour archives & gatherings...' : 'Thinking about Rush music & lore...'}
+              {isDigitalMan ? 'Consulting tour dates & gatherings...' : 'Thinking about Rush music & lore...'}
             </div>
           </div>
         )}
@@ -182,7 +182,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             <input
               className="w-full p-3 pr-14 rounded-full bg-gray-900 text-white border border-gray-700 focus:outline-none disabled:opacity-50"
               type="text"
-              placeholder={isSending ? "Waiting for response..." : isArchivist ? "Ask about venues, tailgates, or tour stops..." : "Talk about Rush songs, albums, or lore..."}
+              placeholder={isSending ? "Waiting for response..." : isDigitalMan ? "Ask about venues, tailgates, or tour stops..." : "Talk about Rush songs, albums, or lore..."}
               value={input}
               maxLength={MAX_INPUT_LENGTH}
               disabled={isSending}
@@ -205,7 +205,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <button
             className="ml-2 text-gray-400 hover:text-white text-2xl font-bold focus:outline-none cursor-pointer"
             aria-label="Close Chat"
-            title={isArchivist ? "Return to Cities & Tours" : "Return to Main Screen"}
+            title={isDigitalMan ? "Return to Cities & Tours" : "Return to Main Screen"}
             onClick={onClose}
           >
             ×

@@ -9,7 +9,7 @@ import { TriviaQuestion } from '../types';
  * Send a chat message via the secure /api/chat Pages Function.
  * The backend injects the API key server-side.
  */
-export type ChatPersona = 'fan' | 'archivist';
+export type ChatPersona = 'fan' | 'digital-man' | 'archivist';
 
 export async function sendChatMessage(
   userMessage: string,

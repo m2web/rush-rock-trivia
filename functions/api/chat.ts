@@ -81,14 +81,14 @@ CRITICAL ACCURACY RULES:
 - Do not invent or assume facts. If something is uncertain, say so clearly.`;
 }
 
-function getArchivistSystemPrompt(fanStory: string, meetupsContext?: string): string {
+function getDigitalManSystemPrompt(fanStory: string, meetupsContext?: string): string {
   const sanitizedStory = sanitizePromptField(fanStory);
   const fallbackActual = DEFAULT_MEETUPS.filter(
     (m) => (m.is_example === 0 || m.is_example === false) && !m.name.startsWith('[Example]')
   );
   const actualEventsData = meetupsContext || formatMeetupsForPrompt(fallbackActual);
 
-  return `You are The Tour Archivist — a dedicated tour guide, historian, and concert curator who helps Rush fans navigate the 2026-2027 "Fifty Something" Tour. You are enthusiastic, welcoming, and deeply knowledgeable about tour stops, venues, dates, and confirmed fan gatherings. The user is a fellow Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond as a helpful tour curator and fellow fan, referencing their story if relevant.
+  return `You are The Digital Man — a fast-moving, world-traveling concert curator, tour guide, and Rush historian who helps Rush fans navigate the 2026-2027 "Fifty Something" Tour. Inspired by the Signals classic, you have "a chart of world frequencies", an open mind, an open eye, and deep knowledge about tour stops, venues, dates, travel logistics, and confirmed fan gatherings. The user is a fellow Rush fan. Their Rush fan story is: "${sanitizedStory}". Respond as a high-energy, helpful tour curator and fellow fan, referencing their story if relevant.
 
 CIVILITY & COMMUNITY STANDARDS:
 - Always maintain an impeccably polite, respectful, and civil tone. Treat every fan with kindness and courtesy.
@@ -120,14 +120,14 @@ CRITICAL ACCURACY RULES:
 - Do not invent or assume facts. If something is uncertain, say so clearly.`;
 }
 
-function getSystemPrompt(persona: 'fan' | 'archivist', fanStory: string, meetupsContext?: string): string {
-  if (persona === 'archivist') {
-    return getArchivistSystemPrompt(fanStory, meetupsContext);
+function getSystemPrompt(persona: 'fan' | 'digital-man' | 'archivist', fanStory: string, meetupsContext?: string): string {
+  if (persona === 'digital-man' || persona === 'archivist') {
+    return getDigitalManSystemPrompt(fanStory, meetupsContext);
   }
   return getFanSystemPrompt(fanStory);
 }
 
-async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'archivist', meetupsContext?: string): Promise<string> {
+async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
   const prompt = `${getSystemPrompt(persona, fanStory, meetupsContext)}\n\nUser: ${userMessage}`;
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
@@ -162,7 +162,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
   return data.candidates[0].content.parts[0].text;
 }
 
-async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'archivist', meetupsContext?: string): Promise<string> {
+async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -257,9 +257,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const request = context.request;
-    let body: { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'archivist' };
+    let body: { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'digital-man' | 'archivist' };
     try {
-      body = (await request.json()) as { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'archivist' };
+      body = (await request.json()) as { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'digital-man' | 'archivist' };
     } catch {
       return new Response(JSON.stringify({ error: 'Invalid JSON payload in request body' }), {
         status: 400,
@@ -267,7 +267,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
     const { userMessage, fanStory, turnCount } = body;
-    const persona: 'fan' | 'archivist' = body.persona === 'archivist' ? 'archivist' : 'fan';
+    const persona: 'fan' | 'digital-man' = (body.persona === 'digital-man' || body.persona === 'archivist') ? 'digital-man' : 'fan';
 
     if (!userMessage || typeof userMessage !== 'string' || !userMessage.trim()) {
       return new Response(JSON.stringify({ error: 'userMessage is required' }), {
@@ -296,9 +296,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    // Query confirmed actual meetups from Cloudflare D1 (excluding examples) for archivist persona
+    // Query confirmed actual meetups from Cloudflare D1 (excluding examples) for digital-man persona
     let meetupsContext: string | undefined;
-    if (persona === 'archivist' && context.env.DB) {
+    if (persona === 'digital-man' && context.env.DB) {
       try {
         const dbResult = await context.env.DB.prepare(
           `SELECT name, tour_city, venue_name, address, event_date, start_time, description, organizer_name, rsvp_link, category, is_example
