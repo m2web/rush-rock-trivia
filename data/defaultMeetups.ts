@@ -167,6 +167,24 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     is_example: 0
   },
   {
+    id: 'meetup-1789088479283-00qjw',
+    name: 'Covington Rush Meetup',
+    tour_city: 'Cincinnati',
+    venue_name: "Igby's",
+    venue_url: 'https://www.igbysbar.com/',
+    address: '122 E 6th St, Cincinnati, OH 45202',
+    latitude: 39.1037,
+    longitude: -84.5105,
+    event_date: '2026-10-23',
+    start_time: '16:00',
+    description: 'Drinks',
+    organizer_name: 'Mark McFadden',
+    rsvp_link: 'https://www.igbysbar.com/',
+    category: 'tailgate',
+    status: 'approved',
+    is_example: 0
+  },
+  {
     id: 'pittsburgh-01',
     name: '[Example] Steel City Working Men Meetup (New Tour Date)',
     tour_city: 'Pittsburgh',

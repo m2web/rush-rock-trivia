@@ -150,6 +150,24 @@ VALUES
   0
 ),
 (
+  'meetup-1789088479283-00qjw',
+  'Covington Rush Meetup',
+  'Cincinnati',
+  'Igby''s',
+  'https://www.igbysbar.com/',
+  '122 E 6th St, Cincinnati, OH 45202',
+  39.1037,
+  -84.5105,
+  '2026-10-23',
+  '16:00',
+  'Drinks',
+  'Mark McFadden',
+  'https://www.igbysbar.com/',
+  'tailgate',
+  'approved',
+  0
+),
+(
   'pittsburgh-01',
   '[Example] Steel City Working Men Meetup (New Tour Date)',
   'Pittsburgh',
