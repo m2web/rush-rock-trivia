@@ -133,58 +133,193 @@
     }
     .city-card {
       border: 1px solid #27272a;
-      border-radius: 0.75rem;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background: #141416;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      background: rgba(9, 9, 11, 0.85);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.75rem;
       scroll-margin-top: 2rem;
       transition: all 0.3s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+    .city-card:hover {
+      border-color: rgba(217, 119, 6, 0.5);
     }
     .city-card:target {
-      border-color: #d97706;
-      box-shadow: 0 0 20px rgba(217, 119, 6, 0.4);
+      border-color: #f59e0b;
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.45);
+      transform: scale(1.01);
+    }
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.35rem;
+    }
+    .badge-city {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: rgba(220, 38, 38, 0.25);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .badge-cat {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: #27272a;
+      color: #d4d4d8;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .badge-actual {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: rgba(22, 101, 52, 0.3);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #86efac;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .badge-example {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: rgba(217, 119, 6, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fde68a;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .card-datetime {
+      font-size: 0.8rem;
+      text-align: right;
+    }
+    .card-datetime .date {
+      color: #fbbf24;
+      font-weight: 700;
+    }
+    .card-datetime .time {
+      color: #a1a1aa;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
     }
     .anchor-link {
       color: var(--text-muted);
       text-decoration: none;
       font-size: 0.75rem;
       font-weight: 600;
-      padding: 0.15rem 0.4rem;
-      border-radius: 0.35rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.5rem;
       background: rgba(39, 39, 42, 0.8);
       border: 1px solid #3f3f46;
       display: inline-flex;
       align-items: center;
       gap: 0.25rem;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
     .anchor-link:hover {
       color: #fbbf24;
       border-color: #d97706;
       background: rgba(217, 119, 6, 0.15);
     }
-    .city-badge {
-      font-size: 0.75rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      background: rgba(220, 38, 38, 0.25);
-      border: 1px solid rgba(220, 38, 38, 0.4);
-      color: #fca5a5;
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.35rem;
-      display: inline-block;
-      width: fit-content;
+    .card-location {
+      font-size: 0.8rem;
+      color: #d4d4d8;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.35rem;
     }
-    .city-name {
-      font-size: 1.15rem;
+    .card-location a {
+      color: #fbbf24;
+      text-decoration: underline;
       font-weight: 700;
     }
-    .city-venue {
-      color: var(--text-muted);
-      font-size: 0.85rem;
+    .card-desc {
+      background: rgba(24, 24, 27, 0.6);
+      border: 1px solid #27272a;
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      font-size: 0.8rem;
+      color: #d4d4d8;
+      line-height: 1.5;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #27272a;
+      padding-top: 0.75rem;
+      margin-top: 0.25rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: #a1a1aa;
+    }
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-digitalman {
+      background: rgba(88, 28, 135, 0.4);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #d8b4fe;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+    .btn-digitalman:hover {
+      background: rgba(88, 28, 135, 0.7);
+      color: #fff;
+    }
+    .btn-venue {
+      background: #d97706;
+      color: #000;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.2s ease;
+    }
+    .btn-venue:hover {
+      background: #f59e0b;
     }
     footer {
       text-align: center;
@@ -248,96 +383,428 @@
 
     <!-- Tour Cities & Meetups Overview -->
     <div class="card">
-      <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">📍 Confirmed Tour Cities & Venues (Sample Schedule)</h2>
+      <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">📍 Confirmed Tour Cities & Fan Gatherings</h2>
 
+      <!-- Cincinnati 01 -->
       <div class="city-card" id="cincinnati-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Oct 23, 2026</div>
-          <a href="#cincinnati-01" class="anchor-link" title="Direct link to Cincinnati meetup">🔗 #cincinnati-01</a>
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Cincinnati</span>
+              <span class="badge-cat">Pub Crawl</span>
+              <span class="badge-actual">⭐ Actual Event</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">Cincinnati Banks Pub Crawl</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('cincinnati-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#cincinnati-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-10-23</div>
+            <div class="time">⏰ 16:30</div>
+          </div>
         </div>
-        <div class="city-name">Cincinnati, OH — Heritage Bank Center</div>
-        <div class="city-venue">Fan Gathering: <strong>Queen City Riverfront Rush Rally</strong> at The Banks (15:30)</div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://thebankscincy.com" target="_blank" rel="noopener noreferrer">The Banks Entertainment District ↗</a> — 100 Joe Nuxhall Way, Cincinnati, OH 45202
+          </span>
+        </div>
+        <div class="card-desc">
+          The Plan at a Glance: 4:30–5:30 PM Pre-Crawl Fuel & Drinks at The Filson Queen City Kitchen & Bar | 5:30–6:15 PM Classic Tavern Pours at The Blind Pig | 6:15–7:00 PM European Brews & Snacks at Taste of Belgium - The Banks | 7:00–7:30 PM Arena Entry at Heritage Bank Center | 7:30–10:45 PM Rush Live in Concert | 11:00 PM–Late Post-Show Party & Nightcap at Tin Roof
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">Mark McFadden</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+            <a href="https://thebankscincy.com/" target="_blank" rel="noopener noreferrer" class="btn-venue">Venue Info →</a>
+          </div>
+        </div>
       </div>
 
-      <div class="city-card" id="houston-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Oct 1, 2026</div>
-          <a href="#houston-01" class="anchor-link" title="Direct link to Houston meetup">🔗 #houston-01</a>
+      <!-- Cincinnati Downtown Meetup -->
+      <div class="city-card" id="meetup-1789088479283-00qjw">
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Cincinnati</span>
+              <span class="badge-cat">Tailgate</span>
+              <span class="badge-actual">⭐ Actual Event</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">Cincy Downtown Rush Meetup</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('meetup-1789088479283-00qjw', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#meetup-1789088479283-00qjw</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-10-23</div>
+            <div class="time">⏰ 16:00</div>
+          </div>
         </div>
-        <div class="city-name">Houston, TX — Toyota Center</div>
-        <div class="city-venue">Fan Gathering: <strong>Space City Rush Tailgate</strong> at Toyota Center Plaza (16:30)</div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://www.igbysbar.com/" target="_blank" rel="noopener noreferrer">Igby's ↗</a> — 122 E 6th St, Cincinnati, OH 45202
+          </span>
+        </div>
+        <div class="card-desc">
+          Drinks
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">Mark McFadden</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+            <a href="https://www.igbysbar.com/" target="_blank" rel="noopener noreferrer" class="btn-venue">Venue Info →</a>
+          </div>
+        </div>
       </div>
 
-      <div class="city-card" id="stlouis-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Oct 21, 2026</div>
-          <a href="#stlouis-01" class="anchor-link" title="Direct link to St. Louis meetup">🔗 #stlouis-01</a>
-        </div>
-        <div class="city-name">St. Louis, MO — Enterprise Center</div>
-        <div class="city-venue">Fan Gathering: <strong>Gateway Arch Rush Rally</strong> at Enterprise Center Atrium (16:00)</div>
-      </div>
-
-      <div class="city-card" id="pittsburgh-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Nov 15, 2026</div>
-          <a href="#pittsburgh-01" class="anchor-link" title="Direct link to Pittsburgh meetup">🔗 #pittsburgh-01</a>
-        </div>
-        <div class="city-name">Pittsburgh, PA — PPG Paints Arena</div>
-        <div class="city-venue">Fan Gathering: <strong>Steel City Working Men Meetup</strong> at The Souper Bowl (16:00)</div>
-      </div>
-
-      <div class="city-card" id="toronto-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Aug 14, 2026</div>
-          <a href="#toronto-01" class="anchor-link" title="Direct link to Toronto meetup">🔗 #toronto-01</a>
-        </div>
-        <div class="city-name">Toronto, ON — Scotiabank Arena</div>
-        <div class="city-venue">Fan Gathering: <strong>RushCon Toronto Gathering</strong> at The Loose Moose (15:00) & Horseshoe Tavern Afterparty (23:00)</div>
-      </div>
-
-      <div class="city-card" id="chicago-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Aug 22, 2026</div>
-          <a href="#chicago-01" class="anchor-link" title="Direct link to Chicago meetup">🔗 #chicago-01</a>
-        </div>
-        <div class="city-name">Chicago, IL — United Center</div>
-        <div class="city-venue">Fan Gathering: <strong>Windy City Pre-Show Tailgate & BBQ</strong> at United Center Lot C (14:00)</div>
-      </div>
-
-      <div class="city-card" id="nyc-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Sep 5, 2026</div>
-          <a href="#nyc-01" class="anchor-link" title="Direct link to New York meetup">🔗 #nyc-01</a>
-        </div>
-        <div class="city-name">New York, NY — Madison Square Garden</div>
-        <div class="city-venue">Fan Gathering: <strong>Subdivisions Pub Crawl NYC</strong> at The Pennsy (16:00)</div>
-      </div>
-
+      <!-- Cleveland East 4th Street -->
       <div class="city-card" id="cleveland-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Sep 17, 2026</div>
-          <a href="#cleveland-01" class="anchor-link" title="Direct link to Cleveland meetup">🔗 #cleveland-01</a>
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Cleveland</span>
+              <span class="badge-cat">Pub Crawl</span>
+              <span class="badge-actual">⭐ Actual Event</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">East 4th Street Pub Crawl</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('cleveland-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#cleveland-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-09-17</div>
+            <div class="time">⏰ 16:00</div>
+          </div>
         </div>
-        <div class="city-name">Cleveland, OH — Rocket Mortgage FieldHouse</div>
-        <div class="city-venue">Fan Gathering: <strong>East 4th Street Pub Crawl</strong> (16:00)</div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://east4thstreet.com" target="_blank" rel="noopener noreferrer">East 4th Street Entertainment District ↗</a> — 2187 E 4th St, Cleveland, OH 44115
+          </span>
+        </div>
+        <div class="card-desc">
+          East 4th Street pub crawl before AND after the 7:30 PM Rush Fifty Something tour show at Rocket Arena!
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">Mark McFadden</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+            <a href="https://east4thstreet.com" target="_blank" rel="noopener noreferrer" class="btn-venue">Venue Info →</a>
+          </div>
+        </div>
       </div>
 
+      <!-- Houston -->
+      <div class="city-card" id="houston-01">
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Houston</span>
+              <span class="badge-cat">Tailgate</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] Space City Rush Tailgate (New Tour Date)</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('houston-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#houston-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-10-01</div>
+            <div class="time">⏰ 16:30</div>
+          </div>
+        </div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <strong>Toyota Center Plaza</strong> — 1510 Polk St, Houston, TX 77002
+          </span>
+        </div>
+        <div class="card-desc">
+          Newly added tour date celebration! Texas fans pre-show tailgate outside Toyota Center with Texas BBQ & Rush playlist.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">Lone Star Rush Society</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- St. Louis -->
+      <div class="city-card" id="stlouis-01">
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">St. Louis</span>
+              <span class="badge-cat">Pub Crawl</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] Gateway Arch Fan Gathering (New Tour Date)</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('stlouis-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#stlouis-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-10-21</div>
+            <div class="time">⏰ 16:00</div>
+          </div>
+        </div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <strong>Enterprise Center Atrium & Beer Garden</strong> — 1401 Clark Ave, St. Louis, MO 63103
+          </span>
+        </div>
+        <div class="card-desc">
+          Pre-concert drinks and tour merchandise swap across from Enterprise Center before the newly added St. Louis show.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">Gateway Rush Legion</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pittsburgh -->
+      <div class="city-card" id="pittsburgh-01">
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Pittsburgh</span>
+              <span class="badge-cat">Pub Crawl</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] Steel City Working Men Meetup (New Tour Date)</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('pittsburgh-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#pittsburgh-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-11-15</div>
+            <div class="time">⏰ 16:00</div>
+          </div>
+        </div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <strong>Souper Bowl Bar & Grill (Across from PPG Paints Arena)</strong> — 910 5th Ave, Pittsburgh, PA 15219
+          </span>
+        </div>
+        <div class="card-desc">
+          Pre-show gathering for the newly announced November Pittsburgh date. Working Man specials and live Rush concert videos.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">Pittsburgh Rush Coalition</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toronto -->
+      <div class="city-card" id="toronto-01">
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Toronto</span>
+              <span class="badge-cat">Tailgate</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] RushCon Toronto Pre-Show Gathering</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('toronto-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#toronto-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-08-14</div>
+            <div class="time">⏰ 15:00</div>
+          </div>
+        </div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://theloosemoose.ca" target="_blank" rel="noopener noreferrer">The Loose Moose Tap & Grill ↗</a> — 146 Front St W, Toronto, ON M5J 1G2
+          </span>
+        </div>
+        <div class="card-desc">
+          Official pre-concert fan gathering 2 blocks from Scotiabank Arena. Rush trivia contest, craft beer, and Rush playlist all afternoon.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">RushCon Fan Club</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+            <a href="https://rushcon.org/toronto2026" target="_blank" rel="noopener noreferrer" class="btn-venue">Venue Info →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chicago -->
+      <div class="city-card" id="chicago-01">
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Chicago</span>
+              <span class="badge-cat">Tailgate</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] Windy City Pre-Show Tailgate & BBQ</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('chicago-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#chicago-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-08-22</div>
+            <div class="time">⏰ 14:00</div>
+          </div>
+        </div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://www.unitedcenter.com" target="_blank" rel="noopener noreferrer">United Center Lot C ↗</a> — 1901 W Madison St, Chicago, IL 60612
+          </span>
+        </div>
+        <div class="card-desc">
+          Big fan tailgate in Lot C with bratwurst, Rush flags, and boomboxes playing bootlegs. Look for the red Starman canopy.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">Midwest Rush Mob</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- New York -->
+      <div class="city-card" id="nyc-01">
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">New York</span>
+              <span class="badge-cat">Pub Crawl</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] Subdivisions Pub Crawl NYC</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('nyc-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#nyc-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-09-05</div>
+            <div class="time">⏰ 16:00</div>
+          </div>
+        </div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://www.thepennsy.nyc" target="_blank" rel="noopener noreferrer">The Pennsy Food Hall & Bar ↗</a> — 2 Pennsylvania Plaza, New York, NY 10121
+          </span>
+        </div>
+        <div class="card-desc">
+          Gathering right above Penn Station / MSG before the show. Drink specials for fans wearing Rush tour shirts.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">NYC Rush Meetup Group</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boston -->
       <div class="city-card" id="boston-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Sep 18, 2026</div>
-          <a href="#boston-01" class="anchor-link" title="Direct link to Boston meetup">🔗 #boston-01</a>
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Boston</span>
+              <span class="badge-cat">Pub Crawl</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] Causeway Street Fan Crawl</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('boston-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#boston-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-09-18</div>
+            <div class="time">⏰ 16:00</div>
+          </div>
         </div>
-        <div class="city-name">Boston, MA — TD Garden</div>
-        <div class="city-venue">Fan Gathering: <strong>Causeway Street Fan Crawl</strong> at The Fours (16:00)</div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://thehuboncauseway.com" target="_blank" rel="noopener noreferrer">The Fours Bar & Hub on Causeway ↗</a> — 52 Causeway St, Boston, MA 02114
+          </span>
+        </div>
+        <div class="card-desc">
+          Pre-show gathering right next to TD Garden. Classic rock jukebox takeover and commemorative tour badges.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">New England Rush Syndicate</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+          </div>
+        </div>
       </div>
 
+      <!-- Los Angeles -->
       <div class="city-card" id="la-01">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="city-badge">Jun 7, 2026</div>
-          <a href="#la-01" class="anchor-link" title="Direct link to Los Angeles meetup">🔗 #la-01</a>
+        <div class="card-header-row">
+          <div>
+            <div class="badge-group">
+              <span class="badge-city">Los Angeles</span>
+              <span class="badge-cat">Tailgate</span>
+              <span class="badge-example">🧪 Example Data</span>
+            </div>
+            <div class="card-title-row">
+              <h3 class="card-title">[Example] Southern California Signals Tailgate</h3>
+              <button type="button" class="anchor-link" onclick="copyAnchor('la-01', this)" title="Copy direct link to event">
+                🔗 <span style="font-size: 10px;">#la-01</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-datetime">
+            <div class="date">📅 2026-06-07</div>
+            <div class="time">⏰ 14:00</div>
+          </div>
         </div>
-        <div class="city-name">Los Angeles, CA — Kia Forum</div>
-        <div class="city-venue">Fan Gathering: <strong>Southern California Signals Tailgate</strong> at Forum Lot E (14:00)</div>
+        <div class="card-location">
+          <span>📍</span>
+          <span>
+            <a href="https://thekiaforum.com" target="_blank" rel="noopener noreferrer">Kia Forum Parking Lot E ↗</a> — 3900 W Manchester Blvd, Inglewood, CA 90305
+          </span>
+        </div>
+        <div class="card-desc">
+          Tour kickoff celebration outside the Forum. California sunshine, taco trucks, and hundreds of Rush fans.
+        </div>
+        <div class="card-footer">
+          <div>Organized by: <strong style="color: #e4e4e7;">SoCal Rush Family</strong></div>
+          <div class="card-actions">
+            <a href="/digital-man" class="btn-digitalman">💬 Ask Digital Man</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -357,5 +824,23 @@
       <p>The Elder Race is returning in 2026-2027! 😊🤘</p>
     </footer>
   </div>
+
+  <script>
+    function copyAnchor(id, btn) {
+      const url = new URL(window.location.href);
+      url.hash = id;
+      window.history.replaceState(null, '', url.toString());
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(url.toString()).catch(() => {});
+      }
+      const origText = btn.innerHTML;
+      btn.innerHTML = '✓ Copied!';
+      btn.style.color = '#4ade80';
+      setTimeout(() => {
+        btn.innerHTML = origText;
+        btn.style.color = '';
+      }, 2000);
+    }
+  </script>
 </body>
 </html>
