@@ -214,8 +214,8 @@ environment variable:
   era, 1990s alt rock, 2000s/2010s late period, and live/gear/side projects).
 - **Truth Baseline Guardrail**: Embedded verified reference sheet prevents
   hallucinations and invalid claims regarding band history and tour details.
-- **Freshness & Temperature**: Generation temperature set to `0.8` for maximum
-  question variety without sacrificing factual accuracy.
+- **Freshness & Temperature**: Generation temperature set to `0.3` for maximum
+  factual accuracy while maintaining question variety.
 - **Structured Output**: Strict JSON schema validation ensures reliable format.
 - **Contextual Fan Chat**: User fan stories are woven into chat context alongside
   strict role guardrails.

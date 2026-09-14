@@ -191,7 +191,7 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: geminiMultipleQuestionsSchema,
-        temperature: 0.8,
+        temperature: 0.3,
       }
     })
   });
@@ -239,7 +239,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
         { role: 'system', content: 'You are a helpful and expert Rush trivia generation assistant. Draw from the broader universe of Rush history while strictly honoring the verified fact sheet for accurate details. Provide diverse, creative, and factually flawless trivia.' },
         { role: 'user', content: prompt }
       ],
-      temperature: 0.8,
+      temperature: 0.3,
       response_format: {
         type: "json_schema",
         json_schema: {
