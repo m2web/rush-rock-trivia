@@ -140,6 +140,31 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      scroll-margin-top: 2rem;
+      transition: all 0.3s ease;
+    }
+    .city-card:target {
+      border-color: #d97706;
+      box-shadow: 0 0 20px rgba(217, 119, 6, 0.4);
+    }
+    .anchor-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.35rem;
+      background: rgba(39, 39, 42, 0.8);
+      border: 1px solid #3f3f46;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.2s ease;
+    }
+    .anchor-link:hover {
+      color: #fbbf24;
+      border-color: #d97706;
+      background: rgba(217, 119, 6, 0.15);
     }
     .city-badge {
       font-size: 0.75rem;
@@ -225,62 +250,92 @@
     <div class="card">
       <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">📍 Confirmed Tour Cities & Venues (Sample Schedule)</h2>
 
-      <div class="city-card">
-        <div class="city-badge">Oct 23, 2026</div>
+      <div class="city-card" id="cincinnati-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Oct 23, 2026</div>
+          <a href="#cincinnati-01" class="anchor-link" title="Direct link to Cincinnati meetup">🔗 #cincinnati-01</a>
+        </div>
         <div class="city-name">Cincinnati, OH — Heritage Bank Center</div>
         <div class="city-venue">Fan Gathering: <strong>Queen City Riverfront Rush Rally</strong> at The Banks (15:30)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Oct 1, 2026</div>
+      <div class="city-card" id="houston-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Oct 1, 2026</div>
+          <a href="#houston-01" class="anchor-link" title="Direct link to Houston meetup">🔗 #houston-01</a>
+        </div>
         <div class="city-name">Houston, TX — Toyota Center</div>
         <div class="city-venue">Fan Gathering: <strong>Space City Rush Tailgate</strong> at Toyota Center Plaza (16:30)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Oct 21, 2026</div>
+      <div class="city-card" id="stlouis-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Oct 21, 2026</div>
+          <a href="#stlouis-01" class="anchor-link" title="Direct link to St. Louis meetup">🔗 #stlouis-01</a>
+        </div>
         <div class="city-name">St. Louis, MO — Enterprise Center</div>
         <div class="city-venue">Fan Gathering: <strong>Gateway Arch Rush Rally</strong> at Enterprise Center Atrium (16:00)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Nov 15, 2026</div>
+      <div class="city-card" id="pittsburgh-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Nov 15, 2026</div>
+          <a href="#pittsburgh-01" class="anchor-link" title="Direct link to Pittsburgh meetup">🔗 #pittsburgh-01</a>
+        </div>
         <div class="city-name">Pittsburgh, PA — PPG Paints Arena</div>
         <div class="city-venue">Fan Gathering: <strong>Steel City Working Men Meetup</strong> at The Souper Bowl (16:00)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Aug 14, 2026</div>
+      <div class="city-card" id="toronto-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Aug 14, 2026</div>
+          <a href="#toronto-01" class="anchor-link" title="Direct link to Toronto meetup">🔗 #toronto-01</a>
+        </div>
         <div class="city-name">Toronto, ON — Scotiabank Arena</div>
         <div class="city-venue">Fan Gathering: <strong>RushCon Toronto Gathering</strong> at The Loose Moose (15:00) & Horseshoe Tavern Afterparty (23:00)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Aug 22, 2026</div>
+      <div class="city-card" id="chicago-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Aug 22, 2026</div>
+          <a href="#chicago-01" class="anchor-link" title="Direct link to Chicago meetup">🔗 #chicago-01</a>
+        </div>
         <div class="city-name">Chicago, IL — United Center</div>
         <div class="city-venue">Fan Gathering: <strong>Windy City Pre-Show Tailgate & BBQ</strong> at United Center Lot C (14:00)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Sep 5, 2026</div>
+      <div class="city-card" id="nyc-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Sep 5, 2026</div>
+          <a href="#nyc-01" class="anchor-link" title="Direct link to New York meetup">🔗 #nyc-01</a>
+        </div>
         <div class="city-name">New York, NY — Madison Square Garden</div>
         <div class="city-venue">Fan Gathering: <strong>Subdivisions Pub Crawl NYC</strong> at The Pennsy (16:00)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Sep 17, 2026</div>
+      <div class="city-card" id="cleveland-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Sep 17, 2026</div>
+          <a href="#cleveland-01" class="anchor-link" title="Direct link to Cleveland meetup">🔗 #cleveland-01</a>
+        </div>
         <div class="city-name">Cleveland, OH — Rocket Mortgage FieldHouse</div>
         <div class="city-venue">Fan Gathering: <strong>East 4th Street Pub Crawl</strong> (16:00)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Sep 18, 2026</div>
+      <div class="city-card" id="boston-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Sep 18, 2026</div>
+          <a href="#boston-01" class="anchor-link" title="Direct link to Boston meetup">🔗 #boston-01</a>
+        </div>
         <div class="city-name">Boston, MA — TD Garden</div>
         <div class="city-venue">Fan Gathering: <strong>Causeway Street Fan Crawl</strong> at The Fours (16:00)</div>
       </div>
 
-      <div class="city-card">
-        <div class="city-badge">Jun 7, 2026</div>
+      <div class="city-card" id="la-01">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="city-badge">Jun 7, 2026</div>
+          <a href="#la-01" class="anchor-link" title="Direct link to Los Angeles meetup">🔗 #la-01</a>
+        </div>
         <div class="city-name">Los Angeles, CA — Kia Forum</div>
         <div class="city-venue">Fan Gathering: <strong>Southern California Signals Tailgate</strong> at Forum Lot E (14:00)</div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Meetup, DEFAULT_MEETUPS, fetchTourParties, submitTourParty } from '../services/partiesService';
 
 interface TourMeetupsViewProps {
@@ -38,6 +38,10 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
   const [parties, setParties] = useState<Meetup[]>(DEFAULT_MEETUPS);
   const [selectedCity, setSelectedCity] = useState<string>('All Cities');
   const [detectedLocation, setDetectedLocation] = useState<string | null>(null);
+
+  // Deep linking and anchor states
+  const [highlightedPartyId, setHighlightedPartyId] = useState<string | null>(null);
+  const [copiedPartyId, setCopiedPartyId] = useState<string | null>(null);
 
   // Modal for submitting a new meetup
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
@@ -83,6 +87,98 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
     } else {
       setParties(DEFAULT_MEETUPS.filter(p => p.tour_city.toLowerCase() === city.toLowerCase()));
     }
+  };
+
+  // Scroll to and highlight a party by Event ID or City
+  const scrollToParty = useCallback((targetId: string) => {
+    if (!targetId) return;
+
+    // Check if target matches a city name
+    const matchingCity = CITIES.find(c => c.toLowerCase() === targetId.toLowerCase());
+    if (matchingCity && matchingCity !== 'All Cities') {
+      handleCityChange(matchingCity);
+      return;
+    }
+
+    // Check if target matches an event ID
+    const targetParty =
+      parties.find(p => p.id.toLowerCase() === targetId.toLowerCase()) ||
+      DEFAULT_MEETUPS.find(p => p.id.toLowerCase() === targetId.toLowerCase());
+
+    if (targetParty) {
+      // If currently filtered to a different city, switch to that city or 'All Cities'
+      if (selectedCity !== 'All Cities' && selectedCity.toLowerCase() !== targetParty.tour_city.toLowerCase()) {
+        setSelectedCity(targetParty.tour_city);
+      }
+    }
+
+    // Scroll into view with retry attempts to ensure element is rendered
+    const tryScroll = (attempts = 0) => {
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setHighlightedPartyId(targetId);
+        setTimeout(() => {
+          setHighlightedPartyId(prev => (prev === targetId ? null : prev));
+        }, 3000);
+      } else if (attempts < 6) {
+        setTimeout(() => tryScroll(attempts + 1), 100);
+      }
+    };
+
+    setTimeout(() => tryScroll(), 50);
+  }, [parties, selectedCity]);
+
+  // Handle URL hash on initial load or when parties list updates
+  useEffect(() => {
+    const rawHash = window.location.hash.replace(/^#/, '').trim();
+    if (rawHash) {
+      scrollToParty(rawHash);
+    }
+  }, [parties, scrollToParty]);
+
+  // Listen for browser hash changes (e.g. forward/back buttons or clicked anchors)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const rawHash = window.location.hash.replace(/^#/, '').trim();
+      if (rawHash) {
+        scrollToParty(rawHash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [scrollToParty]);
+
+  // Copy direct anchor link to clipboard
+  const handleCopyLink = (partyId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const url = new URL(window.location.href);
+    url.hash = partyId;
+    window.history.replaceState(null, '', url.toString());
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(url.toString()).catch(() => {});
+    } else {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = url.toString();
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      } catch {}
+    }
+
+    setCopiedPartyId(partyId);
+    setHighlightedPartyId(partyId);
+    setTimeout(() => {
+      setCopiedPartyId(prev => (prev === partyId ? null : prev));
+    }, 2000);
+    setTimeout(() => {
+      setHighlightedPartyId(prev => (prev === partyId ? null : prev));
+    }, 3000);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -286,7 +382,12 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
           parties.map((party) => (
             <div
               key={party.id}
-              className="p-5 rounded-2xl bg-gray-950/80 border border-gray-800 hover:border-amber-500/50 transition-all duration-200 shadow-lg"
+              id={party.id}
+              className={`p-5 rounded-2xl bg-gray-950/80 border transition-all duration-300 shadow-lg scroll-mt-24 ${
+                highlightedPartyId === party.id
+                  ? 'border-amber-400 ring-2 ring-amber-400/80 shadow-[0_0_25px_rgba(245,158,11,0.4)] scale-[1.01]'
+                  : 'border-gray-800 hover:border-amber-500/50'
+              }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
                 <div>
@@ -312,7 +413,26 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
                       </span>
                     )}
                   </div>
-                  <h3 className="text-lg font-bold text-white leading-snug">{party.name}</h3>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="text-lg font-bold text-white leading-snug">{party.name}</h3>
+                    <button
+                      type="button"
+                      onClick={(e) => handleCopyLink(party.id, e)}
+                      title={`Copy direct link to ${party.name} (#${party.id})`}
+                      aria-label={`Copy direct link to ${party.name}`}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold bg-gray-800/80 hover:bg-amber-600/30 text-gray-400 hover:text-amber-300 border border-gray-700/60 hover:border-amber-500/50 transition cursor-pointer"
+                    >
+                      {copiedPartyId === party.id ? (
+                        <span className="text-green-400 font-bold text-[11px] flex items-center gap-1">
+                          ✓ Copied!
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-[11px]">
+                          🔗 <span className="hidden sm:inline text-[10px]">#{party.id}</span>
+                        </span>
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div className="text-left sm:text-right text-xs">
                   <div className="text-amber-400 font-bold">📅 {party.event_date}</div>
