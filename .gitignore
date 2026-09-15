@@ -37,3 +37,6 @@ ADMIN_GUIDE.md
 
 # Admin helper scripts (local only)
 scripts/
+
+# Marketing copy (local only)
+facebook_marketing_posts.md
