@@ -7,7 +7,6 @@ import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';
 import LoadingSpinner from './components/LoadingSpinner';
-import PassingTheSticks from './components/PassingTheSticks';
 import RushFanModal from './components/RushFanModal';
 import RushFanBadge from './components/RushFanBadge';
 import UpdateFanStoryModal from './components/UpdateFanStoryModal';
@@ -317,7 +316,6 @@ const App: React.FC = () => {
         <Route path="/digitalman" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
         <Route path="/archivist" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
         <Route path="/archivist-chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
-        <Route path="/passingthesticks" element={<PassingTheSticks />} />
         <Route path="*" element={<RushRockTriviaApp initialTab="trivia" />} />
       </Routes>
     </Router>

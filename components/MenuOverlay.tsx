@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaDrum } from 'react-icons/fa';
 import { FaHome } from 'react-icons/fa';
 import './MenuOverlay.css';
 
@@ -10,11 +9,6 @@ const menuItems = [
       path: '/',
       icon: <span style={{ marginRight: '0.5rem', display: 'inline-flex', alignItems: 'center' }}><FaHome /></span>,
     },
-  // {
-  //   label: 'Passing the Sticks',
-  //   path: '/passingthesticks',
-  //   icon: <span style={{ marginRight: '0.5rem', display: 'inline-flex', alignItems: 'center' }}><FaDrum /></span>,
-  // },
   // Future menu items can be added here
 ];
 

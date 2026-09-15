@@ -35,8 +35,6 @@ legacy, or chat directly with a synthetic fellow Rush fan.
 - **:shield: Built-in Chat Guardrails**: In-memory sliding-window IP rate
   limiting (5 requests/min), 500-character input caps with live countdown, and
   a 15-turn session limit with one-click reset.
-- **:drum: Passing the Sticks Tribute**: Dedicated tribute section celebrating
-  the monumental legacy of Neil Peart and welcoming Anika Nilles.
 - **:brain: Dynamic AI-Generated Questions**: Dynamic trivia questions generated
   by Google Gemini 3.6 Flash or OpenAI.
 - **:twisted_rightwards_arrows: Era Diversity & Shuffled Answers**: Balanced
@@ -174,7 +172,6 @@ rush-rock-trivia/
 |   |-- IconComponents.tsx      # Custom Rush-themed SVG icons
 |   |-- LoadingSpinner.tsx      # Rush-themed loading spinner
 |   |-- MenuOverlay.tsx         # Slide-out navigation menu
-|   |-- PassingTheSticks.tsx    # Neil Peart / Anika Nilles tribute
 |   |-- QuestionCard.tsx        # Trivia question card
 |   |-- RushFanBadge.tsx        # Floating fan story badge
 |   |-- RushFanModal.tsx        # Initial fan story prompt modal
