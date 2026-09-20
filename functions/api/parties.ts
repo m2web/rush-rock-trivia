@@ -4,6 +4,7 @@
 import { PagesFunction, Env } from '../types';
 import { GEMINI_MODEL } from '../constants';
 import { getClientIp, getCorsHeaders } from '../utils/request';
+import { sendNewMeetupAlert } from '../meetupNotifier';
 
 import type { Meetup } from '../../data/defaultMeetups';
 import { DEFAULT_MEETUPS } from '../../data/defaultMeetups';
@@ -589,6 +590,9 @@ Respond with ONLY a JSON object: {"approved": true/false, "reason": "brief reaso
         );
       }
     }
+
+    // Dispatch email alert to admin asynchronously (non-blocking)
+    context.waitUntil(sendNewMeetupAlert(context.env, newMeetup));
 
     return new Response(
       JSON.stringify({
