@@ -138,18 +138,60 @@ VERIFIED RUSH FACT SHEET — use this to validate every answer you generate.
 // System-level instruction — no user input is interpolated into this prompt.
 // The only variable (count) is a server-validated integer (1–10), so prompt
 // injection is not possible through this path.
+// Topic categories used to randomize the prompt focus on each call.
+// A random subset is selected and emphasized so the LLM produces different
+// questions even when the rest of the prompt is identical.
+const TOPIC_CATEGORIES = [
+  '1970s Hard Rock & Prog Era (Rush, Fly By Night, Caress of Steel, 2112, A Farewell to Kings, Hemispheres, Permanent Waves)',
+  '1980s Synth & Digital Era (Moving Pictures, Signals, Grace Under Pressure, Power Windows, Hold Your Fire, Presto)',
+  '1990s Hard Rock & Alt Era (Roll the Bones, Counterparts, Test for Echo)',
+  '2000s–2010s Late Studio Era (Vapor Trails, Feedback, Snakes & Arrows, Clockwork Angels)',
+  'Live albums, tour history, and concert milestones',
+  'Gear, instruments, and studio production techniques',
+  'Neil Peart\'s writing, books, and lyrical themes',
+  'Geddy Lee & Alex Lifeson side projects, solo work, or memoirs',
+  'Album cover art, imagery, and Hugh Syme\'s designs',
+  'Song structures, time signatures, and musical composition',
+  'Awards, certifications, and chart performance',
+  'The 2026 Fifty Something tour and Anika Nilles',
+  'Band history, formation, lineup changes, and personal milestones',
+  'Cultural references, literary inspirations, and thematic influences',
+];
+
+/**
+ * Randomly shuffle an array (Fisher-Yates) and return the first `n` items.
+ */
+function pickRandom<T>(arr: readonly T[], n: number): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, n);
+}
+
 function buildTriviaPrompt(count: number): string {
+  // Pick a random subset of topic categories to emphasize in this batch.
+  // This ensures the prompt itself differs across calls, producing varied questions.
+  const emphasizedTopics = pickRandom(TOPIC_CATEGORIES, 4 + Math.floor(Math.random() * 4));
+  const topicList = emphasizedTopics.map((t, i) => `${i + 1}. ${t}`).join('\n');
+
+  // A random seed value embedded in the prompt to further discourage deterministic output.
+  const seed = Math.floor(Math.random() * 1_000_000);
+
   return [
     `Generate exactly ${count} different, highly diverse multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
     '',
+    `RANDOMIZATION SEED: ${seed}`,
+    'Use this seed as creative inspiration to vary your question selection. Do NOT reuse questions from previous requests.',
+    '',
     'BROAD CATALOG & ERA DIVERSITY:',
     'Generate questions spanning the broader universe of Rush\'s 40+ year history. Do NOT limit questions to a single era or a small handful of popular songs.',
-    'Draw evenly across all of Rush\'s distinct eras and topics:',
-    '1. 1970s Hard Rock & Prog Era (Rush, Fly By Night, Caress of Steel, 2112, A Farewell to Kings, Hemispheres, Permanent Waves)',
-    '2. 1980s Synth & Digital Era (Moving Pictures, Signals, Grace Under Pressure, Power Windows, Hold Your Fire, Presto)',
-    '3. 1990s Hard Rock & Alt Era (Roll the Bones, Counterparts, Test for Echo)',
-    '4. 2000s–2010s Late Studio Era (Vapor Trails, Feedback, Snakes & Arrows, Clockwork Angels)',
-    '5. Live albums, tour history, gear/instruments, Neil Peart\'s writing/books, Geddy Lee & Alex Lifeson side projects or memoirs.',
+    '',
+    `FOR THIS BATCH, emphasize (but do not limit to) these randomly selected topic areas:`,
+    topicList,
+    '',
+    'You may also draw from ANY other area of Rush\'s history not listed above.',
     '',
     'QUESTION VARIETY & NO REPETITION:',
     `- Ensure all ${count} questions in this batch cover completely different topics, albums, or band members.`,
@@ -239,7 +281,7 @@ async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQues
         { role: 'system', content: 'You are a helpful and expert Rush trivia generation assistant. Draw from the broader universe of Rush history while strictly honoring the verified fact sheet for accurate details. Provide diverse, creative, and factually flawless trivia.' },
         { role: 'user', content: prompt }
       ],
-      temperature: 0.3,
+      temperature: 0.9,
       response_format: {
         type: "json_schema",
         json_schema: {
