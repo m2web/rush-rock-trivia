@@ -1,15 +1,16 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { TriviaQuestion } from '../types';
+import React, { useState, useEffect } from 'react';
+import { TriviaQuestion, DifficultyLevel, DIFFICULTY_CONFIGS } from '../types';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
   onAnswer: (isCorrect: boolean) => void;
   questionNumber: number;
   totalQuestions: number;
+  difficulty?: DifficultyLevel;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questionNumber, totalQuestions }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questionNumber, totalQuestions, difficulty }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   
@@ -48,7 +49,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
   return (
     <div className="bg-gray-900 bg-opacity-90 p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm animate-fade-in">
       <div className="mb-6 text-center">
-        <p className="text-lg font-semibold text-red-400">Question {questionNumber} / {totalQuestions}</p>
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
+          <p className="text-lg font-semibold text-red-400">Question {questionNumber} / {totalQuestions}</p>
+          {difficulty && DIFFICULTY_CONFIGS[difficulty] && (
+            <span className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${DIFFICULTY_CONFIGS[difficulty].badgeColor}`}>
+              {DIFFICULTY_CONFIGS[difficulty].rushTitle} • {DIFFICULTY_CONFIGS[difficulty].label}
+            </span>
+          )}
+        </div>
         <h2 className="text-2xl md:text-3xl font-bold mt-2">{question.question}</h2>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

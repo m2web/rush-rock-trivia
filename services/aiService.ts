@@ -1,7 +1,7 @@
 // Client-side AI service that routes all calls through Cloudflare Pages Functions.
 // API keys are never present on the client — they live server-side only.
 
-import { TriviaQuestion } from '../types';
+import { TriviaQuestion, DifficultyLevel } from '../types';
 
 // ── Chat ───────────────────────────────────────────────────────────────────────
 
@@ -48,56 +48,77 @@ interface ApiResponse {
   error?: string;
 }
 
-// Question cache for preloading
+// Question cache segmented by difficulty
 class QuestionCache {
-  private cache: TriviaQuestion[] = [];
-  private isLoading = false;
-  private loadPromise: Promise<void> | null = null;
+  private cache: Record<DifficultyLevel, TriviaQuestion[]> = {
+    easy: [],
+    medium: [],
+    hard: [],
+  };
+  private loadingStates: Record<DifficultyLevel, boolean> = {
+    easy: false,
+    medium: false,
+    hard: false,
+  };
+  private loadPromises: Record<DifficultyLevel, Promise<void> | null> = {
+    easy: null,
+    medium: null,
+    hard: null,
+  };
 
-  async getQuestions(count: number = 5): Promise<TriviaQuestion[]> {
-    // If we don't have enough questions, wait for loading to complete
-    if (this.cache.length < count) {
-      if (this.isLoading && this.loadPromise) {
-        await this.loadPromise;
-      } else if (!this.isLoading) {
-        await this.preloadQuestions();
+  async getQuestions(count: number = 5, difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion[]> {
+    // If we don't have enough questions for this difficulty, wait for loading to complete
+    if (this.cache[difficulty].length < count) {
+      if (this.loadingStates[difficulty] && this.loadPromises[difficulty]) {
+        await this.loadPromises[difficulty];
+      } else if (!this.loadingStates[difficulty]) {
+        await this.preloadQuestions(difficulty);
       }
     }
 
     // Return the requested number of questions and remove them from cache
-    const questions = this.cache.splice(0, count);
+    const questions = this.cache[difficulty].splice(0, count);
 
     // Start preloading more questions in the background if cache is getting low
-    if (this.cache.length < 5 && !this.isLoading) {
-      this.preloadQuestions();
+    if (this.cache[difficulty].length < 5 && !this.loadingStates[difficulty]) {
+      this.preloadQuestions(difficulty);
     }
 
     return questions;
   }
 
-  async preloadQuestions(): Promise<void> {
-    if (this.isLoading) return;
+  async preloadQuestions(difficulty: DifficultyLevel = 'easy'): Promise<void> {
+    if (this.loadingStates[difficulty]) return;
 
-    this.isLoading = true;
-    this.loadPromise = this.loadQuestionsInBackground();
+    this.loadingStates[difficulty] = true;
+    this.loadPromises[difficulty] = this.loadQuestionsInBackground(difficulty);
 
     try {
-      await this.loadPromise;
+      await this.loadPromises[difficulty];
     } finally {
-      this.isLoading = false;
-      this.loadPromise = null;
+      this.loadingStates[difficulty] = false;
+      this.loadPromises[difficulty] = null;
     }
   }
 
-  private async loadQuestionsInBackground(): Promise<void> {
+  private async loadQuestionsInBackground(difficulty: DifficultyLevel): Promise<void> {
     try {
-      const newQuestions = await fetchMultipleQuestions(5);
-      this.cache.push(...newQuestions);
+      const newQuestions = await fetchMultipleQuestions(5, difficulty);
+      this.cache[difficulty].push(...newQuestions);
     } catch (error) {
-      console.error('Failed to preload questions:', error);
+      console.error(`Failed to preload ${difficulty} questions:`, error);
     }
   }
 
+  clearCache(difficulty?: DifficultyLevel) {
+    if (difficulty) {
+      this.cache[difficulty] = [];
+    } else {
+      this.cache.easy = [];
+      this.cache.medium = [];
+      this.cache.hard = [];
+    }
+  }
 }
 
 // Create global cache instance
@@ -107,14 +128,17 @@ const questionCache = new QuestionCache();
  * Fetch multiple trivia questions via the secure /api/trivia Pages Function.
  * The backend injects the API key server-side.
  */
-export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQuestion[]> {
+export async function fetchMultipleQuestions(
+  count: number = 5,
+  difficulty: DifficultyLevel = 'easy'
+): Promise<TriviaQuestion[]> {
   try {
     const response = await fetch('/api/trivia', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ count }),
+      body: JSON.stringify({ count, difficulty }),
     });
 
     if (!response.ok) {
@@ -140,18 +164,21 @@ export async function fetchMultipleQuestions(count: number = 5): Promise<TriviaQ
 
     return data.questions;
   } catch (error) {
-    console.error("Error fetching multiple trivia questions:", error);
+    console.error(`Error fetching multiple trivia questions (${difficulty}):`, error);
     throw new Error("Failed to load trivia questions. Please try again.");
   }
 }
 
 // Fetch single question (uses fetchMultipleQuestions with count=1)
-export async function fetchTriviaQuestion(): Promise<TriviaQuestion> {
-  const questions = await fetchMultipleQuestions(1);
+export async function fetchTriviaQuestion(difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion> {
+  const questions = await fetchMultipleQuestions(1, difficulty);
   return questions[0];
 }
 
 // Get preloaded questions from cache
-export async function getPreloadedQuestions(count: number = 5): Promise<TriviaQuestion[]> {
-  return await questionCache.getQuestions(count);
+export async function getPreloadedQuestions(
+  count: number = 5,
+  difficulty: DifficultyLevel = 'easy'
+): Promise<TriviaQuestion[]> {
+  return await questionCache.getQuestions(count, difficulty);
 }

@@ -1,21 +1,32 @@
 
 import React from 'react';
 import { StarmanIcon } from './IconComponents';
+import { DifficultyLevel, DIFFICULTY_CONFIGS } from '../types';
 
 interface StartScreenProps {
   onStart: () => void;
   onStartChat: () => void;
   onViewMeetups?: () => void;
   error?: string | null;
+  difficulty?: DifficultyLevel;
 }
 
-const StartScreen: React.FC<StartScreenProps> = ({ onStart, onStartChat, onViewMeetups, error }) => {
+const StartScreen: React.FC<StartScreenProps> = ({ onStart, onStartChat, onViewMeetups, error, difficulty }) => {
   return (
     <div className="text-center bg-gray-900 bg-opacity-90 p-8 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm">
       <h2 className="text-3xl font-bold mb-4">Are you a true Rush fan?</h2>
-      <p className="text-lg text-gray-300 mb-8 max-w-md mx-auto">
+      <p className="text-lg text-gray-300 mb-6 max-w-md mx-auto">
         Test your knowledge of the holy triumvirate. Questions span decades of lyrical poetry and musical mastery.
       </p>
+
+      {difficulty && DIFFICULTY_CONFIGS[difficulty] && (
+        <div className="mb-6 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border bg-black/50 text-xs shadow-inner">
+          <span className="text-gray-400">Current Rank:</span>
+          <span className={`px-2 py-0.5 rounded-full border font-medium ${DIFFICULTY_CONFIGS[difficulty].badgeColor}`}>
+            {DIFFICULTY_CONFIGS[difficulty].rushTitle} • {DIFFICULTY_CONFIGS[difficulty].label}
+          </span>
+        </div>
+      )}
       {error && <p className="text-red-400 mb-4 bg-red-900/50 p-3 rounded-lg">{error}</p>}
       
       {/* Primary Action: Begin the Test */}

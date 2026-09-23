@@ -39,6 +39,9 @@ legacy, or chat directly with a synthetic fellow Rush fan.
   by Google Gemini 3.6 Flash or OpenAI.
 - **:twisted_rightwards_arrows: Era Diversity & Shuffled Answers**: Balanced
   coverage across 5 distinct Rush eras with shuffled multiple-choice answers.
+- **:chart_with_upwards_trend: Adaptive Difficulty Progression**: Successive quizzes
+  dynamically adjust in difficulty based on player performance. Scoring 4/5 or 5/5
+  promotes players across three calibrated tiers (Working Man -> Subdivisions -> The Professor).
 - **:trophy: Smart Rush-Themed Scoring**: Track your performance with
   custom feedback messages inspired by classic Rush songs and lyrics.
 - **:art: Authentic Rush Aesthetic**: Atmospheric dark theme inspired by the
@@ -136,8 +139,9 @@ legacy, or chat directly with a synthetic fellow Rush fan.
 3. **Answer Questions**: Choose from 4 multiple-choice answers for each
    question.
 4. **Get Feedback**: Receive immediate visual feedback on your selections.
-5. **Complete the Quiz**: Answer all 5 questions to view your final score and
-   lyric rank.
+5. **Complete the Quiz & Level Up**: Answer all 5 questions to view your final score
+   and feedback. Scoring 4/5 or 5/5 promotes you to a harder difficulty tier on
+   your next quiz, with manual tier overrides available.
 6. **Chat About Rush**: Click "Chat about Rush" or the floating fan badge anytime
    to chat with the Synthetic Rush Fan AI.
 
@@ -195,6 +199,25 @@ rush-rock-trivia/
 |-- package.json                # Dependencies and scripts
 `-- README.md                   # Project documentation
 ```
+
+## Adaptive Difficulty Progression
+
+The trivia engine adjusts question difficulty after each completed round:
+
+| Level | Rank Title | Focus Areas | Distractor Complexity |
+| --- | --- | --- | --- |
+| `easy` | Working Man | Mainstream singles, member instruments, iconic albums | Obvious contrasts for casual rock fans |
+| `medium` | Subdivisions | Album cuts, release years, book titles, guest musicians | Plausible Rush tracks and lore |
+| `hard` | The Professor | Time signatures (7/8, 5/4), vintage synth gear, studio lore, b-sides | Subtle, deep-knowledge alternatives |
+
+### Progression Rules
+
+- **Score 4 or 5 out of 5**: Promotes to the next tier (`easy` -> `medium` -> `hard`).
+- **Score 0 or 1 out of 5**: Steps down one tier so gameplay stays rewarding.
+- **Score 2 or 3 out of 5**: Retains the current tier.
+- **Local Persistence**: Player rank persists across sessions via browser storage (`rushTriviaDifficulty`).
+- **Manual Selection**: Players can manually pick any tier on the quiz completion screen.
+- **Tier-Segmented Cache**: The client-side preloader isolates questions by difficulty to avoid serving questions from the wrong tier.
 
 ## AI Integration
 

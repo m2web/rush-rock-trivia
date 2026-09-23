@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { GameState, TriviaQuestion } from './types';
+import { GameState, TriviaQuestion, DifficultyLevel, DIFFICULTY_CONFIGS } from './types';
 // AI service – routes all calls through Cloudflare Pages Functions
 import { getPreloadedQuestions, ChatPersona } from './services/aiService';
 import StartScreen from './components/StartScreen';
@@ -16,6 +16,8 @@ import './src/styles/passingthesticks.css';
 
 const TOTAL_QUESTIONS = 5;
 const FAN_STORY_KEY = 'rushFanStory';
+const DIFFICULTY_KEY = 'rushTriviaDifficulty';
+const DIFFICULTY_ORDER: DifficultyLevel[] = ['easy', 'medium', 'hard'];
 
 // NOTE: Rate limiting is not enforced on the client. Any real cooldown
 // should be enforced server-side in the Pages Functions (429 + Retry-After)
@@ -43,6 +45,19 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
   const [score, setScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Difficulty & adaptive progression state
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(() => {
+    try {
+      const saved = localStorage.getItem(DIFFICULTY_KEY);
+      return (saved === 'easy' || saved === 'medium' || saved === 'hard') ? saved : 'easy';
+    } catch {
+      return 'easy';
+    }
+  });
+  const [nextDifficulty, setNextDifficulty] = useState<DifficultyLevel>(difficulty);
+  const [didLevelUp, setDidLevelUp] = useState(false);
+  const [didLevelDown, setDidLevelDown] = useState(false);
 
   // Fan story & chat state (persisted permanently in localStorage)
   const [fanStory, setFanStory] = useState<string>(() => {
@@ -135,12 +150,29 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
   }, [updateFanStory]);
 
 
-  const loadQuestions = useCallback(async () => {
+  const calculateProgression = useCallback((finalScore: number, currentLevel: DifficultyLevel) => {
+    const currentIndex = DIFFICULTY_ORDER.indexOf(currentLevel);
+
+    // 4 or 5 out of 5 -> Level Up!
+    if (finalScore >= 4 && currentIndex < DIFFICULTY_ORDER.length - 1) {
+      return { next: DIFFICULTY_ORDER[currentIndex + 1], up: true, down: false };
+    }
+
+    // 0 or 1 out of 5 -> Level Down grace
+    if (finalScore <= 1 && currentIndex > 0) {
+      return { next: DIFFICULTY_ORDER[currentIndex - 1], up: false, down: true };
+    }
+
+    // 2 or 3 -> Maintain current level
+    return { next: currentLevel, up: false, down: false };
+  }, []);
+
+  const loadQuestions = useCallback(async (targetDifficulty: DifficultyLevel = difficulty) => {
     setIsLoading(true);
     setError(null);
     try {
-      // Get preloaded questions from the cache
-      const newQuestions = await getPreloadedQuestions(TOTAL_QUESTIONS);
+      // Get preloaded questions from the cache for this difficulty tier
+      const newQuestions = await getPreloadedQuestions(TOTAL_QUESTIONS, targetDifficulty);
       setQuestions(newQuestions);
       setCurrentQuestionIndex(0);
       setScore(0);
@@ -153,14 +185,15 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [difficulty]);
 
 
   const startGame = () => {
-    loadQuestions();
+    loadQuestions(difficulty);
   };
 
   const handleAnswer = (isCorrect: boolean) => {
+    const updatedScore = isCorrect ? score + 1 : score;
     if (isCorrect) {
       setScore(prev => prev + 1);
     }
@@ -170,14 +203,37 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
         if (nextQuestion < TOTAL_QUESTIONS) {
             setCurrentQuestionIndex(nextQuestion);
         } else {
+            // Quiz completed - evaluate adaptive difficulty progression
+            const progression = calculateProgression(updatedScore, difficulty);
+            setNextDifficulty(progression.next);
+            setDidLevelUp(progression.up);
+            setDidLevelDown(progression.down);
+
+            try {
+              localStorage.setItem(DIFFICULTY_KEY, progression.next);
+            } catch {
+              // Ignore if storage is disabled
+            }
+
             setGameState(GameState.FINISHED);
         }
     }, 2000); // Wait 2 seconds before showing the next question to show feedback
   };
 
   const handlePlayAgain = () => {
-    setGameState(GameState.START);
+    const targetDifficulty = nextDifficulty;
+    setDifficulty(targetDifficulty);
     setQuestions([]);
+    loadQuestions(targetDifficulty);
+  };
+
+  const handleSelectDifficulty = (selected: DifficultyLevel) => {
+    setNextDifficulty(selected);
+    try {
+      localStorage.setItem(DIFFICULTY_KEY, selected);
+    } catch {
+      // Ignore
+    }
   };
   
 
@@ -194,6 +250,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
             onStartChat={() => handleStartFanChat()}
             onViewMeetups={handleViewMeetups}
             error={error}
+            difficulty={difficulty}
           />
         );
       case GameState.PLAYING:
@@ -205,18 +262,31 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
                 onAnswer={handleAnswer}
                 questionNumber={currentQuestionIndex + 1}
                 totalQuestions={TOTAL_QUESTIONS}
+                difficulty={difficulty}
               />
             )}
           </>
         );
       case GameState.FINISHED:
-        return <EndScreen score={score} totalQuestions={TOTAL_QUESTIONS} onPlayAgain={handlePlayAgain} />;
+        return (
+          <EndScreen
+            score={score}
+            totalQuestions={TOTAL_QUESTIONS}
+            currentDifficulty={difficulty}
+            nextDifficulty={nextDifficulty}
+            didLevelUp={didLevelUp}
+            didLevelDown={didLevelDown}
+            onPlayAgain={handlePlayAgain}
+            onSelectDifficulty={handleSelectDifficulty}
+          />
+        );
       default:
         return (
           <StartScreen
             onStart={startGame}
             onStartChat={() => handleStartFanChat()}
             onViewMeetups={handleViewMeetups}
+            difficulty={difficulty}
           />
         );
     }

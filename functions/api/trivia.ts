@@ -158,6 +158,27 @@ const TOPIC_CATEGORIES = [
   'Cultural references, literary inspirations, and thematic influences',
 ];
 
+type DifficultyLevel = 'easy' | 'medium' | 'hard';
+
+const DIFFICULTY_INSTRUCTIONS: Record<DifficultyLevel, string> = {
+  easy: `DIFFICULTY LEVEL: EASY ("Working Man" tier - Casual Fans)
+- Focus on mainstream radio singles (e.g., "Tom Sawyer", "The Spirit of Radio", "Limelight", "Closer to the Heart", "Subdivisions", "Fly by Night", "Working Man", "Freewill").
+- General band facts: member roles (Geddy on bass/vocals/synths, Neil on drums/lyrics, Alex on guitar), country of origin, induction into the Rock & Roll Hall of Fame.
+- Keep questions accessible. The incorrect answer distractors should be distinct enough that a casual rock listener can identify the right answer.`,
+
+  medium: `DIFFICULTY LEVEL: MEDIUM ("Subdivisions" tier - Dedicated Fans)
+- Focus on album cuts, deep tracks, and fan favorites (e.g., "Red Barchetta", "Xanadu", "Natural Science", "The Trees", "Red Sector A", "Time Stand Still", "Bravado", "Far Cry").
+- Era history: transitions across synth and late-90s eras, album release sequence, producer Terry Brown, notable guest musicians (Aimee Mann, Ben Mink).
+- Neil Peart's book titles, lyric meanings, and 2026 tour details (Anika Nilles).
+- Distractors must be plausible Rush songs, albums, or dates that require genuine fan knowledge.`,
+
+  hard: `DIFFICULTY LEVEL: HARD ("The Professor" tier - Die-Hard Rush Scholars)
+- Deep musicianship & composition: complex time signatures (e.g. 7/8 in "Subdivisions", 5/4 in "YYZ", 7/4 in "Tom Sawyer"), multi-part suites, and polymeters.
+- Specific instruments and vintage gear (e.g. Wal bass, Rickenbacker 4001, Minimoog, Oberheim OB-X, Moog Taurus pedals, Neil's 360-degree rotating drum kits).
+- Obscure recording lore: Le Studio in Morin-Heights, Rockfield Studios in Wales, Hugh Syme's specific art easter eggs, b-sides, live bootleg names, and early 1968–1974 pre-Peart history (John Rutsey).
+- Distractors must be subtle, highly plausible Rush deep lore that tests true die-hard mastery.`
+};
+
 /**
  * Randomly shuffle an array (Fisher-Yates) and return the first `n` items.
  */
@@ -170,7 +191,7 @@ function pickRandom<T>(arr: readonly T[], n: number): T[] {
   return copy.slice(0, n);
 }
 
-function buildTriviaPrompt(count: number): string {
+function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'): string {
   // Pick a random subset of topic categories to emphasize in this batch.
   // This ensures the prompt itself differs across calls, producing varied questions.
   const emphasizedTopics = pickRandom(TOPIC_CATEGORIES, 4 + Math.floor(Math.random() * 4));
@@ -181,6 +202,8 @@ function buildTriviaPrompt(count: number): string {
 
   return [
     `Generate exactly ${count} different, highly diverse multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
+    '',
+    DIFFICULTY_INSTRUCTIONS[difficulty] || DIFFICULTY_INSTRUCTIONS.easy,
     '',
     `RANDOMIZATION SEED: ${seed}`,
     'Use this seed as creative inspiration to vary your question selection. Do NOT reuse questions from previous requests.',
@@ -196,7 +219,7 @@ function buildTriviaPrompt(count: number): string {
     'QUESTION VARIETY & NO REPETITION:',
     `- Ensure all ${count} questions in this batch cover completely different topics, albums, or band members.`,
     '- Avoid over-using repetitive tropes (e.g., asking only about Ayn Rand, Ben Mink, or album certifications). Provide a fresh, creative mix.',
-    '- Aim for high-quality, engaging questions that reward deep fan knowledge while remaining 100% verifiably accurate.',
+    '- Aim for high-quality, engaging questions that reward fan knowledge while remaining 100% verifiably accurate.',
     '',
     'FACTUAL ACCURACY GUARDRAIL:',
     'Below is a VERIFIED RUSH FACT SHEET. This sheet serves as a strict factual truth baseline to prevent hallucinations or incorrect claims.',
@@ -216,8 +239,8 @@ function buildTriviaPrompt(count: number): string {
   ].join('\n');
 }
 
-async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
-  const prompt = buildTriviaPrompt(count);
+async function callGemini(apiKey: string, count: number = 5, difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion[]> {
+  const prompt = buildTriviaPrompt(count, difficulty);
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
     method: 'POST',
@@ -266,8 +289,8 @@ async function callGemini(apiKey: string, count: number = 5): Promise<TriviaQues
   return parsedData.questions;
 }
 
-async function callOpenAI(apiKey: string, count: number = 5): Promise<TriviaQuestion[]> {
-  const prompt = buildTriviaPrompt(count);
+async function callOpenAI(apiKey: string, count: number = 5, difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion[]> {
+  const prompt = buildTriviaPrompt(count, difficulty);
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -386,7 +409,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    const { count: rawCount } = body as { count?: unknown };
+    const { count: rawCount, difficulty: rawDifficulty } = body as { count?: unknown; difficulty?: unknown };
     const count = typeof rawCount === 'number' ? Math.floor(rawCount) : 5;
 
     // Validate count range
@@ -397,10 +420,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
+    // Validate difficulty
+    const validDifficulties: DifficultyLevel[] = ['easy', 'medium', 'hard'];
+    const difficulty: DifficultyLevel = typeof rawDifficulty === 'string' && validDifficulties.includes(rawDifficulty as DifficultyLevel)
+      ? (rawDifficulty as DifficultyLevel)
+      : 'easy';
+
     // ── Generate questions ────────────────────────────────────────────
     const questions = useOpenAI
-      ? await callOpenAI(apiKey, count)
-      : await callGemini(apiKey, count);
+      ? await callOpenAI(apiKey, count, difficulty)
+      : await callGemini(apiKey, count, difficulty);
 
     return new Response(JSON.stringify({ questions }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
