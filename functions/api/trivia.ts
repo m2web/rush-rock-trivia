@@ -101,7 +101,7 @@ VERIFIED RUSH FACT SHEET — use this to validate every answer you generate.
 10. The 2026 tour setlist is built from a catalogue of 35 songs including greatest hits and fan favorites.
 11. Presale info is available on the official Rush website, fan club sign-ups, and Citi for US shows.
 12. "Subdivisions" (Signals) explores teenage alienation and the pressure to conform to suburban expectations.
-13. "The Big Money" (Power Windows) addresses the pervasive influence of global capitalism and financial power.
+13. "The Big Money" (Power Windows, 1985) addresses the pervasive influence of global capitalism and financial power.
 14. "Time Stand Still" is from the album HOLD YOUR FIRE (1987). Aimee Mann provided backing vocals on this track. It is NOT from Presto, Roll the Bones, Counterparts, or Test for Echo.
 15. There is no announced European leg for the 2026 tour.
 16. The 2026 setlist focuses on hits from the Fly by Night era onward; material from the debut album with John Rutsey is highly unlikely.
@@ -114,7 +114,7 @@ VERIFIED RUSH FACT SHEET — use this to validate every answer you generate.
 23. The cover art for Grace Under Pressure was designed by Hugh Syme.
 24. The Presto (1989) cover features levitating rabbits — a play on the album's magic/sleight-of-hand theme.
 25. In "The Trees" (Hemispheres), the conflict is between the Oaks and the Maples.
-26. "Manhattan Project" (Power Windows) is about the development of the atomic bomb and the bombings of Hiroshima and Nagasaki.
+26. "Manhattan Project" (Power Windows, 1985) is about the development of the atomic bomb and the bombings of Hiroshima and Nagasaki.
 27. The "rap" section in "Roll the Bones" (1991) was performed by Geddy Lee with his voice electronically lowered.
 28. Neil Peart's book about his motorbike journeys during the late-90s hiatus is "Ghost Rider: Travels on the Healing Road."
 29. "Natural Science" (Permanent Waves) explores nature vs. technology and has three parts: "Tide Pools," "Hyperspace," and "Permanent Waves."
@@ -123,7 +123,7 @@ VERIFIED RUSH FACT SHEET — use this to validate every answer you generate.
 32. "Red Sector A" (Grace Under Pressure) was inspired by Geddy Lee's mother's experiences in the Bergen-Belsen concentration camp.
 33. "The Pass" (Presto) is an empathetic plea against teenage suicide.
 34. Apollo represents Reason in "Hemispheres"; Dionysus represents Emotion.
-35. "Territories" (Power Windows) critiques nationalism and artificial boundaries.
+35. "Territories" (Power Windows, 1985) critiques nationalism and artificial boundaries.
 36. "Dreamline" (Roll the Bones) represents the youthful pursuit of dreams and the feeling of immortality while traveling.
 37. Vapor Trails (2002) has zero synthesizers — a deliberate return to raw, guitar-driven sound.
 38. "By-Tor" and the "Snow Dog" (Fly by Night) were named after two dogs owned by lighting director Howard Ungerleider.
@@ -133,6 +133,9 @@ VERIFIED RUSH FACT SHEET — use this to validate every answer you generate.
 42. Anika Nilles released Pikalar (2017), For a Colorful Soul (2020), the EP Opuntia (2022), and False Truth (2025) with her band Nevell.
 43. Anika Nilles gained international recognition through viral YouTube drumming videos, including "Wild Boy" (2013) and "Alter Ego" (2014).
 44. Anika Nilles toured with guitarist Jeff Beck, performing as his drummer for over 60 shows in 2022.
+45. "Power Windows" was released in 1985 (featuring "The Big Money", "Manhattan Project", "Marathon", "Territories", "Middletown Dreams", "Mystic Rhythms"). It was NOT released in 1991!
+46. "Roll the Bones" was released in 1991 (featuring "Dreamline", "Roll the Bones", "Bravado", "Ghost of a Chance").
+47. Chronological Studio Album Release Years: Rush (1974), Fly by Night (1975), Caress of Steel (1975), 2112 (1976), A Farewell to Kings (1977), Hemispheres (1978), Permanent Waves (1980), Moving Pictures (1981), Signals (1982), Grace Under Pressure (1984), Power Windows (1985), Hold Your Fire (1987), Presto (1989), Roll the Bones (1991), Counterparts (1993), Test for Echo (1996), Vapor Trails (2002), Feedback (2004), Snakes & Arrows (2007), Clockwork Angels (2012).
 `;
 
 // System-level instruction — no user input is interpolated into this prompt.

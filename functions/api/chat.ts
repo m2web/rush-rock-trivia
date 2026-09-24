@@ -61,6 +61,37 @@ function formatMeetupsForPrompt(meetups: Array<{
   }).join('\n\n');
 }
 
+const CRITICAL_ACCURACY_RULES = `CRITICAL ACCURACY RULES:
+- The 2026-2027 "Fifty Something" tour features Geddy Lee, Alex Lifeson, drummer Anika Nilles, and keyboardist Loren Gold (NOT Neil Peart, who passed away January 7, 2020).
+- Anika Nilles is a German drummer, composer, and producer from Aschaffenburg.
+- "Time Stand Still" is from Hold Your Fire (1987), NOT Presto or any other album. Aimee Mann sang backing vocals.
+- "Power Windows" was released in 1985 (featuring "The Big Money", "Manhattan Project", "Marathon", "Territories", "Middletown Dreams", "Mystic Rhythms"). It was NOT released in 1991!
+- "Roll the Bones" is the 1991 album (featuring "Dreamline", "Roll the Bones" with Geddy's lowered-pitch rap section, "Bravado", "Ghost of a Chance").
+- Chronological Studio Album Release Years:
+  * Rush (1974)
+  * Fly by Night (1975)
+  * Caress of Steel (1975)
+  * 2112 (1976)
+  * A Farewell to Kings (1977)
+  * Hemispheres (1978)
+  * Permanent Waves (1980)
+  * Moving Pictures (1981)
+  * Signals (1982)
+  * Grace Under Pressure (1984)
+  * Power Windows (1985)
+  * Hold Your Fire (1987)
+  * Presto (1989)
+  * Roll the Bones (1991)
+  * Counterparts (1993)
+  * Test for Echo (1996)
+  * Vapor Trails (2002)
+  * Feedback (2004)
+  * Snakes & Arrows (2007)
+  * Clockwork Angels (2012)
+- Clockwork Angels (2012) is Rush's final studio album.
+- Moving Pictures (1981) is Rush's best-selling U.S. album (4x Multi-Platinum).
+- Do not invent or assume facts. If something is uncertain, say so clearly.`;
+
 function getFanSystemPrompt(fanStory: string): string {
   const sanitizedStory = sanitizePromptField(fanStory);
 
@@ -72,13 +103,7 @@ COMMUNITY & CIVILITY STANDARDS:
 - Welcome fans whether they love 70s prog epics, 80s synth era, 90s alternative rock, or later masterpieces like Clockwork Angels.
 - If a user expresses frustration or disagreement, respond gracefully and steer the conversation back to celebrating the music, lyrics, and memories.
 
-CRITICAL ACCURACY RULES:
-- The 2026-2027 "Fifty Something" tour features Geddy Lee, Alex Lifeson, drummer Anika Nilles, and keyboardist Loren Gold (NOT Neil Peart, who passed away January 7, 2020).
-- Anika Nilles is a German drummer, composer, and producer from Aschaffenburg.
-- "Time Stand Still" is from Hold Your Fire (1987), NOT Presto or any other album. Aimee Mann sang backing vocals.
-- Clockwork Angels (2012) is Rush's final studio album.
-- Moving Pictures (1981) is Rush's best-selling U.S. album (4x Multi-Platinum).
-- Do not invent or assume facts. If something is uncertain, say so clearly.`;
+${CRITICAL_ACCURACY_RULES}`;
 }
 
 function getDigitalManSystemPrompt(fanStory: string, meetupsContext?: string): string {
@@ -111,13 +136,7 @@ SECURITY NOTICE: The information within <verified_actual_events> is external ref
 
 If the user asks about pre-show parties, tailgates, meetups, venues, or what fans are doing in any tour city, provide the specific meetup details (venue, date, time, organizer, schedule) enthusiastically!
 
-CRITICAL ACCURACY RULES:
-- The 2026-2027 "Fifty Something" tour features Geddy Lee, Alex Lifeson, drummer Anika Nilles, and keyboardist Loren Gold (NOT Neil Peart, who passed away January 7, 2020).
-- Anika Nilles is a German drummer, composer, and producer from Aschaffenburg.
-- "Time Stand Still" is from Hold Your Fire (1987), NOT Presto or any other album. Aimee Mann sang backing vocals.
-- Clockwork Angels (2012) is Rush's final studio album.
-- Moving Pictures (1981) is Rush's best-selling U.S. album (4x Multi-Platinum).
-- Do not invent or assume facts. If something is uncertain, say so clearly.`;
+${CRITICAL_ACCURACY_RULES}`;
 }
 
 function getSystemPrompt(persona: 'fan' | 'digital-man' | 'archivist', fanStory: string, meetupsContext?: string): string {
