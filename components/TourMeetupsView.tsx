@@ -8,19 +8,70 @@ interface TourMeetupsViewProps {
   onBack?: () => void;
 }
 
-const CITIES = [
-  'All Cities',
-  'Cincinnati',
-  'Houston',
-  'St. Louis',
-  'Pittsburgh',
-  'Toronto',
-  'Chicago',
-  'New York',
-  'Cleveland',
-  'Boston',
-  'Los Angeles',
+export interface TourStop {
+  city: string;
+  stateOrCountry: string;
+  fullName: string;
+  dates: string;
+  year: number;
+  defaultDate: string;
+}
+
+export const TOUR_STOPS: TourStop[] = [
+  // 2026 Tour Dates
+  { city: 'San Antonio', stateOrCountry: 'Texas', fullName: 'San Antonio, Texas', dates: 'Sept 25', year: 2026, defaultDate: '2026-09-25' },
+  { city: 'Houston', stateOrCountry: 'Texas', fullName: 'Houston, Texas', dates: 'Oct 1', year: 2026, defaultDate: '2026-10-01' },
+  { city: 'Denver', stateOrCountry: 'Colorado', fullName: 'Denver, Colorado', dates: 'Oct 5, 7', year: 2026, defaultDate: '2026-10-05' },
+  { city: 'Seattle', stateOrCountry: 'Washington', fullName: 'Seattle, Washington', dates: 'Oct 10, 12', year: 2026, defaultDate: '2026-10-10' },
+  { city: 'San Jose', stateOrCountry: 'California', fullName: 'San Jose, California', dates: 'Oct 15, 17', year: 2026, defaultDate: '2026-10-15' },
+  { city: 'St. Louis', stateOrCountry: 'Missouri', fullName: 'St. Louis, Missouri', dates: 'Oct 21', year: 2026, defaultDate: '2026-10-21' },
+  { city: 'Cincinnati', stateOrCountry: 'Ohio', fullName: 'Cincinnati, Ohio', dates: 'Oct 23', year: 2026, defaultDate: '2026-10-23' },
+  { city: 'Washington, D.C.', stateOrCountry: 'D.C.', fullName: 'Washington, D.C.', dates: 'Oct 25, 27', year: 2026, defaultDate: '2026-10-25' },
+  { city: 'Uncasville', stateOrCountry: 'Connecticut', fullName: 'Uncasville, Connecticut', dates: 'Oct 30, Nov 1', year: 2026, defaultDate: '2026-10-30' },
+  { city: 'Hollywood', stateOrCountry: 'Florida', fullName: 'Hollywood, Florida', dates: 'Nov 5, 7', year: 2026, defaultDate: '2026-11-05' },
+  { city: 'Tampa', stateOrCountry: 'Florida', fullName: 'Tampa, Florida', dates: 'Nov 9, 11', year: 2026, defaultDate: '2026-11-09' },
+  { city: 'Pittsburgh', stateOrCountry: 'Pennsylvania', fullName: 'Pittsburgh, Pennsylvania', dates: 'Nov 15', year: 2026, defaultDate: '2026-11-15' },
+  { city: 'Charlotte', stateOrCountry: 'North Carolina', fullName: 'Charlotte, North Carolina', dates: 'Nov 20, 22', year: 2026, defaultDate: '2026-11-20' },
+  { city: 'Atlanta', stateOrCountry: 'Georgia', fullName: 'Atlanta, Georgia', dates: 'Nov 25, 27', year: 2026, defaultDate: '2026-11-25' },
+  { city: 'Glendale', stateOrCountry: 'Arizona', fullName: 'Glendale, Arizona', dates: 'Dec 1, 3', year: 2026, defaultDate: '2026-12-01' },
+  { city: 'Edmonton', stateOrCountry: 'Alberta', fullName: 'Edmonton, Alberta', dates: 'Dec 10, 12', year: 2026, defaultDate: '2026-12-10' },
+  { city: 'Vancouver', stateOrCountry: 'British Columbia', fullName: 'Vancouver, British Columbia', dates: 'Dec 15, 17', year: 2026, defaultDate: '2026-12-15' },
+
+  // 2027 Tour Dates
+  { city: 'Buenos Aires', stateOrCountry: 'Argentina', fullName: 'Buenos Aires, Argentina', dates: 'Jan 15', year: 2027, defaultDate: '2027-01-15' },
+  { city: 'Santiago', stateOrCountry: 'Chile', fullName: 'Santiago, Chile', dates: 'Jan 17, 19', year: 2027, defaultDate: '2027-01-17' },
+  { city: 'Curitiba', stateOrCountry: 'Brazil', fullName: 'Curitiba, Brazil', dates: 'Jan 22', year: 2027, defaultDate: '2027-01-22' },
+  { city: 'São Paulo', stateOrCountry: 'Brazil', fullName: 'São Paulo, Brazil', dates: 'Jan 24, 26', year: 2027, defaultDate: '2027-01-24' },
+  { city: 'Rio de Janeiro', stateOrCountry: 'Brazil', fullName: 'Rio de Janeiro, Brazil', dates: 'Jan 30', year: 2027, defaultDate: '2027-01-30' },
+  { city: 'Belo Horizonte', stateOrCountry: 'Brazil', fullName: 'Belo Horizonte, Brazil', dates: 'Feb 1', year: 2027, defaultDate: '2027-02-01' },
+  { city: 'Brasília', stateOrCountry: 'Brazil', fullName: 'Brasília, Brazil', dates: 'Feb 4', year: 2027, defaultDate: '2027-02-04' },
+  { city: 'Paris', stateOrCountry: 'France', fullName: 'Paris, France', dates: 'Feb 19', year: 2027, defaultDate: '2027-02-19' },
+  { city: 'Berlin', stateOrCountry: 'Germany', fullName: 'Berlin, Germany', dates: 'Feb 21', year: 2027, defaultDate: '2027-02-21' },
+  { city: 'Amsterdam', stateOrCountry: 'Netherlands', fullName: 'Amsterdam, Netherlands', dates: 'Feb 23', year: 2027, defaultDate: '2027-02-23' },
+  { city: 'Munich', stateOrCountry: 'Germany', fullName: 'Munich, Germany', dates: 'Feb 25', year: 2027, defaultDate: '2027-02-25' },
+  { city: 'Cologne', stateOrCountry: 'Germany', fullName: 'Cologne, Germany', dates: 'Feb 28', year: 2027, defaultDate: '2027-02-28' },
+  { city: 'Hamburg', stateOrCountry: 'Germany', fullName: 'Hamburg, Germany', dates: 'Mar 2', year: 2027, defaultDate: '2027-03-02' },
+  { city: 'Stuttgart', stateOrCountry: 'Germany', fullName: 'Stuttgart, Germany', dates: 'Mar 4', year: 2027, defaultDate: '2027-03-04' },
+  { city: 'Glasgow', stateOrCountry: 'United Kingdom', fullName: 'Glasgow, United Kingdom', dates: 'Mar 8, 10', year: 2027, defaultDate: '2027-03-08' },
+  { city: 'Manchester', stateOrCountry: 'United Kingdom', fullName: 'Manchester, United Kingdom', dates: 'Mar 12, 14', year: 2027, defaultDate: '2027-03-12' },
+  { city: 'London', stateOrCountry: 'United Kingdom', fullName: 'London, United Kingdom', dates: 'Mar 16, 18, 21', year: 2027, defaultDate: '2027-03-16' },
+  { city: 'Kraków', stateOrCountry: 'Poland', fullName: 'Kraków, Poland', dates: 'Mar 27', year: 2027, defaultDate: '2027-03-27' },
+  { city: 'Milan', stateOrCountry: 'Italy', fullName: 'Milan, Italy', dates: 'Mar 30', year: 2027, defaultDate: '2027-03-30' },
+  { city: 'Basel', stateOrCountry: 'Switzerland', fullName: 'Basel, Switzerland', dates: 'Apr 1', year: 2027, defaultDate: '2027-04-01' },
+  { city: 'Copenhagen', stateOrCountry: 'Denmark', fullName: 'Copenhagen, Denmark', dates: 'Apr 4', year: 2027, defaultDate: '2027-04-04' },
+  { city: 'Oslo', stateOrCountry: 'Norway', fullName: 'Oslo, Norway', dates: 'Apr 6', year: 2027, defaultDate: '2027-04-06' },
+  { city: 'Stockholm', stateOrCountry: 'Sweden', fullName: 'Stockholm, Sweden', dates: 'Apr 8', year: 2027, defaultDate: '2027-04-08' },
+  { city: 'Helsinki', stateOrCountry: 'Finland', fullName: 'Helsinki, Finland', dates: 'Apr 10', year: 2027, defaultDate: '2027-04-10' },
 ];
+
+export const CITIES = ['All Cities', ...TOUR_STOPS.map(s => s.city)];
+
+const isCityMatch = (city1?: string | null, city2?: string | null): boolean => {
+  if (!city1 || !city2) return false;
+  const c1 = city1.toLowerCase().trim();
+  const c2 = city2.toLowerCase().trim();
+  return c1 === c2 || c1.startsWith(c2) || c2.startsWith(c1) || c1.includes(c2) || c2.includes(c1);
+};
 
 const isSafeUrl = (url?: string): boolean => {
   if (!url) return false;
@@ -49,11 +100,11 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    tour_city: 'Cincinnati',
+    tour_city: 'San Antonio',
     venue_name: '',
     venue_url: '',
     address: '',
-    event_date: '2026-10-23',
+    event_date: '2026-09-25',
     start_time: '16:00',
     description: '',
     organizer_name: '',
@@ -85,7 +136,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
     if (city === 'All Cities') {
       setParties(DEFAULT_MEETUPS);
     } else {
-      setParties(DEFAULT_MEETUPS.filter(p => p.tour_city.toLowerCase() === city.toLowerCase()));
+      setParties(DEFAULT_MEETUPS.filter(p => isCityMatch(p.tour_city, city)));
     }
   };
 
@@ -94,7 +145,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
     if (!targetId) return;
 
     // Check if target matches a city name
-    const matchingCity = CITIES.find(c => c.toLowerCase() === targetId.toLowerCase());
+    const matchingCity = CITIES.find(c => isCityMatch(c, targetId));
     if (matchingCity && matchingCity !== 'All Cities') {
       handleCityChange(matchingCity);
       return;
@@ -107,7 +158,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
 
     if (targetParty) {
       // If currently filtered to a different city, switch to that city or 'All Cities'
-      if (selectedCity !== 'All Cities' && selectedCity.toLowerCase() !== targetParty.tour_city.toLowerCase()) {
+      if (selectedCity !== 'All Cities' && !isCityMatch(selectedCity, targetParty.tour_city)) {
         setSelectedCity(targetParty.tour_city);
       }
     }
@@ -193,7 +244,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
       setIsSubmitModalOpen(false);
       // Only prepend to visible list if the meetup was approved (not pending review) AND matches current city filter
       if (res.meetup && res.meetup.status === 'approved') {
-        const matchesCity = selectedCity === 'All Cities' || res.meetup.tour_city.toLowerCase() === selectedCity.toLowerCase();
+        const matchesCity = selectedCity === 'All Cities' || isCityMatch(res.meetup.tour_city, selectedCity);
         if (matchesCity) {
           setParties(prev => [res.meetup, ...prev]);
         }
@@ -201,11 +252,11 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
       // Reset form
       setFormData({
         name: '',
-        tour_city: 'Cincinnati',
+        tour_city: 'San Antonio',
         venue_name: '',
         venue_url: '',
         address: '',
-        event_date: '2026-10-23',
+        event_date: '2026-09-25',
         start_time: '16:00',
         description: '',
         organizer_name: '',
@@ -293,7 +344,17 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
           </div>
         </div>
         <button
-          onClick={() => setIsSubmitModalOpen(true)}
+          onClick={() => {
+            if (selectedCity !== 'All Cities') {
+              const stop = TOUR_STOPS.find(s => isCityMatch(s.city, selectedCity));
+              setFormData(prev => ({
+                ...prev,
+                tour_city: selectedCity,
+                event_date: stop ? stop.defaultDate : prev.event_date,
+              }));
+            }
+            setIsSubmitModalOpen(true);
+          }}
           className="whitespace-nowrap px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-md transition transform hover:scale-105 cursor-pointer"
         >
           ✨ Create Actual Event →
@@ -370,7 +431,14 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
             <p className="text-xs text-gray-500 mb-4">Are you attending this tour stop? Be the first to organize a tailgate!</p>
             <button
               onClick={() => {
-                if (selectedCity !== 'All Cities') setFormData(prev => ({ ...prev, tour_city: selectedCity }));
+                if (selectedCity !== 'All Cities') {
+                  const stop = TOUR_STOPS.find(s => isCityMatch(s.city, selectedCity));
+                  setFormData(prev => ({
+                    ...prev,
+                    tour_city: selectedCity,
+                    event_date: stop ? stop.defaultDate : prev.event_date,
+                  }));
+                }
                 setIsSubmitModalOpen(true);
               }}
               className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-black font-bold text-xs rounded-full cursor-pointer"
@@ -573,14 +641,31 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
                   <label className="block text-gray-300 font-bold mb-1">Tour City *</label>
                   <select
                     value={formData.tour_city}
-                    onChange={(e) => setFormData({ ...formData, tour_city: e.target.value })}
+                    onChange={(e) => {
+                      const newCity = e.target.value;
+                      const stop = TOUR_STOPS.find(s => isCityMatch(s.city, newCity) || isCityMatch(s.fullName, newCity));
+                      setFormData(prev => ({
+                        ...prev,
+                        tour_city: newCity,
+                        event_date: stop ? stop.defaultDate : prev.event_date,
+                      }));
+                    }}
                     className="w-full p-2.5 rounded-lg bg-gray-950 border border-gray-700 text-white focus:outline-none focus:border-amber-500"
                   >
-                    {CITIES.filter((c) => c !== 'All Cities').map((city) => (
-                      <option key={city} value={city}>
-                        {city}
-                      </option>
-                    ))}
+                    <optgroup label="2026 Tour Dates">
+                      {TOUR_STOPS.filter(s => s.year === 2026).map((stop) => (
+                        <option key={stop.city} value={stop.city}>
+                          {stop.fullName} ({stop.dates})
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="2027 Tour Dates">
+                      {TOUR_STOPS.filter(s => s.year === 2027).map((stop) => (
+                        <option key={stop.city} value={stop.city}>
+                          {stop.fullName} ({stop.dates})
+                        </option>
+                      ))}
+                    </optgroup>
                   </select>
                 </div>
                 <div>

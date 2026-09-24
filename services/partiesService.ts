@@ -47,7 +47,11 @@ export async function fetchTourParties(params?: {
   // Safe fallback to default meetups only if API is unreachable or returned invalid data
   let filtered = [...DEFAULT_MEETUPS];
   if (params?.city && params.city !== 'All Cities') {
-    filtered = filtered.filter(p => p.tour_city.toLowerCase() === params.city!.toLowerCase());
+    const qCity = params.city.toLowerCase().trim();
+    filtered = filtered.filter(p => {
+      const pCity = p.tour_city.toLowerCase().trim();
+      return pCity === qCity || pCity.startsWith(qCity) || qCity.startsWith(pCity) || pCity.includes(qCity) || qCity.includes(pCity);
+    });
   }
   if (params?.category) {
     filtered = filtered.filter(p => p.category === params.category);

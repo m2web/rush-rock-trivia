@@ -31,7 +31,7 @@ export const DEFAULT_MEETUPS: Meetup[] = [
     address: '1 AT&T Center Pkwy, San Antonio, TX 78219',
     latitude: 29.4270,
     longitude: -98.4375,
-    event_date: '2026-09-23',
+    event_date: '2026-09-25',
     start_time: '16:00',
     description: 'Tex-Mex tailgate and Rush fan gathering in the Frost Bank Center plaza. Brisket tacos, cold Lone Stars, and a Rush playlist blasting all afternoon.',
     organizer_name: 'Alamo City Rush Crew',
