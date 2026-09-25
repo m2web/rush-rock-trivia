@@ -66,6 +66,36 @@ export const TOUR_STOPS: TourStop[] = [
 
 export const CITIES = ['All Cities', ...TOUR_STOPS.map(s => s.city)];
 
+/** Compute the last show date for a tour stop from its dates string (e.g. "Oct 5, 7" → Oct 7) */
+const getLastShowDate = (stop: TourStop): string => {
+  const parts = stop.dates.split(',').map(s => s.trim());
+  const lastPart = parts[parts.length - 1];
+  const months: Record<string, string> = {
+    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
+  };
+  // "Nov 1" style — month + day (handles cross-month like "Oct 30, Nov 1")
+  const monthDay = lastPart.match(/^([A-Za-z]+)\s+(\d+)$/);
+  if (monthDay) {
+    return `${stop.year}-${months[monthDay[1]] || '01'}-${monthDay[2].padStart(2, '0')}`;
+  }
+  // "7" style — day-only, inherits month from defaultDate (handles "Oct 5, 7")
+  if (/^\d+$/.test(lastPart)) {
+    return `${stop.year}-${stop.defaultDate.substring(5, 7)}-${lastPart.padStart(2, '0')}`;
+  }
+  return stop.defaultDate;
+};
+
+/** Today's date in YYYY-MM-DD (local timezone) — evaluated once at module load */
+const todayStr = (() => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+})();
+
+/** Tour stops whose last show date is today or in the future */
+export const UPCOMING_STOPS = TOUR_STOPS.filter(s => getLastShowDate(s) >= todayStr);
+export const UPCOMING_CITIES = ['All Cities', ...UPCOMING_STOPS.map(s => s.city)];
+
 const isCityMatch = (city1?: string | null, city2?: string | null): boolean => {
   if (!city1 || !city2) return false;
   const c1 = city1.toLowerCase().trim();
@@ -100,11 +130,11 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    tour_city: 'San Antonio',
+    tour_city: UPCOMING_STOPS[0]?.city || 'San Antonio',
     venue_name: '',
     venue_url: '',
     address: '',
-    event_date: '2026-09-25',
+    event_date: UPCOMING_STOPS[0]?.defaultDate || '2026-09-25',
     start_time: '16:00',
     description: '',
     organizer_name: '',
@@ -252,11 +282,11 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
       // Reset form
       setFormData({
         name: '',
-        tour_city: 'San Antonio',
+        tour_city: UPCOMING_STOPS[0]?.city || 'San Antonio',
         venue_name: '',
         venue_url: '',
         address: '',
-        event_date: '2026-09-25',
+        event_date: UPCOMING_STOPS[0]?.defaultDate || '2026-09-25',
         start_time: '16:00',
         description: '',
         organizer_name: '',
@@ -400,7 +430,7 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
       <div className="mb-6">
         <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Select Your Tour City:</label>
         <div className="flex flex-wrap gap-2">
-          {CITIES.map((city) => (
+          {UPCOMING_CITIES.map((city) => (
             <button
               key={city}
               onClick={() => handleCityChange(city)}
@@ -653,19 +683,21 @@ const TourMeetupsView: React.FC<TourMeetupsViewProps> = ({ onAskDigitalMan, onAs
                     className="w-full p-2.5 rounded-lg bg-gray-950 border border-gray-700 text-white focus:outline-none focus:border-amber-500"
                   >
                     <optgroup label="2026 Tour Dates">
-                      {TOUR_STOPS.filter(s => s.year === 2026).map((stop) => (
+                      {UPCOMING_STOPS.filter(s => s.year === 2026).map((stop) => (
                         <option key={stop.city} value={stop.city}>
                           {stop.fullName} ({stop.dates})
                         </option>
                       ))}
                     </optgroup>
+                    {UPCOMING_STOPS.some(s => s.year === 2027) && (
                     <optgroup label="2027 Tour Dates">
-                      {TOUR_STOPS.filter(s => s.year === 2027).map((stop) => (
+                      {UPCOMING_STOPS.filter(s => s.year === 2027).map((stop) => (
                         <option key={stop.city} value={stop.city}>
                           {stop.fullName} ({stop.dates})
                         </option>
                       ))}
                     </optgroup>
+                    )}
                   </select>
                 </div>
                 <div>
