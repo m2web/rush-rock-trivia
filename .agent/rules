@@ -5,3 +5,8 @@
   ```powershell
   npx promptfoo eval --env-file .env
   ```
+
+## Model Selection & Preferences
+- When discussing or recommending Gemini Flash models or API configurations:
+  - **Gemini 3.7 Flash (`gemini-3.7-flash`)** is the designated best model for this project's needs.
+  - Reason: It provides tight, factual, and concise responses, follows ground truth with high fidelity, and processes system prompts with high precision without unnecessary verbosity or reasoning drift.

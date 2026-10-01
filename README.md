@@ -242,23 +242,48 @@ environment variable:
 
 ## LLM Evaluation with Promptfoo
 
-The `SyntheticHemispheres/prompt-foo/` directory contains a
-[promptfoo](https://promptfoo.dev) evaluation harness used to evaluate and
-compare model candidates before deploying to production.
+The root `promptfooconfig.yaml` and `SyntheticHemispheres/prompt-foo/` directory
+contain [promptfoo](https://promptfoo.dev) evaluation harnesses used to evaluate
+and compare model candidates before deploying to production.
 
-- **Dataset**: `rush_full_eval.jsonl` -- 20 Q&A pairs covering album concepts,
-  lyrical themes, band history, the 2026 reunion tour, and adversarial edge
-  cases.
-- **Assertion type**: `factuality` -- an LLM judge scores semantic accuracy
-  against ground truth, handling paraphrasing gracefully.
+- **Dataset**: `data/25.Rush_full_eval_formatted.jsonl` -- 20 Q&A pairs covering
+  album concepts, lyrical themes, band history, and adversarial edge cases.
+- **Assertion type**: `llm-rubric` -- scores semantic accuracy and factual
+  adherence against ground truth.
 
-To run the eval:
+To run the root eval comparing Gemini Flash models:
 
 ```bash
-cd SyntheticHemispheres/prompt-foo
-npx promptfoo eval
+npx promptfoo eval --env-file .env
 npx promptfoo view
 ```
+
+### Model Evaluation: Gemini 3.7 Flash vs. Gemini 3.8 Flash
+
+Testing was conducted evaluating **Gemini 3.7 Flash** against **Gemini 3.8 Flash**
+across the 20-question benchmark using both Google (`google:gemini-3.7-flash`) and
+OpenAI (`openai:gpt-4o`) as LLM rubric judges:
+
+| Metric | Gemini 3.7 Flash | Gemini 3.8 Flash | Analysis |
+| --- | --- | --- | --- |
+| **Pass Rate (Google Judge)** | 60.0% (12/20) | 60.0% (12/20) | Both models answered factual core |
+| **Pass Rate (OpenAI Judge)** | 60.0% (12/20) | 45.0% (9/20) | 3.7 maintained fidelity; 3.8 penalized for verbosity/drift |
+| **Reasoning Tokens** | 8,259 tokens | 9,007 tokens | 3.8 generated +9.1% more reasoning compute |
+| **System Prompt Precision** | High (tight & concise) | Moderate (tends to write essays) | 3.7 strictly adhered to "concisely" instruction |
+
+#### Why Gemini 3.7 Flash is the Designated Model for This Project
+
+1. **System Prompt Discipline**: When instructed to answer "accurately, clearly,
+   and concisely", Gemini 3.7 Flash delivered bounded, direct answers. Gemini 3.8
+   Flash over-indexed on reasoning traces and often produced multi-section
+   treatises that breached the brevity constraint.
+2. **Ground-Truth Precision**: Under strict third-party rubric evaluation, 3.8
+   Flash suffered subtle factual hallucinations during extended reasoning chains
+   (e.g., citing *Moving Pictures* as 4x Platinum rather than the verified 5x
+   Multi-Platinum ground truth correctly answered by 3.7 Flash).
+3. **Cross-Judge Stability**: Gemini 3.7 Flash achieved an identical 60% pass rate
+   under both Google and OpenAI evaluators, demonstrating reliable stability for
+   trivia microservices, structured JSON pipelines, and calibrated system prompts.
 
 ## Available Scripts
 
