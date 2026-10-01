@@ -1,0 +1,539 @@
+{
+  "totalFacts": 111,
+  "categories": [
+    {
+      "category": "Core Band & Album Facts",
+      "facts": [
+        {
+          "id": 1,
+          "fact": "Chronological Studio Album Release Years: Rush (1974), Fly by Night (1975), Caress of Steel (1975), 2112 (1976), A Farewell to Kings (1977), Hemispheres (1978), Permanent Waves (1980), Moving Pictures (1981), Signals (1982), Grace Under Pressure (1984), Power Windows (1985), Hold Your Fire (1987), Presto (1989), Roll the Bones (1991), Counterparts (1993), Test for Echo (1996), Vapor Trails (2002), Snakes & Arrows (2007), Clockwork Angels (2012)."
+        },
+        {
+          "id": 2,
+          "fact": "Power Windows was released in 1985 (NOT 1991). Roll the Bones was released in 1991 (NOT 1985)."
+        },
+        {
+          "id": 3,
+          "fact": "Clockwork Angels (2012) is Rush's final studio album — debuted #1 in Canada and #2 on the U.S. Billboard 200."
+        },
+        {
+          "id": 4,
+          "fact": "Moving Pictures (1981) is Rush's best-selling U.S. album — certified 5x Multi-Platinum by the RIAA."
+        },
+        {
+          "id": 5,
+          "fact": "\"Time Stand Still\" is from HOLD YOUR FIRE (1987). Aimee Mann provided backing vocals. It is NOT from Presto, Roll the Bones, Counterparts, or Test for Echo."
+        },
+        {
+          "id": 6,
+          "fact": "Vapor Trails (2002) has zero synthesizers — a deliberate return to raw, guitar-driven sound."
+        }
+      ]
+    },
+    {
+      "category": "2026 Tour",
+      "facts": [
+        {
+          "id": 7,
+          "fact": "The 2026 \"Fifty Something\" tour features Geddy Lee, Alex Lifeson, and Anika Nilles (drums)."
+        },
+        {
+          "id": 8,
+          "fact": "The tour kicks off June 7, 2026, at The Kia Forum in Los Angeles, CA."
+        },
+        {
+          "id": 9,
+          "fact": "Anika Nilles was born May 29, 1983, in Aschaffenburg, Germany. She earned a degree from the Popakademie Baden-Württemberg and became head of the drums department there."
+        },
+        {
+          "id": 10,
+          "fact": "Anika Nilles gained recognition through viral YouTube videos (\"Wild Boy\" 2013, \"Alter Ego\" 2014). She toured with Jeff Beck for 60+ shows in 2022. Released Pikalar (2017), For a Colorful Soul (2020), Opuntia EP (2022), and False Truth (2025) with her band Nevell."
+        }
+      ]
+    },
+    {
+      "category": "Pre-Peart Era & Band Formation",
+      "facts": [
+        {
+          "id": 11,
+          "fact": "Rush's earliest names: The Projection (1968), then \"Rush\" was suggested by John Rutsey's brother Bill just before their first gig in early September 1968 (traditionally cited as September 18, with verified Friday show dates September 6 and 13) at The Coff-In in North York, Ontario."
+        },
+        {
+          "id": 12,
+          "fact": "The original bassist at the first gig was Jeff Jones, who left after one show. Geddy Lee replaced him for the second show."
+        },
+        {
+          "id": 13,
+          "fact": "John Rutsey (co-founder, drums) played on the debut album Rush (1974). He left due to Type 1 diabetes and disagreements about musical direction. He died May 11, 2008, at age 55."
+        },
+        {
+          "id": 14,
+          "fact": "Neil Peart's audition was in late July 1974. He arrived in a Ford Pinto with his drums in garbage bags. He officially joined July 29, 1974 — Geddy Lee's 21st birthday."
+        },
+        {
+          "id": 15,
+          "fact": "During Geddy's 4-month exile from the band in 1969, Alex and John renamed the band Hadrian and recruited Joe Perna and Lindy Young. Geddy formed his own band called Ogilvie (later renamed Judd)."
+        },
+        {
+          "id": 16,
+          "fact": "The debut album's Moon Records pressing had the logo in red; Mercury Records' reprint had a printer ink error that turned it hot pink/magenta."
+        }
+      ]
+    },
+    {
+      "category": "Chart Performance & Awards",
+      "facts": [
+        {
+          "id": 17,
+          "fact": "Rush NEVER had a #1 album on the US Billboard 200. Their peak was #2, achieved twice: Counterparts (1993, blocked by Pearl Jam's Vs.) and Clockwork Angels (2012, blocked by Usher's Looking 4 Myself)."
+        },
+        {
+          "id": 18,
+          "fact": "Billboard 200 peaks: Rush #105, Fly by Night #113, Caress of Steel #148, 2112 #61, A Farewell to Kings #33, Hemispheres #47, Permanent Waves #4, Moving Pictures #3, Signals #10, Grace Under Pressure #10, Power Windows #10, Hold Your Fire #13, Presto #16, Roll the Bones #3, Counterparts #2, Test for Echo #5, Vapor Trails #6, Feedback #19, Snakes & Arrows #3, Clockwork Angels #2."
+        },
+        {
+          "id": 19,
+          "fact": "RIAA: 2112 is 3x Multi-Platinum. Chronicles compilation is 2x Multi-Platinum. Rush ranks 3rd among rock bands for most consecutive Gold/Platinum albums (behind Beatles and Rolling Stones)."
+        },
+        {
+          "id": 20,
+          "fact": "Rush received 7 Grammy nominations and ZERO wins. All 7 were for Best Rock Instrumental (YYZ, Where's My Thing?, Leave That Thing Alone, O Baterista, Malignant Narcissism, Hope) except the 7th — Best Long Form Music Video for Beyond the Lighted Stage (2011)."
+        },
+        {
+          "id": 21,
+          "fact": "Rock and Roll Hall of Fame: Inducted April 18, 2013. Dave Grohl and Taylor Hawkins (Foo Fighters) inducted them. Alex Lifeson delivered his legendary \"Blah Blah Blah\" speech. Rush won the Hall's first-ever fan vote."
+        },
+        {
+          "id": 22,
+          "fact": "Canadian Music Hall of Fame: 1994. Order of Canada: 1996. Canada's Walk of Fame: 1999. Governor General's Performing Arts Award: 2012."
+        }
+      ]
+    },
+    {
+      "category": "Producers",
+      "facts": [
+        {
+          "id": 23,
+          "fact": "Terry Brown produced 8 studio albums: Fly by Night through Signals (1975–1982) — he engineered and remixed the 1974 debut (credited as produced by Rush). Called the \"fourth member.\" \"Broon's Bane\" was Alex's tribute."
+        },
+        {
+          "id": 24,
+          "fact": "Steve Lillywhite was initially hired for Grace Under Pressure (1984) but pulled out for Simple Minds. Peter Henderson replaced him."
+        },
+        {
+          "id": 25,
+          "fact": "Peter Collins produced Power Windows (1985), Hold Your Fire (1987), Counterparts (1993), Test for Echo (1996)."
+        },
+        {
+          "id": 26,
+          "fact": "Rupert Hine produced Presto (1989) and Roll the Bones (1991)."
+        },
+        {
+          "id": 27,
+          "fact": "Nick Raskulinecz produced Snakes & Arrows (2007) and Clockwork Angels (2012). His air-drumming nickname \"Booujzhe\" is credited in album notes."
+        },
+        {
+          "id": 28,
+          "fact": "Vapor Trails (2002) was co-produced by Rush and Paul Northfield — eschewing an outside commercial producer to protect their fragile emotional state during reunion."
+        }
+      ]
+    },
+    {
+      "category": "Recording Studios",
+      "facts": [
+        {
+          "id": 29,
+          "fact": "Le Studio (Morin-Heights, Quebec) — recorded 7 albums: Permanent Waves, Moving Pictures, Signals, Grace Under Pressure, Presto, Roll the Bones, Counterparts."
+        },
+        {
+          "id": 30,
+          "fact": "Rockfield Studios (Wales) — A Farewell to Kings (1977) and Hemispheres (1978). For \"Xanadu,\" Terry Brown ran mic cables outside at dawn to capture real birdsong."
+        },
+        {
+          "id": 31,
+          "fact": "The Manor (Oxfordshire, England) & AIR Studios (Montserrat) — Power Windows (1985) and Hold Your Fire (1987)."
+        },
+        {
+          "id": 32,
+          "fact": "Allaire Studios (Catskill Mountains, NY) — Snakes & Arrows (2007). Blackbird Studio (Nashville) and Revolution Recording (Toronto) — Clockwork Angels (2012)."
+        }
+      ]
+    },
+    {
+      "category": "Geddy Lee's Bass Guitars",
+      "facts": [
+        {
+          "id": 33,
+          "fact": "Rickenbacker 4001 (1973 Jetglo): Main bass on Fly by Night through Signals (1975–1982). Used Rick-O-Sound stereo output routing bridge pickup into overdriven guitar amps and neck pickup into clean Ampeg SVT."
+        },
+        {
+          "id": 34,
+          "fact": "1972 Fender Jazz Bass (black, maple neck): Used on Moving Pictures (1981) for \"Tom Sawyer,\" \"YYZ,\" \"Limelight.\" After shelving it during the synth era, Kevin \"The Caveman\" Shirley insisted Geddy resurrect it for Counterparts (1993). It remained his primary bass through Clockwork Angels (2012) and inspired his Fender signature model."
+        },
+        {
+          "id": 35,
+          "fact": "Steinberger L2 (headless, carbon graphite): Primary bass on Grace Under Pressure (1984)."
+        },
+        {
+          "id": 36,
+          "fact": "Wal basses: Used on Power Windows (1985), Hold Your Fire (1987), Presto (1989), Roll the Bones (1991). Producer Peter Collins brought the first Wal to the Power Windows sessions. A custom 5-string Wal Mk2 was built for Hold Your Fire, used specifically on \"Lock and Key.\""
+        },
+        {
+          "id": 37,
+          "fact": "Jaco Pastorius Tribute Fretless Jazz Bass: Used exclusively on \"Malignant Narcissism\" (Snakes & Arrows, 2007). Raskulinecz overheard Geddy noodling on it during vocal breaks and demanded they cut a track."
+        }
+      ]
+    },
+    {
+      "category": "Keyboards & Synthesizers",
+      "facts": [
+        {
+          "id": 38,
+          "fact": "Minimoog Model D: Used 2112 through Moving Pictures. The scorching synth solo in \"Tom Sawyer\" was performed on the Minimoog."
+        },
+        {
+          "id": 39,
+          "fact": "Oberheim OB-X: The famous menacing filter sweep opening of \"Tom Sawyer\" (Moving Pictures, 1981) was created on the OB-X in Unison mode."
+        },
+        {
+          "id": 40,
+          "fact": "Oberheim OB-Xa: The anthemic opening chord sequence of \"Subdivisions\" (Signals, 1982)."
+        },
+        {
+          "id": 41,
+          "fact": "Roland Jupiter-8: Used on Signals, Grace Under Pressure, Power Windows. \"Countdown\" and \"Red Sector A\" featured Jupiter-8 prominently."
+        },
+        {
+          "id": 42,
+          "fact": "PPG Wave 2.2/2.3: Defined the icy, crystalline digital textures of Grace Under Pressure and Power Windows."
+        },
+        {
+          "id": 43,
+          "fact": "Moog Taurus I Bass Pedals: Used from A Farewell to Kings through Signals. Both Geddy AND Alex owned sets — they provided sub-bass drones while hands were on guitars/keyboards."
+        },
+        {
+          "id": 44,
+          "fact": "Roland TR-808: Geddy programmed the rhythm track for \"The Weapon\" (Signals) on a TR-808 drum machine. Neil Peart spent days learning to replicate it acoustically."
+        },
+        {
+          "id": 45,
+          "fact": "E-mu Emulator II: Used on Power Windows and Hold Your Fire for sampled choir, horn, and percussion sounds."
+        }
+      ]
+    },
+    {
+      "category": "Alex Lifeson's Guitars",
+      "facts": [
+        {
+          "id": 46,
+          "fact": "Gibson ES-355 (1976, Alpine White): Main guitar from A Farewell to Kings through Moving Pictures. Gibson released a signature Alex Lifeson ES-355 in 2008."
+        },
+        {
+          "id": 47,
+          "fact": "The \"Hentor Sportscaster\": Modified Stratocaster used on Moving Pictures, Signals, Grace Under Pressure. Named after misreading producer Peter Henderson's cursive handwriting as \"Peter Hentor.\" Had a Bill Lawrence L-500 humbucker, Shark maple neck, and one of the earliest Floyd Rose locking tremolos. Used for the \"Limelight\" guitar solo."
+        },
+        {
+          "id": 48,
+          "fact": "PRS CE 24 & Custom 24: Used from the Presto tour through Test for Echo (1990–1996)."
+        },
+        {
+          "id": 49,
+          "fact": "Gibson Alex Lifeson Les Paul Axcess: Used from Time Machine tour through R40 (2010–2015). Featured a Graph Tech Ghost piezo system for acoustic simulation."
+        },
+        {
+          "id": 50,
+          "fact": "Gibson EDS-1275 Double-Neck (6/12-String): Purchased for \"Xanadu\" — combined with Geddy's Rickenbacker 4080/12, creating their legendary \"four-neck\" live performance."
+        }
+      ]
+    },
+    {
+      "category": "Neil Peart's Drum Kits",
+      "facts": [
+        {
+          "id": 51,
+          "fact": "Slingerland \"Chromey\" Kit: Used Fly by Night through All the World's a Stage (1975–1976), purchased from Long & McQuade with a Mercury advance after joining (the $750 figure was the price of his teenage Rogers kit)."
+        },
+        {
+          "id": 52,
+          "fact": "\"Old Faithful\" Snare: A 5.5x14 Slingerland Artist Model purchased secondhand for $60 in 1977 during the 2112 tour. Used on every studio album and tour from A Farewell to Kings (1977) through Counterparts (1993) — 17 years."
+        },
+        {
+          "id": 53,
+          "fact": "Tama era: Neil used Slingerland \"Blakrome\" on A Farewell to Kings and Hemispheres. He switched to Tama Superstar in 1979: custom Rosewood finish for Permanent Waves and Moving Pictures; Candy Apple Red (Artstar prototype) for Signals, Grace Under Pressure, and Power Windows."
+        },
+        {
+          "id": 54,
+          "fact": "The 360-degree rotating drum riser debuted on the Grace Under Pressure tour (1984). Front side: full acoustic kit. Back side: Simmons SDS-V electronic pads, later Roland V-Drums and malletKAT."
+        },
+        {
+          "id": 55,
+          "fact": "In 1995, Peart studied with jazz guru Freddie Gruber, overhauled his technique, and switched from Tama to Drum Workshop (DW)."
+        },
+        {
+          "id": 56,
+          "fact": "R40 tour kits: DW built two kits from a single 1,500-year-old Romanian River Oak log preserved under silt in the Olt River."
+        },
+        {
+          "id": 57,
+          "fact": "Sabian Paragon cymbals: Neil co-designed the series with Sabian (launched 2004 for the R30 tour) after officially switching from Zildjian in 2004."
+        },
+        {
+          "id": 58,
+          "fact": "Signature drumsticks: Pro-Mark 747 Japanese Shira Kashi White Oak, played butt-end forward with his left hand for added rimshot power."
+        }
+      ]
+    },
+    {
+      "category": "Literary & Lyrical Inspirations",
+      "facts": [
+        {
+          "id": 59,
+          "fact": "\"Xanadu\" adapts Samuel Taylor Coleridge's 1797 poem \"Kubla Khan.\""
+        },
+        {
+          "id": 60,
+          "fact": "\"The Camera Eye\" borrows its title from John Dos Passos' U.S.A. trilogy. \"The Big Money\" was also inspired by Dos Passos' third book of that trilogy."
+        },
+        {
+          "id": 61,
+          "fact": "\"Red Barchetta\" adapts Richard S. Foster's sci-fi story \"A Nice Morning Drive\" from Road & Track magazine (Nov 1973)."
+        },
+        {
+          "id": 62,
+          "fact": "\"Tom Sawyer\" was co-written with Max Webster lyricist Pye Dubois — a modern subversion of Mark Twain's character."
+        },
+        {
+          "id": 63,
+          "fact": "\"Bravado\" (Roll the Bones) quotes John Barth's novel The Tidewater Tales: \"We will pay the price, but we will not count the cost.\""
+        },
+        {
+          "id": 64,
+          "fact": "\"Rivendell\" (Fly by Night) references Tolkien. \"The Necromancer\" (Caress of Steel) draws from Tolkien's Sauron mythology."
+        },
+        {
+          "id": 65,
+          "fact": "The spaceship in \"Cygnus X-1\" is named Rocinante, after Don Quixote's horse from Cervantes."
+        },
+        {
+          "id": 66,
+          "fact": "\"The Body Electric\" draws from Walt Whitman's poem \"I Sing the Body Electric\" and Ray Bradbury's sci-fi collection."
+        },
+        {
+          "id": 67,
+          "fact": "\"Losing It\" (Signals) references Ernest Hemingway's suicide and his novel For Whom the Bell Tolls."
+        }
+      ]
+    },
+    {
+      "category": "Song Structures & Composition",
+      "facts": [
+        {
+          "id": 68,
+          "fact": "\"La Villa Strangiato\" has 12 subtitled movements including \"A Lerxst in Wonderland,\" \"Monsters!\" (quoting Raymond Scott's 1937 \"Powerhouse\" from Looney Tunes — Rush voluntarily paid Scott's estate), and \"Danforth and Pape\" (a Toronto intersection)."
+        },
+        {
+          "id": 69,
+          "fact": "\"2112\" has 7 movements: Overture, The Temples of Syrinx, Discovery, Presentation, Oracle: The Dream, Soliloquy, Grand Finale."
+        },
+        {
+          "id": 70,
+          "fact": "\"The Fountain of Lamneth\" (Caress of Steel) has 6 parts. \"Didacts and Narpets\" — \"Narpets\" is an anagram of \"Parents.\""
+        },
+        {
+          "id": 71,
+          "fact": "The \"Fear\" tetralogy was written in REVERSE order: Part III \"Witch Hunt\" (1981), Part II \"The Weapon\" (1982), Part I \"The Enemy Within\" (1984), Part IV \"Freeze\" (2002)."
+        },
+        {
+          "id": 72,
+          "fact": "The \"Gangster of Boats\" trilogy is an inside joke — \"Where's My Thing?\" (1991) was officially subtitled \"Part IV, 'Gangster of Boats' Trilogy\" because a trilogy cannot have 4 parts, and Parts I–III were never written (\"Leave That Thing Alone\" carries no official subtitle on Counterparts)."
+        }
+      ]
+    },
+    {
+      "category": "Time Signatures",
+      "facts": [
+        {
+          "id": 73,
+          "fact": "\"Subdivisions\" intro: 7/8 time. \"YYZ\" intro: 5/4 time spelling Toronto airport Morse code (Y-Y-Z). \"Tom Sawyer\" instrumental section: 7/8. \"Freewill\" verses: cycle between 6/4 and 7/4 (13/4 pattern)."
+        },
+        {
+          "id": 74,
+          "fact": "\"Jacob's Ladder\" cycles between 5/4 and 6/4 (felt as 11/4). \"Limelight\" verses alternate 4/4 and 3/4 bars (7/4 feel). \"La Villa Strangiato\" shifts through 4/4, 7/8, 9/8, 5/8, 6/8, and 12/8."
+        },
+        {
+          "id": 75,
+          "fact": "\"Natural Science\" Part II \"Hyperspace\": 7/8. \"The Trees\" bridge: 5/4. \"Kid Gloves\" verses: 5/4 (felt as 10/8, 3+3+2+2). \"Time Stand Still\" intro and instrumental break: 7/4."
+        }
+      ]
+    },
+    {
+      "category": "Guest Musicians",
+      "facts": [
+        {
+          "id": 76,
+          "fact": "Hugh Syme: Rush's first guest musician, played ARP synthesizer on \"2112: Overture,\" Mellotron on \"Tears\" (2112), piano on \"Different Strings\" (Permanent Waves), and synth on \"Witch Hunt\" (Moving Pictures)."
+        },
+        {
+          "id": 77,
+          "fact": "Ben Mink: Played the electric violin solo on \"Losing It\" (Signals) — the only guest instrumental soloist of the synth era, and performed it live on the R40 tour."
+        },
+        {
+          "id": 78,
+          "fact": "Aimee Mann: Provided co-lead/backing vocals on \"Time Stand Still\" (Hold Your Fire) and appeared in its music video — Rush's first featured outside vocalist."
+        },
+        {
+          "id": 79,
+          "fact": "Mark Dailey (Toronto Citytv anchor): Provided the spoken-word vocal on \"Subdivisions.\""
+        },
+        {
+          "id": 80,
+          "fact": "Terry Brown: Spoke the narrator voice on \"Cygnus X-1 Book I\" prologue."
+        },
+        {
+          "id": 81,
+          "fact": "Andy Richards: Additional keyboards on Power Windows and Hold Your Fire. Anne Dudley (Art of Noise) arranged strings on \"Manhattan Project\" at Abbey Road Studios."
+        },
+        {
+          "id": 82,
+          "fact": "Andrew Jackman arranged the choir on \"Marathon\" (Power Windows) and conducted The William Fairey Engineering Brass Band on Hold Your Fire."
+        },
+        {
+          "id": 83,
+          "fact": "Jason Sniderman played piano on \"The Garden\" (Clockwork Angels). David Campbell arranged strings for the Clockwork Angels String Ensemble."
+        }
+      ]
+    },
+    {
+      "category": "Recording Lore",
+      "facts": [
+        {
+          "id": 84,
+          "fact": "\"Witch Hunt\" (Moving Pictures): The mob sounds were recorded outside Le Studio on a freezing winter night — band and crew drank scotch and shouted into the blizzard."
+        },
+        {
+          "id": 85,
+          "fact": "\"YYZ\" opens with Morse code for Toronto Pearson Airport (Y-Y-Z) played on antique brass crotales."
+        },
+        {
+          "id": 86,
+          "fact": "The Hemispheres vocal crisis: The band composed all backing tracks in keys that strained Geddy's range to near damage. This led to a permanent rule to verify vocal keys before tracking."
+        },
+        {
+          "id": 87,
+          "fact": "Moving Pictures was one of rock's earliest hybrid digital masters (SPARS code ADD), recorded on 2-inch analog tape and mixed down to a Sony PCM-1610 digital two-track."
+        },
+        {
+          "id": 88,
+          "fact": "The Vapor Trails (2002) mastering by Howie Weinberg was a \"Loudness War\" poster child — severe digital clipping. David Bottrill remixed the entire album from scratch, released as Vapor Trails Remixed (Oct 1, 2013)."
+        },
+        {
+          "id": 89,
+          "fact": "\"Stick It Out\" (Counterparts) was the first Rush track recorded with BOTH guitar and bass in Drop-D tuning (Alex had previously used Drop-D guitar on \"Between the Wheels\" while Geddy remained in standard tuning)."
+        },
+        {
+          "id": 90,
+          "fact": "\"Roll the Bones\" rap was Geddy Lee's voice pitch-shifted down via Eventide H3000 Ultra-Harmonizer."
+        },
+        {
+          "id": 91,
+          "fact": "\"The Necromancer\" narrator voice is Neil Peart's voice slowed down and pitch-shifted."
+        },
+        {
+          "id": 92,
+          "fact": "Geddy's stage appliances (1996–2015): Maytag clothes dryers, vending machines, Henhouse rotisserie chicken ovens (Snakes & Arrows tour roasted real rubber chickens), and the steampunk \"Gefilter\" sausage stuffer (Time Machine tour)."
+        }
+      ]
+    },
+    {
+      "category": "Album Art & Hugh Syme",
+      "facts": [
+        {
+          "id": 93,
+          "fact": "Hugh Syme's first Rush cover was Caress of Steel (1975). The only studio albums NOT designed by Syme: Rush (1974, by Paul Weldon) and Fly by Night (1975, painted by Eraldo Carugati — who later painted the 4 KISS solo album covers)."
+        },
+        {
+          "id": 94,
+          "fact": "The Starman logo was co-created by Hugh Syme and Neil Peart for 2112. Bobby King modeled the naked human figure. The red star represents the Solar Federation; the naked man represents the individual."
+        },
+        {
+          "id": 95,
+          "fact": "Moving Pictures cover: Photographed at the Ontario Legislative Building, Queen's Park, Toronto. Paintings being moved include \"Dogs Playing Poker\" and Joan of Arc (modeled by photographer Deborah Samuel)."
+        },
+        {
+          "id": 96,
+          "fact": "Signals back cover: Blueprint features \"Warren Cromartie Secondary School\" (named after the Expos player) and plots spelling band nicknames Dirk, Lerxst, and Pratt."
+        },
+        {
+          "id": 97,
+          "fact": "Permanent Waves: Originally featured the \"Dewey Defeats Truman\" headline — Chicago Tribune threatened legal action, forcing alteration. Coca-Cola also objected to their logo placement, replaced by band members' surnames."
+        },
+        {
+          "id": 98,
+          "fact": "Exit... Stage Left cover contains visual references to ALL eight previous studio albums (owl, Starman, puppet king, brain hemispheres, movers, Paula Turnbull, etc.). Named after Snagglepuss's catchphrase."
+        },
+        {
+          "id": 99,
+          "fact": "Hold Your Fire gatefold: Juggler played by actor Stanley Brock. Street scene was a 5-foot miniature model. Clock displays 9:12 (21:12 in military time). Wet street effect: sandpaper sprayed with mineral spirits."
+        },
+        {
+          "id": 100,
+          "fact": "Clockwork Angels: Clock hands at 9:12 = 21:12 (honoring 2112) and September 12 (Neil Peart's birthday). Each of the 12 songs has an assigned alchemical symbol. Kevin J. Anderson co-wrote the companion novel."
+        },
+        {
+          "id": 101,
+          "fact": "Hugh Syme won 4 Juno Awards for Rush album graphics: Moving Pictures (1982), Power Windows (1986), Presto (1990), Roll the Bones (1992)."
+        }
+      ]
+    },
+    {
+      "category": "Tours & Milestones",
+      "facts": [
+        {
+          "id": 102,
+          "fact": "The Caress of Steel tour was nicknamed the \"Down the Tubes Tour\" due to poor ticket sales."
+        },
+        {
+          "id": 103,
+          "fact": "The Test for Echo tour (1996) introduced the \"An Evening with Rush\" no-opening-act format, used for all subsequent tours."
+        },
+        {
+          "id": 104,
+          "fact": "R40 final show: August 1, 2015, The Forum, Inglewood (Los Angeles). For the first and only time in 41 years, Neil Peart walked to center stage and bowed with Geddy and Alex together."
+        },
+        {
+          "id": 105,
+          "fact": "Neil Peart died January 7, 2020, in Santa Monica, CA, at age 67, from glioblastoma. He was diagnosed in August 2016 and kept it secret for 3.5 years."
+        },
+        {
+          "id": 106,
+          "fact": "Geddy Lee's memoir \"My Effin' Life\" (2023) revealed his parents were Polish Jewish Holocaust survivors, the origin of his name (\"Geddy\" from his mother's accent pronouncing \"Gary\"), and candid accounts of 1970s–80s drug use."
+        },
+        {
+          "id": 107,
+          "fact": "Alex Lifeson's side projects: Victor (1996, Atlantic Records, featuring Les Claypool on \"The Big Dance\") and Envy of None (2022, with Andy Curran and Maiah Wynne). He also guested on Porcupine Tree's \"Anesthetize\" (2007)."
+        },
+        {
+          "id": 108,
+          "fact": "Notable opening acts for Rush: Def Leppard (1980, Permanent Waves tour), Iron Maiden (1981, Moving Pictures tour, with Paul Di'Anno), Primus (1991 and 1994), Mr. Big (1990), Marillion (1986, Power Windows tour, plus select 1983–84 dates), Cheap Trick (co-bills in 1977)."
+        },
+        {
+          "id": 109,
+          "fact": "Rush in Rio (2003): 40,000 fans at Maracanã Stadium. São Paulo drew 60,000 — largest single headline crowd. SARSstock (July 30, 2003): 450,000–500,000 attendees at Downsview Park, Toronto."
+        },
+        {
+          "id": 110,
+          "fact": "Clockwork Angels tour (2012–2013): Only classic-era tour featuring guest musicians (8-piece string ensemble) on stage throughout."
+        }
+      ]
+    },
+    {
+      "category": "Feedback EP Covers (2004)",
+      "facts": [
+        {
+          "id": 111,
+          "fact": "The 8 covers: \"Summertime Blues\" (Eddie Cochran), \"Heart Full of Soul\" (The Yardbirds), \"For What It's Worth\" (Buffalo Springfield), \"The Seeker\" (The Who), \"Mr. Soul\" (Buffalo Springfield/Neil Young), \"Seven and Seven Is\" (Love), \"Shapes of Things\" (The Yardbirds), \"Crossroads\" (Robert Johnson/Cream)."
+        }
+      ]
+    }
+  ]
+}

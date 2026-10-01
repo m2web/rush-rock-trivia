@@ -85,7 +85,6 @@ const CRITICAL_ACCURACY_RULES = `CRITICAL ACCURACY RULES:
   * Counterparts (1993)
   * Test for Echo (1996)
   * Vapor Trails (2002)
-  * Feedback (2004)
   * Snakes & Arrows (2007)
   * Clockwork Angels (2012)
 - Clockwork Angels (2012) is Rush's final studio album.

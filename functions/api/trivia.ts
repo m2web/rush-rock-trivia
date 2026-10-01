@@ -90,7 +90,7 @@ const RUSH_FACTS_REFERENCE = `
 VERIFIED RUSH FACT SHEET — use this as a strict factual truth baseline.
 
 === CORE BAND & ALBUM FACTS ===
-1. Chronological Studio Album Release Years: Rush (1974), Fly by Night (1975), Caress of Steel (1975), 2112 (1976), A Farewell to Kings (1977), Hemispheres (1978), Permanent Waves (1980), Moving Pictures (1981), Signals (1982), Grace Under Pressure (1984), Power Windows (1985), Hold Your Fire (1987), Presto (1989), Roll the Bones (1991), Counterparts (1993), Test for Echo (1996), Vapor Trails (2002), Feedback (2004), Snakes & Arrows (2007), Clockwork Angels (2012).
+1. Chronological Studio Album Release Years: Rush (1974), Fly by Night (1975), Caress of Steel (1975), 2112 (1976), A Farewell to Kings (1977), Hemispheres (1978), Permanent Waves (1980), Moving Pictures (1981), Signals (1982), Grace Under Pressure (1984), Power Windows (1985), Hold Your Fire (1987), Presto (1989), Roll the Bones (1991), Counterparts (1993), Test for Echo (1996), Vapor Trails (2002), Snakes & Arrows (2007), Clockwork Angels (2012).
 2. Power Windows was released in 1985 (NOT 1991). Roll the Bones was released in 1991 (NOT 1985).
 3. Clockwork Angels (2012) is Rush's final studio album — debuted #1 in Canada and #2 on the U.S. Billboard 200.
 4. Moving Pictures (1981) is Rush's best-selling U.S. album — certified 5x Multi-Platinum by the RIAA.
@@ -209,7 +209,7 @@ VERIFIED RUSH FACT SHEET — use this as a strict factual truth baseline.
 89. "Stick It Out" (Counterparts) was the first Rush track recorded with BOTH guitar and bass in Drop-D tuning (Alex had previously used Drop-D guitar on "Between the Wheels" while Geddy remained in standard tuning).
 90. "Roll the Bones" rap was Geddy Lee's voice pitch-shifted down via Eventide H3000 Ultra-Harmonizer.
 91. "The Necromancer" narrator voice is Neil Peart's voice slowed down and pitch-shifted.
-92. Geddy's stage appliances (1996–2015): Maytag clothes dryers, vending machines, Henhouse rotisserie chicken ovens (Snakes & Arrows tour roasted real rubber chickens), and the steampunk "Gedcalibur" sausage stuffer (Time Machine tour).
+92. Geddy's stage appliances (1996–2015): Maytag clothes dryers, vending machines, Henhouse rotisserie chicken ovens (Snakes & Arrows tour roasted real rubber chickens), and the steampunk "Gefilter" sausage stuffer (Time Machine tour).
 
 === ALBUM ART & HUGH SYME ===
 93. Hugh Syme's first Rush cover was Caress of Steel (1975). The only studio albums NOT designed by Syme: Rush (1974, by Paul Weldon) and Fly by Night (1975, painted by Eraldo Carugati — who later painted the 4 KISS solo album covers).
@@ -248,7 +248,7 @@ const TOPIC_CATEGORIES = [
   '1980s Synth & Digital Era (Moving Pictures, Signals, Grace Under Pressure, Power Windows, Hold Your Fire, Presto)',
   '1990s Hard Rock & Alt Era (Roll the Bones, Counterparts, Test for Echo)',
   '2000s–2010s Late Studio Era (Vapor Trails, Feedback, Snakes & Arrows, Clockwork Angels)',
-  'Live albums, tour history, opening acts, and stage props (e.g. dryers, rotisserie chickens, Gedcalibur)',
+  'Live albums, tour history, opening acts, and stage props (e.g. dryers, rotisserie chickens, Gefilter)',
   'Guitars, bass rigs, and pedal setups (Rickenbacker 4001 stereo routing, Wal Mk1/Mk2 5-string, Hentor Sportscaster, PRS, Gibson ES-355, Taurus pedals)',
   'Keyboards, modular synthesizers, and drum machines (Minimoog, Oberheim OB-X / OB-Xa, Roland Jupiter-8, PPG Wave, TR-808, Emulator II)',
   'Neil Peart drum kits, snare lore (Old Faithful Slingerland Artist model), 360-degree rotating riser, Sabian Paragons, Romanian River Oak',
