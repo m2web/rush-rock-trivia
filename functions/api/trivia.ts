@@ -234,6 +234,7 @@ function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'):
     '',
     'IMPORTANT formatting rules:',
     '- Do NOT mention "the fact sheet", "according to reference", or similar metadata in any question or answer text. Present all questions as standalone trivia.',
+    '- The question text MUST NOT contain or reveal the correct answer. For example, do NOT write "The 1985 album Power Windows was released in what year?" when the answer is "1985" — the answer is already in the question! Rephrase to hide the answer (e.g., "In what year was the album Power Windows released?").',
     '- For each question:',
     '  - Provide one correct answer in the "correctAnswer" field that is verifiably true.',
     '  - Provide exactly three plausible, distinct, but incorrect answers in the "incorrectAnswers" array.',
