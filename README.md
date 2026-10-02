@@ -36,7 +36,7 @@ legacy, or chat directly with a synthetic fellow Rush fan.
   limiting (5 requests/min), 500-character input caps with live countdown, and
   a 15-turn session limit with one-click reset.
 - **:brain: Dynamic AI-Generated Questions**: Dynamic trivia questions generated
-  by Google Gemini 3.6 Flash or OpenAI.
+  by Google Gemini 3.7 Flash or OpenAI.
 - **:twisted_rightwards_arrows: Era Diversity & Shuffled Answers**: Balanced
   coverage across 5 distinct Rush eras with shuffled multiple-choice answers.
 - **:chart_with_upwards_trend: Adaptive Difficulty Progression**: Successive quizzes
