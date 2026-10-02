@@ -148,10 +148,11 @@ function getSystemPrompt(persona: 'fan' | 'digital-man' | 'archivist', fanStory:
 async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
   const prompt = `${getSystemPrompt(persona, fanStory, meetupsContext)}\n\nUser: ${userMessage}`;
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
     },
     body: JSON.stringify({
       contents: [{

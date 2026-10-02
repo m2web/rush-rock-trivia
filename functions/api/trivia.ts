@@ -374,10 +374,11 @@ function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'):
 async function callGemini(apiKey: string, count: number = 5, difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion[]> {
   const prompt = buildTriviaPrompt(count, difficulty);
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`, {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
     },
     body: JSON.stringify({
       contents: [{
@@ -583,7 +584,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     return new Response(JSON.stringify({
       error: 'Failed to generate trivia questions',
-      details: errorMessage,
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
