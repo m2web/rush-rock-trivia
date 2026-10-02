@@ -243,63 +243,73 @@ VERIFIED RUSH FACT SHEET — use this as a strict factual truth baseline.
 // Topic categories used to randomize the prompt focus on each call.
 // A random subset is selected and emphasized so the LLM produces different
 // questions even when the rest of the prompt is identical.
-const TOPIC_CATEGORIES = [
-  '1970s Hard Rock & Prog Era (Rush, Fly By Night, Caress of Steel, 2112, A Farewell to Kings, Hemispheres, Permanent Waves)',
-  '1980s Synth & Digital Era (Moving Pictures, Signals, Grace Under Pressure, Power Windows, Hold Your Fire, Presto)',
-  '1990s Hard Rock & Alt Era (Roll the Bones, Counterparts, Test for Echo)',
-  '2000s–2010s Late Studio Era (Vapor Trails, Feedback, Snakes & Arrows, Clockwork Angels)',
-  'Live albums, tour history, opening acts, and stage props (e.g. dryers, rotisserie chickens, Gefilter)',
-  'Guitars, bass rigs, and pedal setups (Rickenbacker 4001 stereo routing, Wal Mk1/Mk2 5-string, Hentor Sportscaster, PRS, Gibson ES-355, Taurus pedals)',
-  'Keyboards, modular synthesizers, and drum machines (Minimoog, Oberheim OB-X / OB-Xa, Roland Jupiter-8, PPG Wave, TR-808, Emulator II)',
-  'Neil Peart drum kits, snare lore (Old Faithful Slingerland Artist model), 360-degree rotating riser, Sabian Paragons, Romanian River Oak',
-  'Recording studios and engineering (Le Studio Morin-Heights, Rockfield Studios Wales, The Manor, digital mixdowns, Vapor Trails loudness war & 2013 remix)',
-  'Producers and engineers (Terry Brown, Peter Collins, Rupert Hine, Peter Henderson, Nick Raskulinecz, David Bottrill, Kevin Shirley)',
-  'Song structures, suite movement subtitles, and anagrams (e.g. La Villa Strangiato movements, The Fountain of Lamneth, Fear tetralogy reverse chronology)',
-  'Time signatures, polyrhythms, and harmonic theory (e.g. 7/8 in Subdivisions/Tom Sawyer, 5/4 in YYZ, 11/4 in Jacob\'s Ladder, the F#7add11 Lifeson chord)',
-  'Literary influences, poetry, and philosophy (Samuel Taylor Coleridge, John Dos Passos, John Barth, Richard S. Foster, Ernest Hemingway, Ayn Rand)',
-  'Album cover art, typography, and Hugh Syme Easter eggs (Starman origins, Permanent Waves headline controversy, Signals Warren Cromartie blueprint, Clockwork Angels alchemical symbols)',
-  'Billboard chart peaks, RIAA multi-platinum counts, Grammy nomination history (7 nominations, 0 wins), and Rock Hall induction ceremony details',
-  'Pre-Peart band history, formation, John Rutsey, Moon Records red-to-pink ink error, and early gig lore',
-  'Guest musicians, arrangers, and vocal cameos (Ben Mink, Aimee Mann, Mark Dailey, Hugh Syme, Anne Dudley, Andrew Jackman, Clockwork Angels String Ensemble)',
-  'The 2026 Fifty Something tour, setlist design, and Anika Nilles history and credentials',
-];
+// Tier-specific topic pools so questions match the chosen difficulty level.
+const TIER_TOPIC_CATEGORIES: Record<DifficultyLevel, string[]> = {
+  easy: [
+    'Classic radio hits and staple tracks (e.g., Tom Sawyer, The Spirit of Radio, Limelight, Closer to the Heart, Fly by Night, Working Man, Freewill, Subdivisions, Time Stand Still)',
+    'Iconic studio albums and their release sequence (e.g., 2112, Moving Pictures, Permanent Waves, Signals, Fly by Night, A Farewell to Kings)',
+    'Band member roles and identities (Geddy Lee on bass/vocals/keyboards, Alex Lifeson on guitars, Neil Peart on drums/lyrics, John Rutsey on debut)',
+    'Famous album cover concepts and visual imagery (e.g., Starman on 2112, movers on Moving Pictures, Dalmatian on Signals, owl on Fly by Night)',
+    'Major milestones and popular lore (e.g., Toronto/Canadian roots, 2013 Rock and Roll Hall of Fame induction, YYZ airport code connection)',
+    'Prominent song themes (e.g., individual freedom in 2112, teenage alienation in Subdivisions, radio freedom in Spirit of Radio)'
+  ],
+  medium: [
+    'Deep album cuts and fan favorites (e.g., The Trees, Natural Science, The Camera Eye, Red Sector A, Bravado, La Villa Strangiato, Jacob\'s Ladder, Cygnus X-1, Xanadu, Far Cry)',
+    'Album eras and stylistic evolution (e.g., 70s prog rock epics, the 80s synthesizer era, 90s alternative rock shift on Counterparts, raw sound of Vapor Trails)',
+    'Lyrical storylines and concepts (e.g., Apollo vs. Dionysus in Hemispheres, Clockwork Angels steampunk narrative, The Trees oak vs. maple conflict)',
+    'Iconic stage elements and famous instruments (e.g., Neil\'s rotating 360-degree drum riser, Alex\'s double-neck guitar for Xanadu, Geddy playing Taurus bass pedals or onstage appliances)',
+    'Well-known guest appearances and cameos (e.g., Aimee Mann on Time Stand Still, Ben Mink\'s electric violin on Losing It, Mark Dailey speaking Subdivisions)',
+    'Touring milestones and live albums (e.g., All the World\'s a Stage, Exit... Stage Left, R40 farewell tour, 2026 Fifty Something tour with Anika Nilles)'
+  ],
+  hard: [
+    'Complex time signatures, polyrhythms, and harmonic theory (e.g., 7/8 in Subdivisions, 5/4 in YYZ, 11/4 in Jacob\'s Ladder, the F#7add11 Lifeson chord, suite movement subtitles)',
+    'Specific instrument gear, models, and setups (e.g., Rickenbacker 4001 stereo Rick-O-Sound, Wal basses, Hentor Sportscaster, Oberheim OB-X, Minimoog, Slingerland "Old Faithful" snare, Sabian Paragon cymbals)',
+    'Producers, recording engineers, and studio locations (e.g., Terry Brown, Peter Collins, Rupert Hine, Peter Henderson, Nick Raskulinecz, Le Studio Morin-Heights, Rockfield Studios Wales)',
+    'Audio engineering and mastering lore (e.g., Moving Pictures digital mixdown on Sony PCM-1610, Vapor Trails loudness war and 2013 remix, Presto bass eq)',
+    'Deep Hugh Syme artwork lore and hidden Easter eggs (e.g., Permanent Waves Chicago Tribune headline alteration, Signals Warren Cromartie blueprint, Clockwork Angels alchemical symbols)',
+    'Early band history, obscure b-sides, and pre-Peart trivia (e.g., The Projection, Moon Records 45 pressings, Rutsey lyric sheets, Pinto audition on Geddy\'s 21st birthday)'
+  ]
+};
 
 type DifficultyLevel = 'easy' | 'medium' | 'hard';
 
 const DIFFICULTY_INSTRUCTIONS: Record<DifficultyLevel, string> = {
-  easy: `DIFFICULTY LEVEL: EASY ("Working Man" tier - Solid Rock & Rush Fan)
-- NOTE: This is NOT "pop culture kindergarten." Do NOT ask insulting questions like "Who was the drummer?" or "What country are they from?"
-- Focus on well-known classic radio hits and fan-staple tracks ("Tom Sawyer", "Subdivisions", "The Spirit of Radio", "Limelight", "Closer to the Heart", "Fly by Night", "Working Man", "Freewill", "Red Barchetta", "Time Stand Still").
-- Cover album release sequencing, major album titles, prominent themes (Ayn Rand connection to 2112, CFNY inspiration for Spirit of Radio), Rock Hall induction year (2013), and basic tour/band milestones.
-- Distractors must be believable classic rock or Rush alternatives (e.g., real Rush songs or adjacent 70s/80s prog bands), requiring genuine familiarity with Rush's catalog.`,
+  easy: `DIFFICULTY LEVEL: EASY ("Working Man" tier - Accessible & Fun for General Rock/Rush Fans)
+- TARGET AUDIENCE: A casual-to-solid rock fan who loves Rush's famous songs and classic albums.
+- TONE & STYLE: Keep questions clean, fun, and straightforward.
+- FOCUS ONLY ON:
+  - Big radio hits and iconic staples: "Tom Sawyer", "The Spirit of Radio", "Limelight", "Closer to the Heart", "Subdivisions", "Fly by Night", "Working Man", "Freewill", "Red Barchetta", "Time Stand Still", "2112".
+  - Core album associations: Which famous album features "Tom Sawyer"? (Moving Pictures); Which album features the Starman logo? (2112); Rush's 1974 self-titled debut.
+  - Band members and their primary roles: Geddy Lee (bass, vocals, synthesizers), Alex Lifeson (guitar), Neil Peart (drums and primary lyricist).
+  - High-level themes and famous lore: The individual vs. totalitarianism in 2112, the Toronto airport code for "YYZ", Canadian heritage, 2013 Rock and Roll Hall of Fame induction.
+- STRICT EXCLUSIONS: Do NOT ask about producers, audio engineers, specific synthesizer/guitar model numbers, time signatures, obscure b-sides, or session musicians.
+- ANSWER CHOICES: Distractors should be well-known classic rock or Rush references that are clearly distinct. Keep answers clean, concise, and fair.`,
 
-  medium: `DIFFICULTY LEVEL: MEDIUM ("Subdivisions" tier - Dedicated Rush Fan & Album Connoisseur)
-- Focus on deep album tracks, non-single favorites, and album production details (e.g., "Natural Science", "The Camera Eye", "The Trees", "Red Sector A", "Bravado", "Far Cry", "La Villa Strangiato", "Jacob's Ladder").
-- Cover producers (Terry Brown vs. Peter Collins vs. Rupert Hine vs. Nick Raskulinecz), recording locations (Le Studio in Quebec, Rockfield Studios in Wales), guest performers (Ben Mink's electric violin, Mark Dailey's voiceover, Aimee Mann on Hold Your Fire), and literary influences (Coleridge on Xanadu, Dos Passos on Camera Eye/Big Money, Richard Foster on Red Barchetta).
-- Cover tour history (opening acts like Maiden or Def Leppard, R40 farewell, Anika Nilles' background for the 2026 tour), and chart positions (never hitting #1 on Billboard 200).
-- Distractors must be plausible Rush songs, albums, producers, or dates from the same respective era that test true album-listening fans.`,
+  medium: `DIFFICULTY LEVEL: MEDIUM ("Subdivisions" tier - Dedicated Rush Fan & Album Listener)
+- TARGET AUDIENCE: A dedicated Rush fan who enjoys listening to full studio albums and knows fan-favorite album cuts, but is NOT an audio engineer or music-theory academic.
+- TONE & STYLE: Engaging questions that reward genuine album-listening knowledge without feeling punishing.
+- FOCUS ON:
+  - Deep album cuts and fan favorites: "Natural Science", "The Trees", "The Camera Eye", "Red Sector A", "Bravado", "La Villa Strangiato", "Jacob's Ladder", "Cygnus X-1", "Xanadu", "Far Cry".
+  - Album themes, eras, and stylistic evolution: 70s prog rock epics, the 80s synth-heavy period, the return to raw guitars on Counterparts/Vapor Trails, the Clockwork Angels steampunk story.
+  - Famous collaborations and cameos: Aimee Mann singing on "Time Stand Still", Ben Mink's electric violin on "Losing It", Mark Dailey speaking "Subdivisions".
+  - Iconic visual/stage instruments (KEEP IT LIGHT & ICONIC): Neil's famous rotating 360-degree drum riser, Alex's double-neck guitar for "Xanadu", Geddy playing bass pedals while singing.
+  - Tour milestones: R40 final tour, live albums like Exit... Stage Left, the 2026 Fifty Something tour with Anika Nilles.
+- STRICT EXCLUSIONS: Save producer/engineer details, complex time signature fractions (e.g. 11/4 or 13/16), and hyper-specific gear model numbers (e.g. Wal Mk1, Oberheim OB-Xa, pickup models) for "The Professor" tier.
+- ANSWER CHOICES: Plausible Rush songs, albums, or era-appropriate choices that reward album listening without feeling like a trick exam.`,
 
-  hard: `DIFFICULTY LEVEL: HARD ("The Professor" tier - Elite Rush Scholars, Musicians & Historians)
-- DEMAND EXTREME DEPTH: This tier must challenge even 30-year veteran Rush scholars and musicians. Avoid standard trivia that any casual Google search quickly returns.
-- Deep Musicianship, Time Signatures & Composition:
-  - Exact time signatures, alternating meter cycles, and polyrhythms (e.g., 7/8 Oberheim OB-Xa in "Subdivisions", 5/4 crotales Morse code in "YYZ", 6/4 to 7/4 in "Freewill", 10/8 in "Kid Gloves", 7/4 intro in "Time Stand Still", 11/4 in "Jacob's Ladder", 13/16 turnaround bar in "Tom Sawyer").
-  - The "Alex Lifeson chord" voicing (F#7add11 with open B and E strings).
-  - Specific multi-part suite movement titles (e.g., specific subtitles within "La Villa Strangiato", "The Fountain of Lamneth", or the reverse chronological release of the "Fear" series).
-- Hyper-Specific Gear & Instrument Lore:
-  - Specific basses per album/track: Rickenbacker 4001 with Rick-O-Sound stereo split; 1972 Fender Jazz pawn-shop find revived on Counterparts; Wal Mk1/Mk2 5-string on "Lock and Key"; Steinberger L2 on Grace Under Pressure; Jaco Pastorius fretless on "Malignant Narcissism".
-  - Specific synthesizers per song: Minimoog solo on "Tom Sawyer", Oberheim OB-X opening sweep, Roland Jupiter-8 on "Red Sector A", TR-808 rhythm on "The Weapon", PPG Wave 2.2/2.3 digital textures.
-  - Alex Lifeson's Hentor Sportscaster (origin of "Hentor the Barbarian" from Peter Henderson, Bill Lawrence L-500 pickup, Floyd Rose tremolo), Gibson EDS-1275 / Rickenbacker 4080 dual double-neck setup on "Xanadu", Les Paul Axcess with Graph Tech piezo.
-  - Neil Peart kit minutiae: "Old Faithful" 1977 Slingerland Artist snare used for 17 years (A Farewell to Kings through Counterparts); Rosewood finish Tama on Permanent Waves/Moving Pictures vs Candy Apple Red on Signals; rotating 360-degree riser debut on 1984 GUP tour; DW Timbre-Matched Romanian River Oak kits for R40; transition to traditional grip with Freddie Gruber in 1995; Sabian Paragon line design.
-- Deep Production, Studio & Artwork Lore:
-  - Specific engineering details: Hybrid digital mixdown to Sony PCM-1610 on Moving Pictures (ADD); Vapor Trails 2002 digital clipping loudness war and David Bottrill's 2013 remix; Rupert Hine & Stephen W. Tayler's lean bass mix on Presto.
-  - Hugh Syme artwork secrets: Caress of Steel sepia printer error; Moving Pictures Queen's Park models (Deborah Samuel, Kelly Jay, Bobby King); Permanent Waves Chicago Tribune "Dewey Defeats Truman" and Coca-Cola billboard controversies; Signals Warren Cromartie blueprint and member nicknames (Dirk, Lerxst, Pratt); Hold Your Fire Stanley Brock juggler and 9:12 / 21:12 clock; Clockwork Angels alchemical symbols.
-  - Early history: Pre-Rush names (The Projection), Bill Rutsey coining the name "Rush", John Rutsey's debut lyric crisis, Neil Peart's Ford Pinto audition on Geddy's 21st birthday (July 29, 1974), Moon Records 3,500-copy run.
-  - Grammy record: Exactly 7 nominations, 0 wins, all Best Rock Instrumental except the 2011 documentary.
-- Distractors: Every incorrect answer must be a meticulously crafted, genuine Rush deep-lore element from adjacent tracks/albums/gear to prevent process of elimination.`
+  hard: `DIFFICULTY LEVEL: HARD ("The Professor" tier - Elite Rush Scholars, Musicians & Gear Historians)
+- TARGET AUDIENCE: Die-hard Rush scholars, musicians, audio engineers, and gear obsessives.
+- TONE & STYLE: Highly specific questions that challenge even 30-year veteran Rush scholars and musicians.
+- FOCUS ON:
+  - Music theory & meters: Time signatures and alternating meters (7/8 in Subdivisions, 5/4 in YYZ, 11/4 in Jacob's Ladder), Lifeson's F#7add11 chord, suite movement subtitles.
+  - Specific gear & instruments: Rickenbacker 4001 Rick-O-Sound stereo routing, Wal basses, Hentor Sportscaster, Minimoog, Roland Jupiter-8, Neil's Slingerland "Old Faithful" snare, Sabian Paragon cymbals.
+  - Producers, studios & engineering: Terry Brown, Peter Collins, Rupert Hine, Nick Raskulinecz; Le Studio Morin-Heights, Rockfield Studios; digital mixdowns (ADD on Moving Pictures), Vapor Trails loudness war & 2013 remix.
+  - Hugh Syme artwork secrets & deep lore: Chicago Tribune "Dewey Defeats Truman" headline issue on Permanent Waves, Warren Cromartie blueprint on Signals, early Moon Records pressings.
+- ANSWER CHOICES: Meticulously plausible deep-lore alternatives designed for expert discrimination.`
 };
 
 /**
- * Randomly shuffle an array (Fisher-Yates) and return the first `n` items.
+ * Randomly shuffle an array (Fisher-Yates) and return the first \`n\` items.
  */
 function pickRandom<T>(arr: readonly T[], n: number): T[] {
   const copy = [...arr];
@@ -311,13 +321,15 @@ function pickRandom<T>(arr: readonly T[], n: number): T[] {
 }
 
 function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'): string {
-  // Pick a random subset of topic categories to emphasize in this batch.
-  // This ensures the prompt itself differs across calls, producing varied questions.
-  const emphasizedTopics = pickRandom(TOPIC_CATEGORIES, 4 + Math.floor(Math.random() * 4));
+  // Pick 2-3 topic categories tailored to this specific difficulty tier
+  const categoryPool = TIER_TOPIC_CATEGORIES[difficulty] || TIER_TOPIC_CATEGORIES.easy;
+  const topicCount = Math.min(3, categoryPool.length);
+  const emphasizedTopics = pickRandom(categoryPool, topicCount);
   const topicList = emphasizedTopics.map((t, i) => `${i + 1}. ${t}`).join('\n');
 
   // A random seed value embedded in the prompt to further discourage deterministic output.
   const seed = Math.floor(Math.random() * 1_000_000);
+
 
   return [
     `Generate exactly ${count} different, highly diverse multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
