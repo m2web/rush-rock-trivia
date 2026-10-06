@@ -44,8 +44,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [userTurnCount, setUserTurnCount] = useState(0);
   const [isSending, setIsSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Close privacy modal on Escape key
+  useEffect(() => {
+    if (!isPrivacyModalOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsPrivacyModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPrivacyModalOpen]);
 
   // Re-initialize greeting when persona changes
   useEffect(() => {
@@ -210,6 +223,57 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           >
             ×
           </button>
+        </div>
+      )}
+
+      {/* Privacy & Ephemeral Session Disclosure */}
+      <div className="mt-2 text-center text-xs text-gray-500">
+        🔒 Chats are private & ephemeral. No sessions are logged.{' '}
+        <button
+          type="button"
+          onClick={() => setIsPrivacyModalOpen(true)}
+          className="text-gray-400 hover:text-white underline cursor-pointer transition-colors"
+        >
+          Privacy Note
+        </button>
+      </div>
+
+      {/* Privacy / 2112 Syrinx Modal */}
+      {isPrivacyModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
+          onClick={() => setIsPrivacyModalOpen(false)}
+        >
+          <div
+            className="relative bg-gray-900 p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-700 max-w-md w-full text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              aria-label="Close"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold focus:outline-none cursor-pointer"
+              onClick={() => setIsPrivacyModalOpen(false)}
+            >
+              ×
+            </button>
+            <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+              <span>🔒</span> Privacy & The Temples of Syrinx
+            </h3>
+            <p className="text-sm text-gray-300 leading-relaxed mb-3">
+              Your chat conversations with the Synthetic Rush Fan / Digital Man are completely private and ephemeral. We do not log, store, or track your messages, fan stories, or chat sessions on our servers or databases. Once you close or refresh the page, your conversation is gone.
+            </p>
+            <p className="text-sm leading-relaxed font-medium text-amber-300">
+              We are not the great computer halls of Syrinx from 2112—just a fellow Rush fan celebrating the music! 😊🤘❤️
+            </p>
+            <div className="mt-5 flex justify-end">
+              <button
+                type="button"
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 px-5 rounded-full text-sm cursor-pointer transition"
+                onClick={() => setIsPrivacyModalOpen(false)}
+              >
+                Got It
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
