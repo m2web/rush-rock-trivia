@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { GameState, TriviaQuestion, DifficultyLevel, DIFFICULTY_CONFIGS } from './types';
 // AI service – routes all calls through Cloudflare Pages Functions
 import { getPreloadedQuestions, ChatPersona } from './services/aiService';
@@ -377,11 +377,12 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<RushRockTriviaApp initialTab="trivia" />} />
-        {/* Archived meetups view routes (preserved in branch archive/meetups-view):
-        <Route path="/cities" element={<RushRockTriviaApp initialTab="meetups" />} />
-        <Route path="/tours" element={<RushRockTriviaApp initialTab="meetups" />} />
-        <Route path="/meetups" element={<RushRockTriviaApp initialTab="meetups" />} />
-        */}
+        {/* Redirect late arrivers / legacy tour URLs to the main trivia page */}
+        <Route path="/cities" element={<Navigate to="/" replace />} />
+        <Route path="/cities.html" element={<Navigate to="/" replace />} />
+        <Route path="/tours" element={<Navigate to="/" replace />} />
+        <Route path="/tours.html" element={<Navigate to="/" replace />} />
+        <Route path="/meetups" element={<Navigate to="/" replace />} />
         <Route path="/chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="fan" />} />
         <Route path="/digital-man" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
         <Route path="/digital-man-chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />

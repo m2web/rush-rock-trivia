@@ -1,5 +1,9 @@
-# Cloudflare Pages 301 Redirects
-/tours.html /cities.html 301
+# Cloudflare Pages Redirects - Route legacy tour and cities traffic to home
+/cities / 302
+/cities.html / 302
+/tours / 302
+/tours.html / 302
+/meetups / 302
 
 # SPA Fallback for client-side routing
 /* /index.html 200
