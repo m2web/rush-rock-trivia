@@ -218,7 +218,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <button
             className="ml-2 text-gray-400 hover:text-white text-2xl font-bold focus:outline-none cursor-pointer"
             aria-label="Close Chat"
-            title={isDigitalMan ? "Return to Cities & Tours" : "Return to Main Screen"}
+            title="Return to Main Screen"
             onClick={onClose}
           >
             ×

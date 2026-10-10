@@ -11,7 +11,7 @@ import RushFanModal from './components/RushFanModal';
 import RushFanBadge from './components/RushFanBadge';
 import UpdateFanStoryModal from './components/UpdateFanStoryModal';
 import ChatInterface from './components/ChatInterface';
-import TourMeetupsView from './components/TourMeetupsView';
+// import TourMeetupsView from './components/TourMeetupsView'; // Archived to branch archive/meetups-view
 import './src/styles/passingthesticks.css';
 
 const TOTAL_QUESTIONS = 5;
@@ -79,9 +79,11 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
       setActiveTab('chat');
       setChatPersona('digital-man');
       setIsChatOpen(true);
+    /* Archived meetups route handling:
     } else if (path === '/cities' || path === '/tours' || path === '/meetups') {
       setActiveTab('meetups');
       setIsChatOpen(false);
+    */
     } else if (path === '/' && activeTab !== 'trivia') {
       setActiveTab('trivia');
       setIsChatOpen(false);
@@ -127,12 +129,8 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
   }, [navigate]);
 
   const handleCloseChat = useCallback(() => {
-    if (chatPersona === 'digital-man' || chatPersona === 'archivist') {
-      handleViewMeetups();
-    } else {
-      handleBackToTrivia();
-    }
-  }, [chatPersona, handleViewMeetups, handleBackToTrivia]);
+    handleBackToTrivia();
+  }, [handleBackToTrivia]);
 
   const handleFanModalSubmit = useCallback((story: string) => {
     updateFanStory(story);
@@ -248,7 +246,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
           <StartScreen
             onStart={startGame}
             onStartChat={() => handleStartFanChat()}
-            onViewMeetups={handleViewMeetups}
+            // onViewMeetups={handleViewMeetups}
             error={error}
             difficulty={difficulty}
           />
@@ -285,7 +283,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
           <StartScreen
             onStart={startGame}
             onStartChat={() => handleStartFanChat()}
-            onViewMeetups={handleViewMeetups}
+            // onViewMeetups={handleViewMeetups}
             difficulty={difficulty}
           />
         );
@@ -313,14 +311,16 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
               </header>
 
               <main className="w-full max-w-2xl">
-                {activeTab === 'meetups' ? (
+                {/* Archived meetups view (preserved in branch archive/meetups-view):
+                activeTab === 'meetups' ? (
                   <TourMeetupsView
                     onBack={handleBackToTrivia}
                     onAskDigitalMan={(prompt) => {
                       handleStartDigitalManChat(prompt);
                     }}
                   />
-                ) : activeTab === 'chat' ? (
+                ) : */}
+                {activeTab === 'chat' ? (
                   <div className="bg-gray-900 bg-opacity-90 p-6 rounded-2xl shadow-2xl border border-gray-700 backdrop-blur-sm">
                     <h2 className="text-2xl font-bold mb-4 text-center">
                       {chatPersona === 'digital-man' || chatPersona === 'archivist' ? '🧭 The Digital Man Chat' : '💬 Synthetic Fan Chat'}
@@ -377,9 +377,11 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<RushRockTriviaApp initialTab="trivia" />} />
+        {/* Archived meetups view routes (preserved in branch archive/meetups-view):
         <Route path="/cities" element={<RushRockTriviaApp initialTab="meetups" />} />
         <Route path="/tours" element={<RushRockTriviaApp initialTab="meetups" />} />
         <Route path="/meetups" element={<RushRockTriviaApp initialTab="meetups" />} />
+        */}
         <Route path="/chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="fan" />} />
         <Route path="/digital-man" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
         <Route path="/digital-man-chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
