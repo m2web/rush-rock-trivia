@@ -134,12 +134,12 @@ export const SUBDIVISIONS_ERA_QUESTIONS: Record<SpecificSubdivisionsEra, TriviaQ
       ],
     },
     {
-      question: 'Whose name was substituted onto the background billboard on revised pressings of Permanent Waves after the Chicago Tribune objected to their front-page headline?',
-      correctAnswer: 'Ray Danniels',
+      question: 'Which brand\'s advertisement on the background billboard of Permanent Waves had to be altered on revised pressings after the company objected to its unauthorized appearance?',
+      correctAnswer: 'Coca-Cola',
       incorrectAnswers: [
-        'Terry Brown',
-        'Hugh Syme',
-        'Peter Henderson',
+        'Pepsi-Cola',
+        'Texaco',
+        'McDonald\'s',
       ],
     },
     {
@@ -446,7 +446,7 @@ export const SUBDIVISIONS_ERA_QUESTIONS: Record<SpecificSubdivisionsEra, TriviaQ
       ],
     },
     {
-      question: 'Which instrumental track from Counterparts was nominated for a Grammy Award for Best Rock Instrumental Performance in 1994?',
+      question: 'Which instrumental track from Counterparts was nominated for a Grammy Award for Best Rock Instrumental Performance at the 1995 awards?',
       correctAnswer: '"Leave That Thing Alone"',
       incorrectAnswers: [
         '"Where\'s My Thing?"',

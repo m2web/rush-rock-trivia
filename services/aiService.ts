@@ -90,7 +90,7 @@ class QuestionCache {
 
     // Fallback for Subdivisions if API was unreachable and bucket still needs questions
     if (difficulty === 'medium' && this.cache[key].length < count) {
-      this.cache[key].push(...getShuffledCuratedEraQuestions(era));
+      this.appendCuratedFallback(key, era);
     }
 
     // Return the requested number of questions and remove them from cache
@@ -102,6 +102,18 @@ class QuestionCache {
     }
 
     return questions;
+  }
+
+  /**
+   * Appends curated questions to the bucket, filtering out any questions that are
+   * already queued to prevent immediate back-to-back duplicates across rounds.
+   */
+  private appendCuratedFallback(key: string, era: SubdivisionsEra): void {
+    const queuedQuestionTexts = new Set(this.cache[key].map((q) => q.question));
+    const freshQuestions = getShuffledCuratedEraQuestions(era);
+    const unqueued = freshQuestions.filter((q) => !queuedQuestionTexts.has(q.question));
+    // If all available questions are already queued, fall back to the fresh pool
+    this.cache[key].push(...(unqueued.length > 0 ? unqueued : freshQuestions));
   }
 
   async preloadQuestions(difficulty: DifficultyLevel = 'easy', era: SubdivisionsEra = 'all'): Promise<void> {
@@ -133,7 +145,7 @@ class QuestionCache {
       console.error(`Failed to preload ${key} questions:`, error);
       // For Subdivisions, replenish from curated pool if API call fails
       if (difficulty === 'medium' && this.cache[key].length < 5) {
-        this.cache[key].push(...getShuffledCuratedEraQuestions(era));
+        this.appendCuratedFallback(key, era);
       }
     }
   }

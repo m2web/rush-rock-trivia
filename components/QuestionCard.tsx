@@ -32,7 +32,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       [answers[i], answers[j]] = [answers[j], answers[i]];
     }
     setShuffledAnswers(answers);
-  }, [question]);
+  }, [question, questionNumber]);
 
   const handleAnswerClick = (answer: string) => {
     if (isAnswered) return;
