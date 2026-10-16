@@ -54,6 +54,7 @@ const StartScreen: React.FC<StartScreenProps> = ({
                 <button
                   key={level}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => onSelectDifficulty(level)}
                   className={`px-2 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                     isSelected
@@ -94,6 +95,7 @@ const StartScreen: React.FC<StartScreenProps> = ({
                 <button
                   key={eraKey}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => onSelectEra(eraKey)}
                   className={`px-3 py-2 rounded-lg text-xs font-semibold border text-left transition-all duration-200 cursor-pointer ${
                     eraKey === 'all' ? 'sm:col-span-2 text-center' : ''

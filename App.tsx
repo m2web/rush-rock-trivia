@@ -75,6 +75,8 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
       return 'all';
     }
   });
+  // Preserves the era played during the active/completed quiz independently of next-round selections
+  const [playedEra, setPlayedEra] = useState<SubdivisionsEra>(selectedEra);
 
   // Fan story & chat state (persisted permanently in localStorage)
   const [fanStory, setFanStory] = useState<string>(() => {
@@ -183,6 +185,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
     ) => {
       setIsLoading(true);
       setError(null);
+      setPlayedEra(targetEra);
       try {
         // Get preloaded questions from the cache for this difficulty tier (and era for Subdivisions)
         const newQuestions = await getPreloadedQuestions(
@@ -299,12 +302,13 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
           <>
             {questions.length > 0 && (
               <QuestionCard
+                key={currentQuestionIndex}
                 question={questions[currentQuestionIndex]}
                 onAnswer={handleAnswer}
                 questionNumber={currentQuestionIndex + 1}
                 totalQuestions={TOTAL_QUESTIONS}
                 difficulty={difficulty}
-                selectedEra={selectedEra}
+                selectedEra={playedEra}
               />
             )}
           </>
@@ -320,6 +324,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
             didLevelDown={didLevelDown}
             onPlayAgain={handlePlayAgain}
             onSelectDifficulty={handleSelectDifficulty}
+            playedEra={playedEra}
             selectedEra={selectedEra}
             onSelectEra={handleSelectEra}
           />

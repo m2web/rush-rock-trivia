@@ -461,7 +461,7 @@ export const SUBDIVISIONS_ERA_QUESTIONS: Record<SpecificSubdivisionsEra, TriviaQ
  * Helper to return a shuffled copy of the curated question pool for a given era.
  */
 export function getShuffledCuratedEraQuestions(era: SubdivisionsEra): TriviaQuestion[] {
-  const pool: TriviaQuestion[] =
+  const source: TriviaQuestion[] =
     era === 'all'
       ? [
           ...SUBDIVISIONS_ERA_QUESTIONS['prog-70s'],
@@ -469,7 +469,15 @@ export function getShuffledCuratedEraQuestions(era: SubdivisionsEra): TriviaQues
           ...SUBDIVISIONS_ERA_QUESTIONS['synth-pop-80s-90s'],
           ...SUBDIVISIONS_ERA_QUESTIONS['modern-rock'],
         ]
-      : [...SUBDIVISIONS_ERA_QUESTIONS[era]];
+      : SUBDIVISIONS_ERA_QUESTIONS[era];
+
+  // Deep-clone each question into a fresh object reference on every refill to
+  // prevent identity-related state stalls in QuestionCard across refills.
+  const pool: TriviaQuestion[] = source.map((q) => ({
+    question: q.question,
+    correctAnswer: q.correctAnswer,
+    incorrectAnswers: [...q.incorrectAnswers],
+  }));
 
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

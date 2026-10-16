@@ -16,6 +16,7 @@ interface EndScreenProps {
   didLevelDown: boolean;
   onPlayAgain: () => void;
   onSelectDifficulty?: (difficulty: DifficultyLevel) => void;
+  playedEra?: SubdivisionsEra;
   selectedEra?: SubdivisionsEra;
   onSelectEra?: (era: SubdivisionsEra) => void;
 }
@@ -29,6 +30,7 @@ const EndScreen: React.FC<EndScreenProps> = ({
   didLevelDown,
   onPlayAgain,
   onSelectDifficulty,
+  playedEra,
   selectedEra = 'all',
   onSelectEra,
 }) => {
@@ -42,6 +44,7 @@ const EndScreen: React.FC<EndScreenProps> = ({
 
   const currentConfig = DIFFICULTY_CONFIGS[currentDifficulty];
   const nextConfig = DIFFICULTY_CONFIGS[nextDifficulty];
+  const playedEraConfig = ERA_CONFIGS[playedEra || selectedEra];
   const currentEraConfig = ERA_CONFIGS[selectedEra];
   const isMaxTierMaster = currentDifficulty === 'hard' && score >= 4;
 
@@ -95,7 +98,7 @@ const EndScreen: React.FC<EndScreenProps> = ({
         <span className="text-xs text-gray-400">Played on:</span>
         <span className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${currentConfig.badgeColor}`}>
           {currentConfig.rushTitle} (
-          {currentDifficulty === 'medium' ? currentEraConfig.label : currentConfig.label})
+          {currentDifficulty === 'medium' ? playedEraConfig.label : currentConfig.label})
         </span>
       </div>
 
@@ -113,6 +116,7 @@ const EndScreen: React.FC<EndScreenProps> = ({
                 <button
                   key={level}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => onSelectDifficulty(level)}
                   className={`px-2 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                     isSelected
@@ -149,6 +153,7 @@ const EndScreen: React.FC<EndScreenProps> = ({
                 <button
                   key={eraKey}
                   type="button"
+                  aria-pressed={isSelected}
                   onClick={() => onSelectEra(eraKey)}
                   className={`px-3 py-2 rounded-lg text-xs font-semibold border text-left transition-all duration-200 cursor-pointer ${
                     eraKey === 'all' ? 'sm:col-span-2 text-center' : ''
