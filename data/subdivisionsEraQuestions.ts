@@ -392,12 +392,12 @@ export const SUBDIVISIONS_ERA_QUESTIONS: Record<SpecificSubdivisionsEra, TriviaQ
       ],
     },
     {
-      question: 'Aside from a photograph of a nut and bolt, what technical diagram appears on the front cover of Counterparts?',
-      correctAnswer: 'A schematic blueprint of a mortise and tenon joint',
+      question: 'Which everyday pairing of mechanical hardware is photographed on the front cover of Counterparts as a visual metaphor for the album\'s title?',
+      correctAnswer: 'A nut and bolt',
       incorrectAnswers: [
-        'An exploded view of a padlock and key',
-        'A line drawing of intermeshing gears',
-        'A cross-section diagram of an electrical wall socket',
+        'A padlock and key',
+        'A hammer and nail',
+        'A plug and electrical socket',
       ],
     },
     {

@@ -302,7 +302,7 @@ const ERA_INSTRUCTIONS: Record<Exclude<SubdivisionsEra, 'all'>, string> = {
   'modern-rock': `ERA CONSTRAINT: THE MODERN ROCK ERA (1993–2012)
 - STRICTLY RESTRICT ALL QUESTIONS in this batch to Rush's 1993–2012 era.
 - Allowed Studio Albums: Counterparts (1993), Test for Echo (1996), Vapor Trails (2002), Snakes & Arrows (2007), Clockwork Angels (2012).
-- Allowed Topics: Songs, lyrics, Freddie Gruber drumming lessons, zero keyboards on Vapor Trails, producer Nick Raskulinecz ("Booujzhe"), Clockwork Angels steampunk narrative and Kevin J. Anderson novel, 21:12 clock face, Counterparts mortise and tenon diagram, Jaco Pastorius fretless bass on "Malignant Narcissism", "Hope" acoustic guitar tuning, and the Clockwork Angels String Ensemble (1993–2012 ONLY).
+- Allowed Topics: Songs, lyrics, Freddie Gruber drumming lessons, zero keyboards on Vapor Trails, producer Nick Raskulinecz ("Booujzhe"), Clockwork Angels steampunk narrative and Kevin J. Anderson novel, 21:12 clock face, Counterparts nut and bolt cover artwork, Jaco Pastorius fretless bass on "Malignant Narcissism", "Hope" acoustic guitar tuning, and the Clockwork Angels String Ensemble (1993–2012 ONLY).
 - Do NOT generate questions about albums released before 1993.`,
 };
 
