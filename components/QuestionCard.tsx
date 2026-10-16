@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { TriviaQuestion, DifficultyLevel, DIFFICULTY_CONFIGS } from '../types';
+import { TriviaQuestion, DifficultyLevel, DIFFICULTY_CONFIGS, SubdivisionsEra, ERA_CONFIGS } from '../types';
 
 interface QuestionCardProps {
   question: TriviaQuestion;
@@ -8,9 +7,17 @@ interface QuestionCardProps {
   questionNumber: number;
   totalQuestions: number;
   difficulty?: DifficultyLevel;
+  selectedEra?: SubdivisionsEra;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questionNumber, totalQuestions, difficulty }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({
+  question,
+  onAnswer,
+  questionNumber,
+  totalQuestions,
+  difficulty,
+  selectedEra = 'all',
+}) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   
@@ -25,7 +32,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
       [answers[i], answers[j]] = [answers[j], answers[i]];
     }
     setShuffledAnswers(answers);
-  }, [question]);
+  }, [question, questionNumber]);
 
   const handleAnswerClick = (answer: string) => {
     if (isAnswered) return;
@@ -53,7 +60,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onAnswer, questio
           <p className="text-lg font-semibold text-red-400">Question {questionNumber} / {totalQuestions}</p>
           {difficulty && DIFFICULTY_CONFIGS[difficulty] && (
             <span className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${DIFFICULTY_CONFIGS[difficulty].badgeColor}`}>
-              {DIFFICULTY_CONFIGS[difficulty].rushTitle} • {DIFFICULTY_CONFIGS[difficulty].label}
+              {DIFFICULTY_CONFIGS[difficulty].rushTitle} •{' '}
+              {difficulty === 'medium' && ERA_CONFIGS[selectedEra]
+                ? ERA_CONFIGS[selectedEra].shortLabel
+                : DIFFICULTY_CONFIGS[difficulty].label}
             </span>
           )}
         </div>

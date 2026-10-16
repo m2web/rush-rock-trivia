@@ -256,9 +256,10 @@ const TIER_TOPIC_CATEGORIES: Record<DifficultyLevel, string[]> = {
   medium: [
     'Deep album cuts and fan favorites (e.g., The Trees, Natural Science, The Camera Eye, Red Sector A, Bravado, La Villa Strangiato, Jacob\'s Ladder, Cygnus X-1, Xanadu, Far Cry)',
     'Album eras and stylistic evolution (e.g., 70s prog rock epics, the 80s synthesizer era, 90s alternative rock shift on Counterparts, raw sound of Vapor Trails)',
+    'Key producers and landmark studio transitions (e.g., longtime producer Terry Brown, Peter Collins bringing modern production, Rupert Hine, Nick Raskulinecz "Booujzhe")',
     'Lyrical storylines and concepts (e.g., Apollo vs. Dionysus in Hemispheres, Clockwork Angels steampunk narrative, The Trees oak vs. maple conflict)',
-    'Iconic stage elements and famous instruments (e.g., Neil\'s rotating 360-degree drum riser, Alex\'s double-neck guitar for Xanadu, Geddy playing Taurus bass pedals or onstage appliances)',
-    'Well-known guest appearances and cameos (e.g., Aimee Mann on Time Stand Still, Ben Mink\'s electric violin on Losing It, Mark Dailey speaking Subdivisions)',
+    'Prominent signature instruments and sound design (e.g., Neil\'s 360-degree riser and Simmons electronic drums, Alex\'s double-neck guitar, Oberheim sweep on Tom Sawyer, Taurus pedals)',
+    'Well-known guest appearances and cameos (e.g., Aimee Mann on Time Stand Still, Ben Mink\'s electric violin on Losing It, Mark Dailey speaking Subdivisions, Jason Sniderman on The Garden)',
     'Touring milestones and live albums (e.g., All the World\'s a Stage, Exit... Stage Left, R40 farewell tour, 2026 Fifty Something tour with Anika Nilles)'
   ],
   hard: [
@@ -272,6 +273,38 @@ const TIER_TOPIC_CATEGORIES: Record<DifficultyLevel, string[]> = {
 };
 
 type DifficultyLevel = 'easy' | 'medium' | 'hard';
+type SubdivisionsEra =
+  | 'all'
+  | 'prog-70s'
+  | 'synthesis-80s'
+  | 'synth-pop-80s-90s'
+  | 'modern-rock';
+
+const ERA_INSTRUCTIONS: Record<Exclude<SubdivisionsEra, 'all'>, string> = {
+  'prog-70s': `ERA CONSTRAINT: THE PROG '70s ERA (1974–1978)
+- STRICTLY RESTRICT ALL QUESTIONS in this batch to Rush's 1974–1978 era.
+- Allowed Studio Albums: Rush (1974), Fly by Night (1975), Caress of Steel (1975), 2112 (1976), A Farewell to Kings (1977), Hemispheres (1978).
+- Allowed Topics: Songs, lyrics, literary inspirations (Ayn Rand, Coleridge, Tolkien), instruments (Gibson EDS-1275 double-neck, wood blocks, tubular bells), tours ("Down the Tubes" tour), and recording lore (Rockfield Studios courtyard mics, Hemispheres vocal range) from 1974–1978 ONLY.
+- Do NOT generate questions about albums released after 1978.`,
+
+  'synthesis-80s': `ERA CONSTRAINT: THE PEAK SYNTHESIS '80s ERA (1980–1984)
+- STRICTLY RESTRICT ALL QUESTIONS in this batch to Rush's 1980–1984 era.
+- Allowed Studio Albums: Permanent Waves (1980), Moving Pictures (1981), Signals (1982), Grace Under Pressure (1984).
+- Allowed Topics: Songs, lyrics, synthesizers (Oberheim OB-X, Minimoog), Simmons SDS-V electronic drums, cover art (Permanent Waves Coca-Cola billboard and newspaper cover changes, Moving Pictures triple meaning), STS-1 Space Shuttle Columbia launch ("Countdown"), CFNY-FM inspiration, and producer transition from Terry Brown to Steve Lillywhite/Peter Henderson (1980–1984 ONLY).
+- Do NOT generate questions about albums outside 1980–1984.`,
+
+  'synth-pop-80s-90s': `ERA CONSTRAINT: THE SYNTH & POP-PROG ERA (1985–1991)
+- STRICTLY RESTRICT ALL QUESTIONS in this batch to Rush's 1985–1991 era.
+- Allowed Studio Albums: Power Windows (1985), Hold Your Fire (1987), Presto (1989), Roll the Bones (1991).
+- Allowed Topics: Songs, lyrics, guest appearances (Aimee Mann on "Time Stand Still", Abbey Road strings on "Manhattan Project", Choir of the English National Opera on "Marathon"), Geddy's pitch-shifted rap on "Roll the Bones", producers Peter Collins and Rupert Hine, cover art (Hold Your Fire red spheres, Presto rabbits/top hats), and stage props from 1985–1991 ONLY.
+- Do NOT generate questions about albums outside 1985–1991.`,
+
+  'modern-rock': `ERA CONSTRAINT: THE MODERN ROCK ERA (1993–2012)
+- STRICTLY RESTRICT ALL QUESTIONS in this batch to Rush's 1993–2012 era.
+- Allowed Studio Albums: Counterparts (1993), Test for Echo (1996), Vapor Trails (2002), Snakes & Arrows (2007), Clockwork Angels (2012).
+- Allowed Topics: Songs, lyrics, Freddie Gruber drumming lessons, zero keyboards on Vapor Trails, producer Nick Raskulinecz ("Booujzhe"), Clockwork Angels steampunk narrative and Kevin J. Anderson novel, 21:12 clock face, Counterparts nut and bolt cover artwork, Jaco Pastorius fretless bass on "Malignant Narcissism", "Hope" acoustic guitar tuning, and the Clockwork Angels String Ensemble (1993–2012 ONLY).
+- Do NOT generate questions about albums released before 1993.`,
+};
 
 const DIFFICULTY_INSTRUCTIONS: Record<DifficultyLevel, string> = {
   easy: `DIFFICULTY LEVEL: EASY ("Working Man" tier - Accessible & Fun for General Rock/Rush Fans)
@@ -291,10 +324,11 @@ const DIFFICULTY_INSTRUCTIONS: Record<DifficultyLevel, string> = {
 - FOCUS ON:
   - Deep album cuts and fan favorites: "Natural Science", "The Trees", "The Camera Eye", "Red Sector A", "Bravado", "La Villa Strangiato", "Jacob's Ladder", "Cygnus X-1", "Xanadu", "Far Cry".
   - Album themes, eras, and stylistic evolution: 70s prog rock epics, the 80s synth-heavy period, the return to raw guitars on Counterparts/Vapor Trails, the Clockwork Angels steampunk story.
-  - Famous collaborations and cameos: Aimee Mann singing on "Time Stand Still", Ben Mink's electric violin on "Losing It", Mark Dailey speaking "Subdivisions".
-  - Iconic visual/stage instruments (KEEP IT LIGHT & ICONIC): Neil's famous rotating 360-degree drum riser, Alex's double-neck guitar for "Xanadu", Geddy playing bass pedals while singing.
+  - Well-known producers & transitions: Longtime producer Terry Brown, Peter Collins modernizing their sound, Rupert Hine, and Nick Raskulinecz ("Booujzhe").
+  - Famous collaborations and cameos: Aimee Mann singing on "Time Stand Still", Ben Mink's electric violin on "Losing It", Mark Dailey speaking "Subdivisions", Jason Sniderman's piano on "The Garden".
+  - Signature instruments & iconic gear: Neil's rotating 360-degree drum riser and Simmons electronic drums, Alex's double-neck guitar for "Xanadu", Geddy's famous Oberheim sweep on "Tom Sawyer" or Taurus bass pedals.
   - Tour milestones: R40 final tour, live albums like Exit... Stage Left, the 2026 Fifty Something tour with Anika Nilles.
-- STRICT EXCLUSIONS: Save producer/engineer details, complex time signature fractions (e.g. 11/4 or 13/16), and hyper-specific gear model numbers (e.g. Wal Mk1, Oberheim OB-Xa, pickup models) for "The Professor" tier.
+- STRICT EXCLUSIONS: Save hyper-specific audio engineering minutiae (e.g., Sony PCM-1610 digital mastering machines, console channel strips, pickup models), obscure electronics serials, and complex fractional time signatures (e.g., 11/4 or 13/16) for "The Professor" tier.
 - ANSWER CHOICES: Plausible Rush songs, albums, or era-appropriate choices that reward album listening without feeling like a trick exam.`,
 
   hard: `DIFFICULTY LEVEL: HARD ("The Professor" tier - Elite Rush Scholars, Musicians & Gear Historians)
@@ -303,13 +337,13 @@ const DIFFICULTY_INSTRUCTIONS: Record<DifficultyLevel, string> = {
 - FOCUS ON:
   - Music theory & meters: Time signatures and alternating meters (7/8 in Subdivisions, 5/4 in YYZ, 11/4 in Jacob's Ladder), Lifeson's F#7add11 chord, suite movement subtitles.
   - Specific gear & instruments: Rickenbacker 4001 Rick-O-Sound stereo routing, Wal basses, Hentor Sportscaster, Minimoog, Roland Jupiter-8, Neil's Slingerland "Old Faithful" snare, Sabian Paragon cymbals.
-  - Producers, studios & engineering: Terry Brown, Peter Collins, Rupert Hine, Nick Raskulinecz; Le Studio Morin-Heights, Rockfield Studios; digital mixdowns (ADD on Moving Pictures), Vapor Trails loudness war & 2013 remix.
+  - Producers, studios & engineering: Deep engineering lore with Terry Brown, Peter Collins, Rupert Hine, Nick Raskulinecz; Le Studio Morin-Heights, Rockfield Studios; digital mixdowns (ADD on Moving Pictures Sony PCM-1610), Vapor Trails loudness war & 2013 remix.
   - Hugh Syme artwork secrets & deep lore: Chicago Tribune "Dewey Defeats Truman" headline issue on Permanent Waves, Warren Cromartie blueprint on Signals, early Moon Records pressings.
 - ANSWER CHOICES: Meticulously plausible deep-lore alternatives designed for expert discrimination.`
 };
 
 /**
- * Randomly shuffle an array (Fisher-Yates) and return the first \`n\` items.
+ * Randomly shuffle an array (Fisher-Yates) and return the first `n` items.
  */
 function pickRandom<T>(arr: readonly T[], n: number): T[] {
   const copy = [...arr];
@@ -320,7 +354,11 @@ function pickRandom<T>(arr: readonly T[], n: number): T[] {
   return copy.slice(0, n);
 }
 
-function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'): string {
+function buildTriviaPrompt(
+  count: number,
+  difficulty: DifficultyLevel = 'easy',
+  era: SubdivisionsEra = 'all'
+): string {
   // Pick 2-3 topic categories tailored to this specific difficulty tier
   const categoryPool = TIER_TOPIC_CATEGORIES[difficulty] || TIER_TOPIC_CATEGORIES.easy;
   const topicCount = Math.min(3, categoryPool.length);
@@ -330,6 +368,20 @@ function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'):
   // A random seed value embedded in the prompt to further discourage deterministic output.
   const seed = Math.floor(Math.random() * 1_000_000);
 
+  const eraConstraintBlock =
+    difficulty === 'medium' && era !== 'all'
+      ? ['', ERA_INSTRUCTIONS[era], '']
+      : [
+          '',
+          'BROAD CATALOG & ERA DIVERSITY:',
+          "Generate questions spanning the broader universe of Rush's 40+ year history. Do NOT limit questions to a single era or a small handful of popular songs.",
+          '',
+          'FOR THIS BATCH, emphasize (but do not limit to) these randomly selected topic areas:',
+          topicList,
+          '',
+          "You may also draw from ANY other area of Rush's history not listed above.",
+          '',
+        ];
 
   return [
     `Generate exactly ${count} different, highly diverse multiple-choice trivia questions about the Canadian progressive rock band Rush.`,
@@ -338,15 +390,7 @@ function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'):
     '',
     `RANDOMIZATION SEED: ${seed}`,
     'Use this seed as creative inspiration to vary your question selection. Do NOT reuse questions from previous requests.',
-    '',
-    'BROAD CATALOG & ERA DIVERSITY:',
-    'Generate questions spanning the broader universe of Rush\'s 40+ year history. Do NOT limit questions to a single era or a small handful of popular songs.',
-    '',
-    `FOR THIS BATCH, emphasize (but do not limit to) these randomly selected topic areas:`,
-    topicList,
-    '',
-    'You may also draw from ANY other area of Rush\'s history not listed above.',
-    '',
+    ...eraConstraintBlock,
     'QUESTION VARIETY & NO REPETITION:',
     `- Ensure all ${count} questions in this batch cover completely different topics, albums, or band members.`,
     '- Avoid over-using repetitive tropes (e.g., asking only about Ayn Rand, Ben Mink, or album certifications). Provide a fresh, creative mix.',
@@ -371,8 +415,13 @@ function buildTriviaPrompt(count: number, difficulty: DifficultyLevel = 'easy'):
   ].join('\n');
 }
 
-async function callGemini(apiKey: string, count: number = 5, difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion[]> {
-  const prompt = buildTriviaPrompt(count, difficulty);
+async function callGemini(
+  apiKey: string,
+  count: number = 5,
+  difficulty: DifficultyLevel = 'easy',
+  era: SubdivisionsEra = 'all'
+): Promise<TriviaQuestion[]> {
+  const prompt = buildTriviaPrompt(count, difficulty, era);
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
     method: 'POST',
@@ -422,8 +471,13 @@ async function callGemini(apiKey: string, count: number = 5, difficulty: Difficu
   return parsedData.questions;
 }
 
-async function callOpenAI(apiKey: string, count: number = 5, difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion[]> {
-  const prompt = buildTriviaPrompt(count, difficulty);
+async function callOpenAI(
+  apiKey: string,
+  count: number = 5,
+  difficulty: DifficultyLevel = 'easy',
+  era: SubdivisionsEra = 'all'
+): Promise<TriviaQuestion[]> {
+  const prompt = buildTriviaPrompt(count, difficulty, era);
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -542,7 +596,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    const { count: rawCount, difficulty: rawDifficulty } = body as { count?: unknown; difficulty?: unknown };
+    const { count: rawCount, difficulty: rawDifficulty, era: rawEra } = body as {
+      count?: unknown;
+      difficulty?: unknown;
+      era?: unknown;
+    };
     const count = typeof rawCount === 'number' ? Math.floor(rawCount) : 5;
 
     // Validate count range
@@ -559,10 +617,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       ? (rawDifficulty as DifficultyLevel)
       : 'easy';
 
+    // Validate Subdivisions era (only applicable when difficulty is medium)
+    const validEras: SubdivisionsEra[] = [
+      'all',
+      'prog-70s',
+      'synthesis-80s',
+      'synth-pop-80s-90s',
+      'modern-rock',
+    ];
+    const era: SubdivisionsEra =
+      difficulty === 'medium' && typeof rawEra === 'string' && validEras.includes(rawEra as SubdivisionsEra)
+        ? (rawEra as SubdivisionsEra)
+        : 'all';
+
     // ── Generate questions ────────────────────────────────────────────
     const questions = useOpenAI
-      ? await callOpenAI(apiKey, count, difficulty)
-      : await callGemini(apiKey, count, difficulty);
+      ? await callOpenAI(apiKey, count, difficulty, era)
+      : await callGemini(apiKey, count, difficulty, era);
 
     return new Response(JSON.stringify({ questions }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
