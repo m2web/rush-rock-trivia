@@ -281,8 +281,8 @@ export const SUBDIVISIONS_ERA_QUESTIONS: Record<SpecificSubdivisionsEra, TriviaQ
       ],
     },
     {
-      question: 'Which track from Presto marked the start of the band stepping back from dense synthesizers in favor of delicate, prominent acoustic guitars?',
-      correctAnswer: '"The Pass"',
+      question: 'Which song from the 1989 album Presto prominently features Alex Lifeson\'s acoustic guitar as the foundation of its verses, signaling the shift away from 1980s keyboard saturation?',
+      correctAnswer: '"Presto"',
       incorrectAnswers: [
         '"Show Don\'t Tell"',
         '"Superconductor"',
@@ -437,12 +437,12 @@ export const SUBDIVISIONS_ERA_QUESTIONS: Record<SpecificSubdivisionsEra, TriviaQ
       ],
     },
     {
-      question: 'What subtle sound effect is heard at the very end of "The Garden," marking the final seconds of Rush\'s recorded studio output?',
-      correctAnswer: 'A mechanical wind-up clock slowly ticking down',
+      question: 'Which guest musician performed the delicate piano accompaniment on "The Garden," the poignant final track on Clockwork Angels?',
+      correctAnswer: 'Jason Sniderman',
       incorrectAnswers: [
-        'A chime bell striking twenty-one times',
-        'An airship valve releasing steam',
-        'Neil Peart setting his drumsticks down on a snare',
+        'Hugh Syme',
+        'Terry Brown',
+        'David Campbell',
       ],
     },
     {

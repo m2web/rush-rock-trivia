@@ -109,9 +109,13 @@ class QuestionCache {
    * already queued to prevent immediate back-to-back duplicates across rounds.
    */
   private appendCuratedFallback(key: string, era: SubdivisionsEra): void {
-    const queuedQuestionTexts = new Set(this.cache[key].map((q) => q.question));
+    const queuedQuestionTexts = new Set(
+      this.cache[key].map((q) => q.question.trim().toLowerCase())
+    );
     const freshQuestions = getShuffledCuratedEraQuestions(era);
-    const unqueued = freshQuestions.filter((q) => !queuedQuestionTexts.has(q.question));
+    const unqueued = freshQuestions.filter(
+      (q) => !queuedQuestionTexts.has(q.question.trim().toLowerCase())
+    );
     // If all available questions are already queued, fall back to the fresh pool
     this.cache[key].push(...(unqueued.length > 0 ? unqueued : freshQuestions));
   }
@@ -140,7 +144,13 @@ class QuestionCache {
   ): Promise<void> {
     try {
       const newQuestions = await fetchMultipleQuestions(5, difficulty, era);
-      this.cache[key].push(...newQuestions);
+      const queuedQuestionTexts = new Set(
+        this.cache[key].map((q) => q.question.trim().toLowerCase())
+      );
+      const uniqueNewQuestions = newQuestions.filter(
+        (q) => !queuedQuestionTexts.has(q.question.trim().toLowerCase())
+      );
+      this.cache[key].push(...uniqueNewQuestions);
     } catch (error) {
       console.error(`Failed to preload ${key} questions:`, error);
       // For Subdivisions, replenish from curated pool if API call fails

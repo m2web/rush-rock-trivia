@@ -256,9 +256,10 @@ const TIER_TOPIC_CATEGORIES: Record<DifficultyLevel, string[]> = {
   medium: [
     'Deep album cuts and fan favorites (e.g., The Trees, Natural Science, The Camera Eye, Red Sector A, Bravado, La Villa Strangiato, Jacob\'s Ladder, Cygnus X-1, Xanadu, Far Cry)',
     'Album eras and stylistic evolution (e.g., 70s prog rock epics, the 80s synthesizer era, 90s alternative rock shift on Counterparts, raw sound of Vapor Trails)',
+    'Key producers and landmark studio transitions (e.g., longtime producer Terry Brown, Peter Collins bringing modern production, Rupert Hine, Nick Raskulinecz "Booujzhe")',
     'Lyrical storylines and concepts (e.g., Apollo vs. Dionysus in Hemispheres, Clockwork Angels steampunk narrative, The Trees oak vs. maple conflict)',
-    'Iconic stage elements and famous instruments (e.g., Neil\'s rotating 360-degree drum riser, Alex\'s double-neck guitar for Xanadu, Geddy playing Taurus bass pedals or onstage appliances)',
-    'Well-known guest appearances and cameos (e.g., Aimee Mann on Time Stand Still, Ben Mink\'s electric violin on Losing It, Mark Dailey speaking Subdivisions)',
+    'Prominent signature instruments and sound design (e.g., Neil\'s 360-degree riser and Simmons electronic drums, Alex\'s double-neck guitar, Oberheim sweep on Tom Sawyer, Taurus pedals)',
+    'Well-known guest appearances and cameos (e.g., Aimee Mann on Time Stand Still, Ben Mink\'s electric violin on Losing It, Mark Dailey speaking Subdivisions, Jason Sniderman on The Garden)',
     'Touring milestones and live albums (e.g., All the World\'s a Stage, Exit... Stage Left, R40 farewell tour, 2026 Fifty Something tour with Anika Nilles)'
   ],
   hard: [
@@ -289,7 +290,7 @@ const ERA_INSTRUCTIONS: Record<Exclude<SubdivisionsEra, 'all'>, string> = {
   'synthesis-80s': `ERA CONSTRAINT: THE PEAK SYNTHESIS '80s ERA (1980–1984)
 - STRICTLY RESTRICT ALL QUESTIONS in this batch to Rush's 1980–1984 era.
 - Allowed Studio Albums: Permanent Waves (1980), Moving Pictures (1981), Signals (1982), Grace Under Pressure (1984).
-- Allowed Topics: Songs, lyrics, synthesizers (Oberheim OB-X, Minimoog), Simmons SDS-V electronic drums, cover art (Permanent Waves Ray Danniels billboard, Moving Pictures triple meaning), STS-1 Space Shuttle Columbia launch ("Countdown"), CFNY-FM inspiration, and producer transition from Terry Brown to Steve Lillywhite/Peter Henderson (1980–1984 ONLY).
+- Allowed Topics: Songs, lyrics, synthesizers (Oberheim OB-X, Minimoog), Simmons SDS-V electronic drums, cover art (Permanent Waves Coca-Cola billboard and newspaper cover changes, Moving Pictures triple meaning), STS-1 Space Shuttle Columbia launch ("Countdown"), CFNY-FM inspiration, and producer transition from Terry Brown to Steve Lillywhite/Peter Henderson (1980–1984 ONLY).
 - Do NOT generate questions about albums outside 1980–1984.`,
 
   'synth-pop-80s-90s': `ERA CONSTRAINT: THE SYNTH & POP-PROG ERA (1985–1991)
@@ -323,10 +324,11 @@ const DIFFICULTY_INSTRUCTIONS: Record<DifficultyLevel, string> = {
 - FOCUS ON:
   - Deep album cuts and fan favorites: "Natural Science", "The Trees", "The Camera Eye", "Red Sector A", "Bravado", "La Villa Strangiato", "Jacob's Ladder", "Cygnus X-1", "Xanadu", "Far Cry".
   - Album themes, eras, and stylistic evolution: 70s prog rock epics, the 80s synth-heavy period, the return to raw guitars on Counterparts/Vapor Trails, the Clockwork Angels steampunk story.
-  - Famous collaborations and cameos: Aimee Mann singing on "Time Stand Still", Ben Mink's electric violin on "Losing It", Mark Dailey speaking "Subdivisions".
-  - Iconic visual/stage instruments (KEEP IT LIGHT & ICONIC): Neil's famous rotating 360-degree drum riser, Alex's double-neck guitar for "Xanadu", Geddy playing bass pedals while singing.
+  - Well-known producers & transitions: Longtime producer Terry Brown, Peter Collins modernizing their sound, Rupert Hine, and Nick Raskulinecz ("Booujzhe").
+  - Famous collaborations and cameos: Aimee Mann singing on "Time Stand Still", Ben Mink's electric violin on "Losing It", Mark Dailey speaking "Subdivisions", Jason Sniderman's piano on "The Garden".
+  - Signature instruments & iconic gear: Neil's rotating 360-degree drum riser and Simmons electronic drums, Alex's double-neck guitar for "Xanadu", Geddy's famous Oberheim sweep on "Tom Sawyer" or Taurus bass pedals.
   - Tour milestones: R40 final tour, live albums like Exit... Stage Left, the 2026 Fifty Something tour with Anika Nilles.
-- STRICT EXCLUSIONS: Save producer/engineer details, complex time signature fractions (e.g. 11/4 or 13/16), and hyper-specific gear model numbers (e.g. Wal Mk1, Oberheim OB-Xa, pickup models) for "The Professor" tier.
+- STRICT EXCLUSIONS: Save hyper-specific audio engineering minutiae (e.g., Sony PCM-1610 digital mastering machines, console channel strips, pickup models), obscure electronics serials, and complex fractional time signatures (e.g., 11/4 or 13/16) for "The Professor" tier.
 - ANSWER CHOICES: Plausible Rush songs, albums, or era-appropriate choices that reward album listening without feeling like a trick exam.`,
 
   hard: `DIFFICULTY LEVEL: HARD ("The Professor" tier - Elite Rush Scholars, Musicians & Gear Historians)
@@ -335,7 +337,7 @@ const DIFFICULTY_INSTRUCTIONS: Record<DifficultyLevel, string> = {
 - FOCUS ON:
   - Music theory & meters: Time signatures and alternating meters (7/8 in Subdivisions, 5/4 in YYZ, 11/4 in Jacob's Ladder), Lifeson's F#7add11 chord, suite movement subtitles.
   - Specific gear & instruments: Rickenbacker 4001 Rick-O-Sound stereo routing, Wal basses, Hentor Sportscaster, Minimoog, Roland Jupiter-8, Neil's Slingerland "Old Faithful" snare, Sabian Paragon cymbals.
-  - Producers, studios & engineering: Terry Brown, Peter Collins, Rupert Hine, Nick Raskulinecz; Le Studio Morin-Heights, Rockfield Studios; digital mixdowns (ADD on Moving Pictures), Vapor Trails loudness war & 2013 remix.
+  - Producers, studios & engineering: Deep engineering lore with Terry Brown, Peter Collins, Rupert Hine, Nick Raskulinecz; Le Studio Morin-Heights, Rockfield Studios; digital mixdowns (ADD on Moving Pictures Sony PCM-1610), Vapor Trails loudness war & 2013 remix.
   - Hugh Syme artwork secrets & deep lore: Chicago Tribune "Dewey Defeats Truman" headline issue on Permanent Waves, Warren Cromartie blueprint on Signals, early Moon Records pressings.
 - ANSWER CHOICES: Meticulously plausible deep-lore alternatives designed for expert discrimination.`
 };
