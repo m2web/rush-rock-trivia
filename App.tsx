@@ -1,6 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { GameState, TriviaQuestion, DifficultyLevel, DIFFICULTY_CONFIGS } from './types';
+import {
+  GameState,
+  TriviaQuestion,
+  DifficultyLevel,
+  SubdivisionsEra,
+  SUBDIVISIONS_ERA_ORDER,
+} from './types';
 // AI service – routes all calls through Cloudflare Pages Functions
 import { getPreloadedQuestions, ChatPersona } from './services/aiService';
 import StartScreen from './components/StartScreen';
@@ -17,6 +23,7 @@ import './src/styles/passingthesticks.css';
 const TOTAL_QUESTIONS = 5;
 const FAN_STORY_KEY = 'rushFanStory';
 const DIFFICULTY_KEY = 'rushTriviaDifficulty';
+const SUBDIVISIONS_ERA_KEY = 'rushTriviaSubdivisionsEra';
 const DIFFICULTY_ORDER: DifficultyLevel[] = ['easy', 'medium', 'hard'];
 
 // NOTE: Rate limiting is not enforced on the client. Any real cooldown
@@ -59,6 +66,16 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
   const [didLevelUp, setDidLevelUp] = useState(false);
   const [didLevelDown, setDidLevelDown] = useState(false);
 
+  // Subdivisions Era state (persisted in localStorage, used when difficulty === 'medium')
+  const [selectedEra, setSelectedEra] = useState<SubdivisionsEra>(() => {
+    try {
+      const saved = localStorage.getItem(SUBDIVISIONS_ERA_KEY) as SubdivisionsEra | null;
+      return saved && SUBDIVISIONS_ERA_ORDER.includes(saved) ? saved : 'all';
+    } catch {
+      return 'all';
+    }
+  });
+
   // Fan story & chat state (persisted permanently in localStorage)
   const [fanStory, setFanStory] = useState<string>(() => {
     return localStorage.getItem(FAN_STORY_KEY) || '';
@@ -99,12 +116,6 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
       localStorage.removeItem(FAN_STORY_KEY);
     }
   }, []);
-
-  const handleViewMeetups = useCallback(() => {
-    setIsChatOpen(false);
-    setActiveTab('meetups');
-    navigate('/cities');
-  }, [navigate]);
 
   const handleBackToTrivia = useCallback(() => {
     setIsChatOpen(false);
@@ -165,29 +176,39 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
     return { next: currentLevel, up: false, down: false };
   }, []);
 
-  const loadQuestions = useCallback(async (targetDifficulty: DifficultyLevel = difficulty) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      // Get preloaded questions from the cache for this difficulty tier
-      const newQuestions = await getPreloadedQuestions(TOTAL_QUESTIONS, targetDifficulty);
-      setQuestions(newQuestions);
-      setCurrentQuestionIndex(0);
-      setScore(0);
+  const loadQuestions = useCallback(
+    async (
+      targetDifficulty: DifficultyLevel = difficulty,
+      targetEra: SubdivisionsEra = selectedEra
+    ) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // Get preloaded questions from the cache for this difficulty tier (and era for Subdivisions)
+        const newQuestions = await getPreloadedQuestions(
+          TOTAL_QUESTIONS,
+          targetDifficulty,
+          targetEra
+        );
+        setQuestions(newQuestions);
+        setCurrentQuestionIndex(0);
+        setScore(0);
 
-      setGameState(GameState.PLAYING);
-    } catch (err) {
-      setError('Failed to fetch trivia questions. Please try again later.');
-      console.error(err);
-      setGameState(GameState.START);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [difficulty]);
+        setGameState(GameState.PLAYING);
+      } catch (err) {
+        setError('Failed to fetch trivia questions. Please try again later.');
+        console.error(err);
+        setGameState(GameState.START);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [difficulty, selectedEra]
+  );
 
 
   const startGame = () => {
-    loadQuestions(difficulty);
+    loadQuestions(difficulty, selectedEra);
   };
 
   const handleAnswer = (isCorrect: boolean) => {
@@ -222,13 +243,32 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
     const targetDifficulty = nextDifficulty;
     setDifficulty(targetDifficulty);
     setQuestions([]);
-    loadQuestions(targetDifficulty);
+    loadQuestions(targetDifficulty, selectedEra);
+  };
+
+  const handleSelectStartDifficulty = (selected: DifficultyLevel) => {
+    setDifficulty(selected);
+    setNextDifficulty(selected);
+    try {
+      localStorage.setItem(DIFFICULTY_KEY, selected);
+    } catch {
+      // Ignore
+    }
   };
 
   const handleSelectDifficulty = (selected: DifficultyLevel) => {
     setNextDifficulty(selected);
     try {
       localStorage.setItem(DIFFICULTY_KEY, selected);
+    } catch {
+      // Ignore
+    }
+  };
+
+  const handleSelectEra = (era: SubdivisionsEra) => {
+    setSelectedEra(era);
+    try {
+      localStorage.setItem(SUBDIVISIONS_ERA_KEY, era);
     } catch {
       // Ignore
     }
@@ -249,6 +289,9 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
             // onViewMeetups={handleViewMeetups}
             error={error}
             difficulty={difficulty}
+            onSelectDifficulty={handleSelectStartDifficulty}
+            selectedEra={selectedEra}
+            onSelectEra={handleSelectEra}
           />
         );
       case GameState.PLAYING:
@@ -261,6 +304,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
                 questionNumber={currentQuestionIndex + 1}
                 totalQuestions={TOTAL_QUESTIONS}
                 difficulty={difficulty}
+                selectedEra={selectedEra}
               />
             )}
           </>
@@ -276,6 +320,8 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
             didLevelDown={didLevelDown}
             onPlayAgain={handlePlayAgain}
             onSelectDifficulty={handleSelectDifficulty}
+            selectedEra={selectedEra}
+            onSelectEra={handleSelectEra}
           />
         );
       default:
@@ -285,6 +331,9 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
             onStartChat={() => handleStartFanChat()}
             // onViewMeetups={handleViewMeetups}
             difficulty={difficulty}
+            onSelectDifficulty={handleSelectStartDifficulty}
+            selectedEra={selectedEra}
+            onSelectEra={handleSelectEra}
           />
         );
     }
@@ -329,7 +378,6 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
                       fanStory={fanStory}
                       persona={chatPersona}
                       onClose={handleCloseChat}
-                      onViewMeetups={handleViewMeetups}
                       onBackToTrivia={handleBackToTrivia}
                       initialPrompt={pendingInitialPrompt}
                     />

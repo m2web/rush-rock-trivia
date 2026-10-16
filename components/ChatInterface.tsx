@@ -11,7 +11,6 @@ interface ChatInterfaceProps {
   fanStory?: string;
   persona?: ChatPersona;
   onClose: () => void;
-  onViewMeetups?: () => void;
   onBackToTrivia?: () => void;
   initialPrompt?: string;
 }
@@ -23,7 +22,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   fanStory = '',
   persona = 'fan',
   onClose,
-  onViewMeetups,
   onBackToTrivia,
   initialPrompt = '',
 }) => {
@@ -119,14 +117,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <span className="font-bold text-gray-300">
             {isDigitalMan ? '🧭 The Digital Man' : '💬 Synthetic Fan Chat'}
           </span>
-          {onViewMeetups && (
-            <button
-              onClick={onViewMeetups}
-              className="text-[11px] px-2.5 py-1 rounded-md bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 text-amber-300 font-bold transition cursor-pointer"
-            >
-              📍 Cities & Tours
-            </button>
-          )}
           {onBackToTrivia && (
             <button
               onClick={onBackToTrivia}
@@ -259,7 +249,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <span>🔒</span> Privacy & The Temples of Syrinx
             </h3>
             <p className="text-sm text-gray-300 leading-relaxed mb-3">
-              Your chat conversations with the Synthetic Rush Fan / Digital Man are completely private and ephemeral. We do not log, store, or track your messages, fan stories, or chat sessions on our servers or databases. Once you close or refresh the page, your conversation is gone.
+              Your chat conversations with the Synthetic Rush Fan are completely private and ephemeral. We do not log, store, or track your messages, fan stories, or chat sessions on our servers or databases. Once you close or refresh the page, your conversation is gone.
             </p>
             <p className="text-sm leading-relaxed font-medium text-amber-300">
               We are not the great computer halls of Syrinx from 2112—just a fellow Rush fan celebrating the music! 😊🤘❤️

@@ -1,7 +1,8 @@
 // Client-side AI service that routes all calls through Cloudflare Pages Functions.
 // API keys are never present on the client — they live server-side only.
 
-import { TriviaQuestion, DifficultyLevel } from '../types';
+import { TriviaQuestion, DifficultyLevel, SubdivisionsEra } from '../types';
+import { getShuffledCuratedEraQuestions } from '../data/subdivisionsEraQuestions';
 
 // ── Chat ───────────────────────────────────────────────────────────────────────
 
@@ -48,75 +49,103 @@ interface ApiResponse {
   error?: string;
 }
 
-// Question cache segmented by difficulty
+// Question cache segmented by difficulty (and by Subdivisions era when difficulty === 'medium')
 class QuestionCache {
-  private cache: Record<DifficultyLevel, TriviaQuestion[]> = {
-    easy: [],
-    medium: [],
-    hard: [],
-  };
-  private loadingStates: Record<DifficultyLevel, boolean> = {
-    easy: false,
-    medium: false,
-    hard: false,
-  };
-  private loadPromises: Record<DifficultyLevel, Promise<void> | null> = {
-    easy: null,
-    medium: null,
-    hard: null,
-  };
+  private cache: Record<string, TriviaQuestion[]> = {};
+  private loadingStates: Record<string, boolean> = {};
+  private loadPromises: Record<string, Promise<void> | null> = {};
+  private initializedEras: Set<string> = new Set();
 
-  async getQuestions(count: number = 5, difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion[]> {
-    // If we don't have enough questions for this difficulty, wait for loading to complete
-    if (this.cache[difficulty].length < count) {
-      if (this.loadingStates[difficulty] && this.loadPromises[difficulty]) {
-        await this.loadPromises[difficulty];
-      } else if (!this.loadingStates[difficulty]) {
-        await this.preloadQuestions(difficulty);
+  private getKey(difficulty: DifficultyLevel, era: SubdivisionsEra = 'all'): string {
+    return difficulty === 'medium' ? `medium:${era}` : difficulty;
+  }
+
+  private ensureBucket(key: string, difficulty: DifficultyLevel, era: SubdivisionsEra) {
+    if (!this.cache[key]) {
+      this.cache[key] = [];
+    }
+    // Seed Subdivisions ('medium') buckets with the curated archival questions first
+    if (difficulty === 'medium' && !this.initializedEras.has(key)) {
+      this.initializedEras.add(key);
+      this.cache[key].push(...getShuffledCuratedEraQuestions(era));
+    }
+  }
+
+  async getQuestions(
+    count: number = 5,
+    difficulty: DifficultyLevel = 'easy',
+    era: SubdivisionsEra = 'all'
+  ): Promise<TriviaQuestion[]> {
+    const key = this.getKey(difficulty, era);
+    this.ensureBucket(key, difficulty, era);
+
+    // If we don't have enough questions for this bucket, wait for loading to complete
+    if (this.cache[key].length < count) {
+      if (this.loadingStates[key] && this.loadPromises[key]) {
+        await this.loadPromises[key];
+      } else if (!this.loadingStates[key]) {
+        await this.preloadQuestions(difficulty, era);
       }
     }
 
+    // Fallback for Subdivisions if API was unreachable and bucket still needs questions
+    if (difficulty === 'medium' && this.cache[key].length < count) {
+      this.cache[key].push(...getShuffledCuratedEraQuestions(era));
+    }
+
     // Return the requested number of questions and remove them from cache
-    const questions = this.cache[difficulty].splice(0, count);
+    const questions = this.cache[key].splice(0, count);
 
     // Start preloading more questions in the background if cache is getting low
-    if (this.cache[difficulty].length < 5 && !this.loadingStates[difficulty]) {
-      this.preloadQuestions(difficulty);
+    if (this.cache[key].length < 5 && !this.loadingStates[key]) {
+      this.preloadQuestions(difficulty, era);
     }
 
     return questions;
   }
 
-  async preloadQuestions(difficulty: DifficultyLevel = 'easy'): Promise<void> {
-    if (this.loadingStates[difficulty]) return;
+  async preloadQuestions(difficulty: DifficultyLevel = 'easy', era: SubdivisionsEra = 'all'): Promise<void> {
+    const key = this.getKey(difficulty, era);
+    this.ensureBucket(key, difficulty, era);
 
-    this.loadingStates[difficulty] = true;
-    this.loadPromises[difficulty] = this.loadQuestionsInBackground(difficulty);
+    if (this.loadingStates[key]) return;
+
+    this.loadingStates[key] = true;
+    this.loadPromises[key] = this.loadQuestionsInBackground(key, difficulty, era);
 
     try {
-      await this.loadPromises[difficulty];
+      await this.loadPromises[key];
     } finally {
-      this.loadingStates[difficulty] = false;
-      this.loadPromises[difficulty] = null;
+      this.loadingStates[key] = false;
+      this.loadPromises[key] = null;
     }
   }
 
-  private async loadQuestionsInBackground(difficulty: DifficultyLevel): Promise<void> {
+  private async loadQuestionsInBackground(
+    key: string,
+    difficulty: DifficultyLevel,
+    era: SubdivisionsEra
+  ): Promise<void> {
     try {
-      const newQuestions = await fetchMultipleQuestions(5, difficulty);
-      this.cache[difficulty].push(...newQuestions);
+      const newQuestions = await fetchMultipleQuestions(5, difficulty, era);
+      this.cache[key].push(...newQuestions);
     } catch (error) {
-      console.error(`Failed to preload ${difficulty} questions:`, error);
+      console.error(`Failed to preload ${key} questions:`, error);
+      // For Subdivisions, replenish from curated pool if API call fails
+      if (difficulty === 'medium' && this.cache[key].length < 5) {
+        this.cache[key].push(...getShuffledCuratedEraQuestions(era));
+      }
     }
   }
 
-  clearCache(difficulty?: DifficultyLevel) {
+  clearCache(difficulty?: DifficultyLevel, era?: SubdivisionsEra) {
     if (difficulty) {
-      this.cache[difficulty] = [];
+      const key = this.getKey(difficulty, era || 'all');
+      this.cache[key] = [];
+      this.initializedEras.delete(key);
     } else {
-      this.cache.easy = [];
-      this.cache.medium = [];
-      this.cache.hard = [];
+      this.cache = {};
+      this.initializedEras.clear();
     }
   }
 }
@@ -130,7 +159,8 @@ const questionCache = new QuestionCache();
  */
 export async function fetchMultipleQuestions(
   count: number = 5,
-  difficulty: DifficultyLevel = 'easy'
+  difficulty: DifficultyLevel = 'easy',
+  era: SubdivisionsEra = 'all'
 ): Promise<TriviaQuestion[]> {
   try {
     const response = await fetch('/api/trivia', {
@@ -138,7 +168,11 @@ export async function fetchMultipleQuestions(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ count, difficulty }),
+      body: JSON.stringify({
+        count,
+        difficulty,
+        ...(difficulty === 'medium' ? { era } : {}),
+      }),
     });
 
     if (!response.ok) {
@@ -164,21 +198,25 @@ export async function fetchMultipleQuestions(
 
     return data.questions;
   } catch (error) {
-    console.error(`Error fetching multiple trivia questions (${difficulty}):`, error);
+    console.error(`Error fetching multiple trivia questions (${difficulty}, era=${era}):`, error);
     throw new Error("Failed to load trivia questions. Please try again.");
   }
 }
 
 // Fetch single question (uses fetchMultipleQuestions with count=1)
-export async function fetchTriviaQuestion(difficulty: DifficultyLevel = 'easy'): Promise<TriviaQuestion> {
-  const questions = await fetchMultipleQuestions(1, difficulty);
+export async function fetchTriviaQuestion(
+  difficulty: DifficultyLevel = 'easy',
+  era: SubdivisionsEra = 'all'
+): Promise<TriviaQuestion> {
+  const questions = await fetchMultipleQuestions(1, difficulty, era);
   return questions[0];
 }
 
 // Get preloaded questions from cache
 export async function getPreloadedQuestions(
   count: number = 5,
-  difficulty: DifficultyLevel = 'easy'
+  difficulty: DifficultyLevel = 'easy',
+  era: SubdivisionsEra = 'all'
 ): Promise<TriviaQuestion[]> {
-  return await questionCache.getQuestions(count, difficulty);
+  return await questionCache.getQuestions(count, difficulty, era);
 }

@@ -1,6 +1,11 @@
-
 import React from 'react';
-import { DifficultyLevel, DIFFICULTY_CONFIGS } from '../types';
+import {
+  DifficultyLevel,
+  DIFFICULTY_CONFIGS,
+  SubdivisionsEra,
+  SUBDIVISIONS_ERA_ORDER,
+  ERA_CONFIGS,
+} from '../types';
 
 interface EndScreenProps {
   score: number;
@@ -11,6 +16,8 @@ interface EndScreenProps {
   didLevelDown: boolean;
   onPlayAgain: () => void;
   onSelectDifficulty?: (difficulty: DifficultyLevel) => void;
+  selectedEra?: SubdivisionsEra;
+  onSelectEra?: (era: SubdivisionsEra) => void;
 }
 
 const EndScreen: React.FC<EndScreenProps> = ({
@@ -22,6 +29,8 @@ const EndScreen: React.FC<EndScreenProps> = ({
   didLevelDown,
   onPlayAgain,
   onSelectDifficulty,
+  selectedEra = 'all',
+  onSelectEra,
 }) => {
   const getFeedback = () => {
     const percentage = (score / totalQuestions) * 100;
@@ -33,6 +42,7 @@ const EndScreen: React.FC<EndScreenProps> = ({
 
   const currentConfig = DIFFICULTY_CONFIGS[currentDifficulty];
   const nextConfig = DIFFICULTY_CONFIGS[nextDifficulty];
+  const currentEraConfig = ERA_CONFIGS[selectedEra];
   const isMaxTierMaster = currentDifficulty === 'hard' && score >= 4;
 
   return (
@@ -81,10 +91,11 @@ const EndScreen: React.FC<EndScreenProps> = ({
         You scored <span className="text-red-400 font-bold text-3xl">{score}</span> out of <span className="text-red-400 font-bold text-3xl">{totalQuestions}</span>
       </p>
 
-      <div className="flex items-center justify-center gap-2 mb-4">
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
         <span className="text-xs text-gray-400">Played on:</span>
         <span className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${currentConfig.badgeColor}`}>
-          {currentConfig.rushTitle} ({currentConfig.label})
+          {currentConfig.rushTitle} (
+          {currentDifficulty === 'medium' ? currentEraConfig.label : currentConfig.label})
         </span>
       </div>
 
@@ -103,7 +114,7 @@ const EndScreen: React.FC<EndScreenProps> = ({
                   key={level}
                   type="button"
                   onClick={() => onSelectDifficulty(level)}
-                  className={`px-2 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 ${
+                  className={`px-2 py-2 rounded-lg text-xs font-semibold border transition-all duration-200 cursor-pointer ${
                     isSelected
                       ? 'border-red-500 bg-red-600/30 text-white shadow-sm'
                       : 'border-gray-700 bg-gray-800/40 text-gray-400 hover:text-gray-200 hover:border-gray-600'
@@ -118,9 +129,56 @@ const EndScreen: React.FC<EndScreenProps> = ({
         </div>
       )}
 
+      {/* Subdivisions Era Selector — shown ONLY when nextDifficulty is Subdivisions (medium) */}
+      {nextDifficulty === 'medium' && onSelectEra && (
+        <div className="mb-6 p-4 bg-amber-950/20 rounded-xl border border-amber-500/40 text-left animate-fade-in">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              🎹 Subdivisions Era Selector
+            </span>
+            <span className="text-[11px] text-amber-300/80 font-medium">
+              {currentEraConfig.years}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+            {SUBDIVISIONS_ERA_ORDER.map((eraKey) => {
+              const era = ERA_CONFIGS[eraKey];
+              const isSelected = selectedEra === eraKey;
+              return (
+                <button
+                  key={eraKey}
+                  type="button"
+                  onClick={() => onSelectEra(eraKey)}
+                  className={`px-3 py-2 rounded-lg text-xs font-semibold border text-left transition-all duration-200 cursor-pointer ${
+                    eraKey === 'all' ? 'sm:col-span-2 text-center' : ''
+                  } ${
+                    isSelected
+                      ? 'border-amber-400 bg-amber-500/25 text-amber-200 shadow-sm'
+                      : 'border-gray-700 bg-gray-800/50 text-gray-300 hover:text-white hover:border-amber-500/50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1">
+                    <span>{era.label}</span>
+                    <span className="text-[10px] opacity-75 font-normal">({era.years})</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="text-xs text-gray-300 bg-black/40 p-2.5 rounded-lg border border-gray-800">
+            <p className="font-semibold text-amber-300 mb-0.5">
+              Albums: <span className="font-normal text-gray-200">{currentEraConfig.albums}</span>
+            </p>
+            <p className="text-[11px] text-gray-400">{currentEraConfig.description}</p>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={onPlayAgain}
-        className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-10 rounded-full text-xl transform hover:scale-105 transition-all duration-300 ease-in-out shadow-lg hover:shadow-red-500/50"
+        className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-10 rounded-full text-xl transform hover:scale-105 transition-all duration-300 ease-in-out shadow-lg hover:shadow-red-500/50 cursor-pointer"
       >
         {didLevelUp ? `Play ${nextConfig.rushTitle} →` : 'Play Again'}
       </button>
@@ -129,4 +187,5 @@ const EndScreen: React.FC<EndScreenProps> = ({
 };
 
 export default EndScreen;
+
 
