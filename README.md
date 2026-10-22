@@ -227,7 +227,8 @@ environment variable:
 | Provider | Model | Configuration |
 | --- | --- | --- |
 | OpenAI | Configured `OPENAI_MODEL` | Set `USE_OPENAI=true` |
-| Google Gemini | Configured `GEMINI_MODEL` | Default (or `USE_OPENAI=false`) |
+| Google Gemini (Fast Router) | `GEMINI_LIGHT_MODEL` (`gemini-3.5-flash-lite`) | Primary responder: handles *Working Man*, mixes *Subdivisions*, and answers general chat |
+| Google Gemini (Professor) | `GEMINI_MODEL` (`gemini-3.8-flash`) | Escalation model: handles *The Professor* tier, deep *Subdivisions* mix, and complex chat |
 
 - **Catalog & Era Diversity**: System prompt explicitly balances questions
   across 5 distinct eras of Rush history (1970s hard rock/prog, 1980s synth
@@ -257,6 +258,36 @@ To run the root eval comparing Gemini Flash models:
 npx promptfoo eval --env-file .env
 npx promptfoo view
 ```
+
+### Model Evaluation: Gemini 3.8 Flash vs. Gemini 3.5 Flash-Lite
+
+Following the retirement of Gemini 3.7 Flash, an uncached benchmark evaluation
+(`reports/rush_eval_gemini_3.8_vs_3.5_lite.json`) was conducted comparing the
+active **Gemini 3.8 Flash** (`google:gemini-3.8-flash`) against **Gemini 3.5
+Flash-Lite** (`google:gemini-3.5-flash-lite`) across the 20-question Rush suite:
+
+| Metric | Gemini 3.8 Flash | Gemini 3.5 Flash-Lite | Analysis |
+| --- | --- | --- | --- |
+| **Pass Rate (LLM Rubric)** | 50.0% (10/20) | **55.0% (11/20)** | 3.5 Flash-Lite edged out 3.8 Flash by +1 test case |
+| **Total Latency (20 Reqs)** | 120,156 ms (~6.01s/req) | **21,130 ms (~1.06s/req)** | 3.5 Flash-Lite is **5.69x faster** (-82.4% latency) |
+| **Total Tokens** | 13,373 tokens | **3,235 tokens** | 3.5 Flash-Lite used **4.13x fewer tokens** (-75.8%) |
+| **Reasoning Tokens** | 9,361 tokens | **0 tokens** | 3.5 Flash-Lite avoids reasoning token overhead |
+| **Completion Tokens** | 3,039 tokens | **2,262 tokens** | 3.5 Flash-Lite is 25.6% more concise |
+
+#### Key Findings (3.8 Flash vs. 3.5 Flash-Lite)
+
+1. **Speed & Token Efficiency**: `gemini-3.5-flash-lite` completed the 20-question
+   benchmark in 21.1 seconds (~1.06s per request) compared to 120.2 seconds (~6.01s
+   per request) for `gemini-3.8-flash`, while consuming 75.8% fewer total tokens due
+   to zero internal reasoning token overhead.
+2. **Certification Precision (Question 17)**: `gemini-3.5-flash-lite` accurately
+   reported *Moving Pictures* at 5 million U.S. units / 5x Multi-Platinum (passing
+   with 0.95 rubric score in 743 ms), whereas `gemini-3.8-flash` again failed by
+   citing 4 million copies / 4x Platinum.
+3. **Detail Completeness Trade-off (Question 18)**: On *Clockwork Angels*,
+   `gemini-3.8-flash` included both the No. 1 Canadian chart debut and the No. 2
+   U.S. Billboard 200 peak (passing), whereas `gemini-3.5-flash-lite` cited the
+   No. 2 U.S. peak (tying *Counterparts*) but omitted the Canadian chart position.
 
 ### Model Evaluation: Gemini 3.7 Flash vs. Gemini 3.8 Flash
 

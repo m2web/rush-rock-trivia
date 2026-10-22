@@ -28,8 +28,9 @@ and required updates for the Rush Rock Trivia and Tour Concierge service.
 
 | Provider | Model Identifier | Role | Lifecycle / Retirement |
 | --- | --- | --- | --- |
-| Google | `gemini-3.8-flash` | Active Live Provider (`USE_OPENAI = "false"`) | Current active release |
-| Google | `gemini-3.7-flash` | Former Live Provider | Retired (auto-redirected to 3.8 Flash) |
+| Google | `gemini-3.5-flash-lite` | Primary First-Responder & Self-Router (`GEMINI_LIGHT_MODEL`: Working Man, Subdivisions mix, & Chat) | Released Jul 21, 2026; retires **Jul 21, 2027 or later** |
+| Google | `gemini-3.8-flash` | Escalation Model (`GEMINI_MODEL`: The Professor tier, Subdivisions deep mix, & escalated Chat) | Released Sep 2, 2026; retires **Sep 2, 2027 or later** |
+| Google | `gemini-3.7-flash` | Former Live Provider | Retired Oct 2026 (auto-redirected to 3.8 Flash) |
 | OpenAI | `gpt-5.4-nano` | Secondary / Fallback Provider | **Retires April 1, 2027** (Action required) |
 | OpenAI | `gpt-4.1-mini` | Legacy benchmark reference | Retires April 14, 2027 |
 

@@ -1,5 +1,5 @@
 import { PagesFunction, Env } from '../types';
-import { GEMINI_MODEL, OPENAI_MODEL } from '../constants';
+import { GEMINI_LIGHT_MODEL, GEMINI_MODEL, OPENAI_MODEL } from '../constants';
 import { getClientIp, getCorsHeaders } from '../utils/request';
 import { DEFAULT_MEETUPS } from '../../data/defaultMeetups';
 
@@ -145,9 +145,32 @@ function getSystemPrompt(persona: 'fan' | 'digital-man' | 'archivist', fanStory:
   return getFanSystemPrompt(fanStory);
 }
 
-async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
-  const prompt = `${getSystemPrompt(persona, fanStory, meetupsContext)}\n\nUser: ${userMessage}`;
+interface ChatRouterResponse {
+  escalateToProfessorModel: boolean;
+  escalationReason?: string;
+  reply: string;
+}
 
+const geminiChatRouterSchema = {
+  type: "object",
+  properties: {
+    escalateToProfessorModel: {
+      type: "boolean",
+      description: "Set to true ONLY if the user's question requires deep 'Professor'-level music theory (complex odd meters/polyrhythms), studio mastering/engineering minutiae, or obscure vintage instrument wiring/gear specs that benefit from gemini-3.8-flash."
+    },
+    escalationReason: {
+      type: "string",
+      description: "Brief explanation if escalating to gemini-3.8-flash."
+    },
+    reply: {
+      type: "string",
+      description: "Your complete conversational reply to the user when escalateToProfessorModel is false (or empty string if escalating)."
+    }
+  },
+  required: ["escalateToProfessorModel", "reply"]
+};
+
+async function callGeminiProfessorChat(apiKey: string, prompt: string): Promise<string> {
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
     method: 'POST',
     headers: {
@@ -169,16 +192,67 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Gemini API error: ${response.status} ${response.statusText} - ${errorText}`);
+    throw new Error(`Gemini (${GEMINI_MODEL}) API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
   const data = await response.json() as any;
 
   if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-    throw new Error('Invalid response from Gemini API');
+    throw new Error(`Invalid response from Gemini (${GEMINI_MODEL}) API`);
   }
 
   return data.candidates[0].content.parts[0].text;
+}
+
+async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
+  const basePrompt = `${getSystemPrompt(persona, fanStory, meetupsContext)}\n\nUser: ${userMessage}`;
+  const routerInstruction = [
+    `MODEL SELF-ROUTING RULES (YOU ARE ${GEMINI_LIGHT_MODEL}):`,
+    '- If this message is general Rush fan conversation, album/song discussion ("Working Man" or "Subdivisions" level), or 2026-2027 tour/meetup concierge questions: set "escalateToProfessorModel": false and write your full response in "reply".',
+    `- If this message asks a deep "Professor"-level question requiring intricate music theory/time-signature breakdowns, studio mastering/console engineering minutiae, or obscure vintage gear routing specs: set "escalateToProfessorModel": true and "reply": "" so ${GEMINI_MODEL} handles it.`,
+  ].join('\n');
+
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_LIGHT_MODEL}:generateContent`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey,
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: `${routerInstruction}\n\n${basePrompt}`
+        }]
+      }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        responseSchema: geminiChatRouterSchema,
+        maxOutputTokens: 600,
+        temperature: 0.7,
+      }
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Gemini (${GEMINI_LIGHT_MODEL}) API error: ${response.status} ${response.statusText} - ${errorText}`);
+  }
+
+  const data = await response.json() as any;
+
+  if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+    throw new Error(`Invalid response from Gemini (${GEMINI_LIGHT_MODEL}) API`);
+  }
+
+  const parsed = JSON.parse(data.candidates[0].content.parts[0].text) as ChatRouterResponse;
+
+  if (!parsed.escalateToProfessorModel && parsed.reply && parsed.reply.trim()) {
+    console.log(`⚡ [Gemini Chat Router] ${GEMINI_LIGHT_MODEL} handled chat message directly (${persona})`);
+    return parsed.reply.trim();
+  }
+
+  console.log(`🧠 [Gemini Chat Router] ${GEMINI_LIGHT_MODEL} escalated chat message to ${GEMINI_MODEL}. Reason: ${parsed.escalationReason || 'Professor-level query'}`);
+  return callGeminiProfessorChat(apiKey, basePrompt);
 }
 
 async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
