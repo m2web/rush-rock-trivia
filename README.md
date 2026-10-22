@@ -36,7 +36,7 @@ legacy, or chat directly with a synthetic fellow Rush fan.
   limiting (5 requests/min), 500-character input caps with live countdown, and
   a 15-turn session limit with one-click reset.
 - **:brain: Dynamic AI-Generated Questions**: Dynamic trivia questions generated
-  by Google Gemini 3.7 Flash or OpenAI.
+  by Google Gemini (3.5 Flash-Lite and 3.8 Flash hybrid self-routing) or OpenAI.
 - **:twisted_rightwards_arrows: Era Diversity & Shuffled Answers**: Balanced
   coverage across 5 distinct Rush eras with shuffled multiple-choice answers.
 - **:chart_with_upwards_trend: Adaptive Difficulty Progression**: Successive quizzes
@@ -150,7 +150,7 @@ legacy, or chat directly with a synthetic fellow Rush fan.
 - **Frontend Framework**: React 19.2.0 with TypeScript
 - **Build Tool**: Vite 6.2.0
 - **Backend**: Cloudflare Pages Functions (secure serverless API proxy)
-- **AI Providers**: OpenAI (`OPENAI_MODEL`) or Google Gemini (`GEMINI_MODEL`)
+- **AI Providers**: OpenAI (`OPENAI_MODEL`) or Google Gemini (`GEMINI_LIGHT_MODEL` and `GEMINI_MODEL`)
 - **LLM Evaluation**: [promptfoo](https://promptfoo.dev) (see `SyntheticHemispheres/prompt-foo/`)
 - **Styling**: Tailwind CSS 4 with custom Rush themes
 - **State Management**: React Hooks (useState, useCallback, useEffect, useRef)
@@ -288,8 +288,16 @@ Flash-Lite** (`google:gemini-3.5-flash-lite`) across the 20-question Rush suite:
    `gemini-3.8-flash` included both the No. 1 Canadian chart debut and the No. 2
    U.S. Billboard 200 peak (passing), whereas `gemini-3.5-flash-lite` cited the
    No. 2 U.S. peak (tying *Counterparts*) but omitted the Canadian chart position.
+4. **Hybrid Self-Routing Architecture**: Based on these results, `gemini-3.5-flash-lite`
+   (`GEMINI_LIGHT_MODEL`) serves as the primary fast responder and router across
+   `/api/trivia` and `/api/chat`. It handles *Working Man* (`easy`) batches and
+   general fan/tour chat directly in ~1s, mixes *Subdivisions* (`medium`) batches
+   by generating the accessible album/lyric questions itself while delegating the
+   remaining studio/gear/strict-era questions to `gemini-3.8-flash` (`GEMINI_MODEL`),
+   and escalates *The Professor* (`hard`) tier and deep music-theory/gear chat
+   queries to `gemini-3.8-flash`.
 
-### Model Evaluation: Gemini 3.7 Flash vs. Gemini 3.8 Flash
+### Historical Model Evaluation: Gemini 3.7 Flash vs. Gemini 3.8 Flash
 
 Testing was conducted evaluating **Gemini 3.7 Flash** against **Gemini 3.8 Flash**
 across the 20-question benchmark using both Google (`google:gemini-3.7-flash`) and
@@ -302,7 +310,7 @@ OpenAI (`openai:gpt-4o`) as LLM rubric judges:
 | **Reasoning Tokens** | 8,259 tokens | 9,007 tokens | 3.8 generated +9.1% more reasoning compute |
 | **System Prompt Precision** | High (tight & concise) | Moderate (tends to write essays) | 3.7 strictly adhered to "concisely" instruction |
 
-#### Why Gemini 3.7 Flash is the Designated Model for This Project
+#### Historical Rationale: Gemini 3.7 Flash (Prior to October 2026 Retirement)
 
 1. **System Prompt Discipline**: When instructed to answer "accurately, clearly,
    and concisely", Gemini 3.7 Flash delivered bounded, direct answers. Gemini 3.8
