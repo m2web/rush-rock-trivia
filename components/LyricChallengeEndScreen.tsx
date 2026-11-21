@@ -40,7 +40,7 @@ const LyricChallengeEndScreen: React.FC<LyricChallengeEndScreenProps> = ({
 
       <div className="mb-6">
         <p className="text-2xl text-gray-300">
-          You scored <span className="text-amber-400 font-extrabold text-4xl">{score}</span> out of{' '}
+          You scored <span className="text-amber-400 font-extrabold text-4xl">{Number(score.toFixed(1))}</span> out of{' '}
           <span className="text-amber-400 font-extrabold text-4xl">{maxScore}</span> pts
         </p>
       </div>

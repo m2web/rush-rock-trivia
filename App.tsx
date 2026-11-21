@@ -185,7 +185,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
   }, [startNewLyricChallengeRound, navigate]);
 
   const handleLyricChallengeComplete = useCallback((result: LyricChallengeResult) => {
-    setLyricScore((prev) => prev + result.pointsEarned);
+    setLyricScore((prev) => Math.round((prev + result.pointsEarned) * 10) / 10);
     setLyricStats((prev) => ({
       lyricsCorrect: prev.lyricsCorrect + (result.lyricCorrect ? 1 : 0),
       songsCorrect: prev.songsCorrect + (result.songCorrect ? 1 : 0),

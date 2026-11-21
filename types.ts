@@ -123,8 +123,11 @@ export interface LyricChallengeItem {
 
 export interface LyricChallengeResult {
   lyricCorrect: boolean;
+  lyricScore: number; // 0.0 to 1.0 (supports partial credit)
+  wordMatchPercent: number; // 0 to 100
+  semanticSimilarity?: number; // 0 to 100
   songCorrect: boolean;
-  pointsEarned: number;
+  pointsEarned: number; // 0.0 to 2.0
   feedback: string;
   gradedBy: 'ai' | 'local';
   expectedLyric: string;

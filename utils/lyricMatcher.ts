@@ -47,51 +47,106 @@ function similarityRatio(a: string, b: string): number {
 
 const STOP_WORDS = new Set(['a', 'an', 'the', 'and', 'or', 'of', 'to', 'in', 'on', 'is', 'it', 'for', 'my', 'your']);
 
+export function roundToTenth(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
+/**
+ * Compute percentage (0-100) of expected lyric words matched by userLyric.
+ */
+export function computeWordMatchPercent(userLyric: string, expectedLyric: string): number {
+  const userNorm = normalizeText(userLyric);
+  const expNorm = normalizeText(expectedLyric);
+
+  if (!userNorm || !expNorm) return 0;
+  if (userNorm === expNorm) return 100;
+
+  const expTokens = expNorm.split(' ').filter(Boolean);
+  const userTokens = userNorm.split(' ').filter(Boolean);
+  if (expTokens.length === 0 || userTokens.length === 0) return 0;
+
+  // Track used user tokens so repeated words aren't double-counted unfairly
+  const used = new Set<number>();
+  let matchedCount = 0;
+
+  for (const expTok of expTokens) {
+    const idx = userTokens.findIndex(
+      (uTok, i) =>
+        !used.has(i) &&
+        (uTok === expTok || (expTok.length >= 4 && levenshtein(uTok, expTok) <= 1))
+    );
+    if (idx !== -1) {
+      used.add(idx);
+      matchedCount++;
+    }
+  }
+
+  let percent = (matchedCount / expTokens.length) * 100;
+
+  // Mild penalty if user typed a huge wall of unrelated text
+  if (userTokens.length > expTokens.length * 2.2) {
+    percent *= (expTokens.length * 2.2) / userTokens.length;
+  }
+
+  return Math.round(Math.max(0, Math.min(100, percent)));
+}
+
+/**
+ * Score a user's lyric completion locally on a 0.0 to 1.0 scale using
+ * word-match percentage and string similarity.
+ */
+export function scoreLyricLocally(
+  userLyric: string,
+  expectedLyric: string
+): { lyricScore: number; wordMatchPercent: number; lyricCorrect: boolean } {
+  const userNorm = normalizeText(userLyric);
+  const expNorm = normalizeText(expectedLyric);
+
+  if (!userNorm || userNorm.length < 2) {
+    return { lyricScore: 0, wordMatchPercent: 0, lyricCorrect: false };
+  }
+
+  const wordMatchPercent = computeWordMatchPercent(userLyric, expectedLyric);
+  const charSim = similarityRatio(userNorm, expNorm);
+
+  if (userNorm === expNorm || wordMatchPercent >= 90 || charSim >= 0.85) {
+    return { lyricScore: 1, wordMatchPercent: Math.max(wordMatchPercent, 90), lyricCorrect: true };
+  }
+
+  // Also check content-word recall for partial credit
+  const expTokens = expNorm.split(' ').filter(Boolean);
+  const userTokens = userNorm.split(' ').filter(Boolean);
+  const expContent = expTokens.filter((t) => !STOP_WORDS.has(t));
+  let contentMatched = 0;
+  for (const expTok of expContent) {
+    if (
+      userTokens.some(
+        (uTok) => uTok === expTok || (expTok.length >= 4 && levenshtein(uTok, expTok) <= 1)
+      )
+    ) {
+      contentMatched++;
+    }
+  }
+  const contentRecall = expContent.length > 0 ? contentMatched / expContent.length : 0;
+
+  const combined = Math.max(wordMatchPercent / 100, contentRecall * 0.9, charSim * 0.85);
+  if (combined < 0.2) {
+    return { lyricScore: 0, wordMatchPercent, lyricCorrect: false };
+  }
+
+  const lyricScore = roundToTenth(Math.min(0.9, Math.max(0.1, combined)));
+  return {
+    lyricScore,
+    wordMatchPercent,
+    lyricCorrect: lyricScore >= 0.8,
+  };
+}
+
 /**
  * Fuzzy match a user's lyric completion against the expected missing line.
  */
 export function isLyricMatch(userLyric: string, expectedLyric: string): boolean {
-  const userNorm = normalizeText(userLyric);
-  const expNorm = normalizeText(expectedLyric);
-
-  if (!userNorm || userNorm.length < 3) return false;
-  if (userNorm === expNorm) return true;
-
-  // High character-level similarity (handles minor typos or missing apostrophes)
-  if (similarityRatio(userNorm, expNorm) >= 0.76) return true;
-
-  // Token-based matching: check if user captured the key words of the line
-  const expTokens = expNorm.split(' ').filter(Boolean);
-  const userTokens = userNorm.split(' ').filter(Boolean);
-
-  if (userTokens.length === 0 || expTokens.length === 0) return false;
-
-  // Allow fuzzy per-token match (edit distance <= 1 for words >= 4 chars)
-  let matchedCount = 0;
-  for (const expTok of expTokens) {
-    const found = userTokens.some(
-      (uTok) => uTok === expTok || (expTok.length >= 4 && levenshtein(uTok, expTok) <= 1)
-    );
-    if (found) matchedCount++;
-  }
-
-  const recall = matchedCount / expTokens.length;
-  // Also check content-word recall so short filler words don't skew things
-  const expContent = expTokens.filter((t) => !STOP_WORDS.has(t));
-  let contentMatched = 0;
-  for (const expTok of expContent) {
-    const found = userTokens.some(
-      (uTok) => uTok === expTok || (expTok.length >= 4 && levenshtein(uTok, expTok) <= 1)
-    );
-    if (found) contentMatched++;
-  }
-  const contentRecall = expContent.length > 0 ? contentMatched / expContent.length : recall;
-
-  // Prevent overly short or spammy answers from passing
-  const lengthRatio = userTokens.length / expTokens.length;
-  if (lengthRatio < 0.45 || lengthRatio > 2.2) return false;
-
-  return recall >= 0.72 || contentRecall >= 0.78;
+  return scoreLyricLocally(userLyric, expectedLyric).lyricCorrect;
 }
 
 /**
@@ -163,13 +218,18 @@ export function gradeLyricChallengeLocally(params: {
   expectedSong: string;
   album: string;
 }): LyricChallengeResult {
-  const lyricCorrect = isLyricMatch(params.userLyric, params.expectedLyric);
+  const { lyricScore, wordMatchPercent, lyricCorrect } = scoreLyricLocally(
+    params.userLyric,
+    params.expectedLyric
+  );
   const songCorrect = isSongTitleMatch(params.userSong, params.expectedSong);
-  const pointsEarned = (lyricCorrect ? 1 : 0) + (songCorrect ? 1 : 0);
+  const pointsEarned = roundToTenth(lyricScore + (songCorrect ? 1 : 0));
 
   let feedback: string;
-  if (pointsEarned === 2) {
+  if (lyricScore === 1 && songCorrect) {
     feedback = `Spot on! You nailed both Neil Peart's lyric and "${params.expectedSong}"!`;
+  } else if (lyricScore > 0 && lyricScore < 1) {
+    feedback = `Partial lyric credit (+${lyricScore}, ${wordMatchPercent}% word match) on "${params.expectedSong}" (${params.album}).`;
   } else if (lyricCorrect) {
     feedback = `Great lyric recall! That line is from "${params.expectedSong}" (${params.album}).`;
   } else if (songCorrect) {
@@ -180,6 +240,8 @@ export function gradeLyricChallengeLocally(params: {
 
   return {
     lyricCorrect,
+    lyricScore,
+    wordMatchPercent,
     songCorrect,
     pointsEarned,
     feedback,

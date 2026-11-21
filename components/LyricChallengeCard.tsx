@@ -67,7 +67,7 @@ const LyricChallengeCard: React.FC<LyricChallengeCardProps> = ({
 
         <div className="flex items-center gap-3">
           <span className="text-xs px-3 py-1 rounded-full bg-black/50 border border-gray-700 text-gray-200 font-semibold">
-            Score: <span className="text-amber-400">{currentScore}</span> / {totalChallenges * 2} pts
+            Score: <span className="text-amber-400">{Number(currentScore.toFixed(1))}</span> / {totalChallenges * 2} pts
           </span>
           <button
             type="button"
@@ -161,7 +161,7 @@ const LyricChallengeCard: React.FC<LyricChallengeCardProps> = ({
               disabled={isGrading || (!userLyric.trim() && !userSong.trim())}
               className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 disabled:bg-gray-700 disabled:text-gray-400 text-white font-extrabold py-3.5 px-10 rounded-full text-lg transition-all duration-200 shadow-lg cursor-pointer disabled:cursor-not-allowed"
             >
-              {isGrading ? 'Checking with The Professor...' : '🎸 Lock In Answer'}
+              {isGrading ? 'Checking with Digital Hemispheres...' : '🎸 Lock In Answer'}
             </button>
           </div>
         </form>
@@ -170,30 +170,40 @@ const LyricChallengeCard: React.FC<LyricChallengeCardProps> = ({
         <div className="space-y-4 animate-fade-in-fast text-left">
           <div
             className={`p-4 rounded-xl border text-center font-bold text-lg ${
-              result.pointsEarned === 2
+              result.pointsEarned >= 1.9
                 ? 'bg-green-500/20 border-green-400/60 text-green-300'
-                : result.pointsEarned === 1
+                : result.pointsEarned > 0
                 ? 'bg-amber-500/20 border-amber-400/60 text-amber-300'
                 : 'bg-red-500/20 border-red-400/60 text-red-300'
             }`}
           >
-            {result.pointsEarned === 2 && '🔥 Full Points! (+2 pts)'}
-            {result.pointsEarned === 1 && '⚡ Partial Points! (+1 pt)'}
+            {result.pointsEarned >= 1.9 && `🔥 Full Points! (+${result.pointsEarned} pts)`}
+            {result.pointsEarned > 0 && result.pointsEarned < 1.9 && `⚡ Partial Credit! (+${result.pointsEarned} pts)`}
             {result.pointsEarned === 0 && '💀 Missed! (+0 pts)'}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div
               className={`p-3.5 rounded-lg border ${
-                result.lyricCorrect
+                result.lyricScore >= 0.9
                   ? 'bg-green-950/30 border-green-500/40'
+                  : result.lyricScore > 0
+                  ? 'bg-amber-950/30 border-amber-500/40'
                   : 'bg-red-950/30 border-red-500/40'
               }`}
             >
               <div className="text-xs font-bold uppercase tracking-wider mb-1 text-gray-300">
-                {result.lyricCorrect ? '✅ Lyric Completed' : '❌ Missing Lyric'}
+                {result.lyricScore >= 0.9
+                  ? `✅ Lyric Completed (+${result.lyricScore} pt)`
+                  : result.lyricScore > 0
+                  ? `⚡ Partial Lyric Credit (+${result.lyricScore} pt)`
+                  : '❌ Missing Lyric (+0 pts)'}
               </div>
               <p className="text-sm text-white font-medium">&ldquo;{result.expectedLyric}&rdquo;</p>
+              <p className="text-[11px] text-amber-300/90 mt-1">
+                {result.wordMatchPercent}% word match
+                {typeof result.semanticSimilarity === 'number' && ` • ${result.semanticSimilarity}% semantic similarity`}
+              </p>
               {userLyric.trim() && (
                 <p className="text-xs text-gray-400 mt-1">Your guess: &ldquo;{userLyric}&rdquo;</p>
               )}

@@ -280,16 +280,23 @@ export async function validateLyricChallenge(
     }
 
     const data = (await response.json()) as Partial<LyricChallengeResult>;
-    if (typeof data.lyricCorrect !== 'boolean' || typeof data.songCorrect !== 'boolean') {
+    if (typeof data.lyricScore !== 'number' || typeof data.songCorrect !== 'boolean') {
       return gradeLyricChallengeLocally(localArgs);
     }
 
+    const lyricScore = Math.round(Math.max(0, Math.min(1, data.lyricScore)) * 10) / 10;
+    const pointsEarned =
+      typeof data.pointsEarned === 'number'
+        ? Math.round(data.pointsEarned * 10) / 10
+        : Math.round((lyricScore + (data.songCorrect ? 1 : 0)) * 10) / 10;
+
     return {
-      lyricCorrect: data.lyricCorrect,
+      lyricCorrect: typeof data.lyricCorrect === 'boolean' ? data.lyricCorrect : lyricScore >= 0.8,
+      lyricScore,
+      wordMatchPercent: typeof data.wordMatchPercent === 'number' ? data.wordMatchPercent : 0,
+      semanticSimilarity: typeof data.semanticSimilarity === 'number' ? data.semanticSimilarity : undefined,
       songCorrect: data.songCorrect,
-      pointsEarned: typeof data.pointsEarned === 'number'
-        ? data.pointsEarned
-        : (data.lyricCorrect ? 1 : 0) + (data.songCorrect ? 1 : 0),
+      pointsEarned,
       feedback: data.feedback || gradeLyricChallengeLocally(localArgs).feedback,
       gradedBy: data.gradedBy || 'ai',
       expectedLyric: challenge.missingLine,
