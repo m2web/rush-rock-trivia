@@ -6,12 +6,17 @@ import {
   DifficultyLevel,
   SubdivisionsEra,
   SUBDIVISIONS_ERA_ORDER,
+  LyricChallengeItem,
+  LyricChallengeResult,
 } from './types';
 // AI service – routes all calls through Cloudflare Pages Functions
 import { getPreloadedQuestions, ChatPersona } from './services/aiService';
+import { getShuffledLyricChallenges } from './data/lyricChallenges';
 import StartScreen from './components/StartScreen';
 import QuestionCard from './components/QuestionCard';
 import EndScreen from './components/EndScreen';
+import LyricChallengeCard from './components/LyricChallengeCard';
+import LyricChallengeEndScreen from './components/LyricChallengeEndScreen';
 import LoadingSpinner from './components/LoadingSpinner';
 import RushFanModal from './components/RushFanModal';
 import RushFanBadge from './components/RushFanBadge';
@@ -30,7 +35,7 @@ const DIFFICULTY_ORDER: DifficultyLevel[] = ['easy', 'medium', 'hard'];
 // should be enforced server-side in the Pages Functions (429 + Retry-After)
 // and surfaced to the UI via the API response.
 
-type TabType = 'trivia' | 'meetups' | 'chat';
+type TabType = 'trivia' | 'meetups' | 'chat' | 'lyric-challenge';
 
 interface RushRockTriviaAppProps {
   initialTab?: TabType;
@@ -87,6 +92,16 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
   const [isChatOpen, setIsChatOpen] = useState(initialTab === 'chat');
   const [pendingInitialPrompt, setPendingInitialPrompt] = useState<string>('');
 
+  // Lyric Challenge Mode state
+  const [lyricChallenges, setLyricChallenges] = useState<LyricChallengeItem[]>(() =>
+    initialTab === 'lyric-challenge' ? getShuffledLyricChallenges(TOTAL_QUESTIONS) : []
+  );
+  const [lyricIndex, setLyricIndex] = useState(0);
+  const [lyricScore, setLyricScore] = useState(0);
+  const [lyricStats, setLyricStats] = useState({ lyricsCorrect: 0, songsCorrect: 0 });
+  const [lyricFinished, setLyricFinished] = useState(false);
+  const [seenLyricIds, setSeenLyricIds] = useState<string[]>([]);
+
   // Keep activeTab and view state in sync with URL route
   useEffect(() => {
     const path = location.pathname.toLowerCase();
@@ -98,6 +113,17 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
       setActiveTab('chat');
       setChatPersona('digital-man');
       setIsChatOpen(true);
+    } else if (path === '/lyric-challenge' || path === '/lyrics') {
+      setActiveTab('lyric-challenge');
+      setIsChatOpen(false);
+      if (lyricChallenges.length === 0) {
+        const picked = getShuffledLyricChallenges(TOTAL_QUESTIONS, seenLyricIds);
+        setLyricChallenges(picked);
+        setLyricIndex(0);
+        setLyricScore(0);
+        setLyricStats({ lyricsCorrect: 0, songsCorrect: 0 });
+        setLyricFinished(false);
+      }
     /* Archived meetups route handling:
     } else if (path === '/cities' || path === '/tours' || path === '/meetups') {
       setActiveTab('meetups');
@@ -140,6 +166,39 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
     setActiveTab('chat');
     navigate('/digital-man');
   }, [navigate]);
+
+  const startNewLyricChallengeRound = useCallback(() => {
+    const picked = getShuffledLyricChallenges(TOTAL_QUESTIONS, seenLyricIds);
+    setSeenLyricIds((prev) => [...prev, ...picked.map((p) => p.id)]);
+    setLyricChallenges(picked);
+    setLyricIndex(0);
+    setLyricScore(0);
+    setLyricStats({ lyricsCorrect: 0, songsCorrect: 0 });
+    setLyricFinished(false);
+    setIsChatOpen(false);
+    setActiveTab('lyric-challenge');
+  }, [seenLyricIds]);
+
+  const handleStartLyricChallenge = useCallback(() => {
+    startNewLyricChallengeRound();
+    navigate('/lyric-challenge');
+  }, [startNewLyricChallengeRound, navigate]);
+
+  const handleLyricChallengeComplete = useCallback((result: LyricChallengeResult) => {
+    setLyricScore((prev) => prev + result.pointsEarned);
+    setLyricStats((prev) => ({
+      lyricsCorrect: prev.lyricsCorrect + (result.lyricCorrect ? 1 : 0),
+      songsCorrect: prev.songsCorrect + (result.songCorrect ? 1 : 0),
+    }));
+  }, []);
+
+  const handleLyricChallengeNext = useCallback(() => {
+    if (lyricIndex + 1 < lyricChallenges.length) {
+      setLyricIndex((prev) => prev + 1);
+    } else {
+      setLyricFinished(true);
+    }
+  }, [lyricIndex, lyricChallenges.length]);
 
   const handleCloseChat = useCallback(() => {
     handleBackToTrivia();
@@ -289,6 +348,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
           <StartScreen
             onStart={startGame}
             onStartChat={() => handleStartFanChat()}
+            onStartLyricChallenge={handleStartLyricChallenge}
             // onViewMeetups={handleViewMeetups}
             error={error}
             difficulty={difficulty}
@@ -334,6 +394,7 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
           <StartScreen
             onStart={startGame}
             onStartChat={() => handleStartFanChat()}
+            onStartLyricChallenge={handleStartLyricChallenge}
             // onViewMeetups={handleViewMeetups}
             difficulty={difficulty}
             onSelectDifficulty={handleSelectStartDifficulty}
@@ -387,6 +448,30 @@ const RushRockTriviaApp: React.FC<RushRockTriviaAppProps> = ({
                       initialPrompt={pendingInitialPrompt}
                     />
                   </div>
+                ) : activeTab === 'lyric-challenge' ? (
+                  lyricFinished ? (
+                    <LyricChallengeEndScreen
+                      score={lyricScore}
+                      totalChallenges={lyricChallenges.length || TOTAL_QUESTIONS}
+                      lyricsCorrect={lyricStats.lyricsCorrect}
+                      songsCorrect={lyricStats.songsCorrect}
+                      onPlayAgain={startNewLyricChallengeRound}
+                      onBackToTrivia={handleBackToTrivia}
+                    />
+                  ) : lyricChallenges.length > 0 ? (
+                    <LyricChallengeCard
+                      key={lyricChallenges[lyricIndex].id}
+                      challenge={lyricChallenges[lyricIndex]}
+                      challengeNumber={lyricIndex + 1}
+                      totalChallenges={lyricChallenges.length}
+                      currentScore={lyricScore}
+                      onComplete={handleLyricChallengeComplete}
+                      onNext={handleLyricChallengeNext}
+                      onBackToTrivia={handleBackToTrivia}
+                    />
+                  ) : (
+                    <LoadingSpinner />
+                  )
                 ) : (
                   renderContent()
                 )}
@@ -437,6 +522,8 @@ const App: React.FC = () => {
         <Route path="/tours.html" element={<Navigate to="/" replace />} />
         <Route path="/meetups" element={<Navigate to="/" replace />} />
         <Route path="/chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="fan" />} />
+        <Route path="/lyric-challenge" element={<RushRockTriviaApp initialTab="lyric-challenge" />} />
+        <Route path="/lyrics" element={<RushRockTriviaApp initialTab="lyric-challenge" />} />
         <Route path="/digital-man" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
         <Route path="/digital-man-chat" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />
         <Route path="/digitalman" element={<RushRockTriviaApp initialTab="chat" initialPersona="digital-man" />} />

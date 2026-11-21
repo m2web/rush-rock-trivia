@@ -112,3 +112,23 @@ export interface TriviaQuestion {
   incorrectAnswers: string[];
 }
 
+export interface LyricChallengeItem {
+  id: string;
+  songId: string;
+  title: string;
+  album: string;
+  promptLines: string[];
+  missingLine: string;
+}
+
+export interface LyricChallengeResult {
+  lyricCorrect: boolean;
+  songCorrect: boolean;
+  pointsEarned: number;
+  feedback: string;
+  gradedBy: 'ai' | 'local';
+  expectedLyric: string;
+  expectedSong: string;
+  album: string;
+}
+

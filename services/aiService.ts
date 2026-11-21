@@ -1,8 +1,9 @@
 // Client-side AI service that routes all calls through Cloudflare Pages Functions.
 // API keys are never present on the client — they live server-side only.
 
-import { TriviaQuestion, DifficultyLevel, SubdivisionsEra } from '../types';
+import { TriviaQuestion, DifficultyLevel, SubdivisionsEra, LyricChallengeItem, LyricChallengeResult } from '../types';
 import { getShuffledCuratedEraQuestions } from '../data/subdivisionsEraQuestions';
+import { gradeLyricChallengeLocally } from '../utils/lyricMatcher';
 
 // ── Chat ───────────────────────────────────────────────────────────────────────
 
@@ -241,4 +242,62 @@ export async function getPreloadedQuestions(
   era: SubdivisionsEra = 'all'
 ): Promise<TriviaQuestion[]> {
   return await questionCache.getQuestions(count, difficulty, era);
+}
+
+// ── Lyric Challenge Validation ─────────────────────────────────────────────────
+
+export async function validateLyricChallenge(
+  challenge: LyricChallengeItem,
+  userLyric: string,
+  userSong: string
+): Promise<LyricChallengeResult> {
+  const localArgs = {
+    userLyric,
+    userSong,
+    expectedLyric: challenge.missingLine,
+    expectedSong: challenge.title,
+    album: challenge.album,
+  };
+
+  try {
+    const response = await fetch('/api/lyric-challenge', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        promptLines: challenge.promptLines,
+        expectedLyric: challenge.missingLine,
+        expectedSong: challenge.title,
+        album: challenge.album,
+        userLyric,
+        userSong,
+      }),
+    });
+
+    if (!response.ok) {
+      return gradeLyricChallengeLocally(localArgs);
+    }
+
+    const data = (await response.json()) as Partial<LyricChallengeResult>;
+    if (typeof data.lyricCorrect !== 'boolean' || typeof data.songCorrect !== 'boolean') {
+      return gradeLyricChallengeLocally(localArgs);
+    }
+
+    return {
+      lyricCorrect: data.lyricCorrect,
+      songCorrect: data.songCorrect,
+      pointsEarned: typeof data.pointsEarned === 'number'
+        ? data.pointsEarned
+        : (data.lyricCorrect ? 1 : 0) + (data.songCorrect ? 1 : 0),
+      feedback: data.feedback || gradeLyricChallengeLocally(localArgs).feedback,
+      gradedBy: data.gradedBy || 'ai',
+      expectedLyric: challenge.missingLine,
+      expectedSong: challenge.title,
+      album: challenge.album,
+    };
+  } catch {
+    // Seamless fallback when running Vite dev server without Cloudflare Pages Functions
+    return gradeLyricChallengeLocally(localArgs);
+  }
 }
