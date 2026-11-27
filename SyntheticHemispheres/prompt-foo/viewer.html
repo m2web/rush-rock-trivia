@@ -487,6 +487,15 @@
 
             resultsTable.innerHTML = '';
 
+            function escapeHtml(str) {
+                return String(str ?? '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
             Object.entries(grouped).forEach(([question, runs], idx) => {
                 // Sort runs by provider ID to ensure consistent columns
                 runs.sort((a, b) => a.provider.id.localeCompare(b.provider.id));
@@ -498,7 +507,7 @@
                 let contentHtml = `
                     <td colspan="2">
                         <div class="question-header">
-                            <span>Q: ${question}</span>
+                            <span>Q: ${escapeHtml(question)}</span>
                             <span class="latency">Case #${idx + 1}</span>
                         </div>
                         <div style="display: flex; gap: 2rem;">
@@ -506,9 +515,10 @@
 
                 runs.forEach(run => {
                     const isPass = run.success;
-                    const provider = run.provider.id;
-                    const output = run.response.output;
-                    const reason = run.gradingResult ? run.gradingResult.reason : 'No reasoning provided';
+                    const provider = escapeHtml(run.provider.id);
+                    const output = escapeHtml(run.response.output);
+                    const rawReason = run.gradingResult ? run.gradingResult.reason : 'No reasoning provided';
+                    const safeReason = escapeHtml(rawReason).replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
                     const latency = (run.latencyMs / 1000).toFixed(2);
 
                     contentHtml += `
@@ -519,7 +529,7 @@
                             </div>
                             <div class="output-text">${output}</div>
                             <div class="rationale">
-                                <strong>Rationale:</strong> ${reason.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}
+                                <strong>Rationale:</strong> ${safeReason}
                             </div>
                             <div class="latency" style="margin-top: 10px">Latency: ${latency}s</div>
                         </div>

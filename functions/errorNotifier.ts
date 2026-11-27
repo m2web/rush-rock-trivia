@@ -31,6 +31,10 @@ export interface ErrorAlertContext {
  * If `RESEND_API_KEY` or `ALERT_EMAIL` are not configured the function
  * exits immediately without throwing.
  */
+// Cooldown per endpoint (5 minutes) to prevent alert storms / Resend quota exhaustion
+const ALERT_COOLDOWN_MS = 5 * 60 * 1000;
+const lastAlertSentAt = new Map<string, number>();
+
 export async function sendErrorAlert(
   env: Env,
   ctx: ErrorAlertContext,
@@ -43,6 +47,19 @@ export async function sendErrorAlert(
     return;
   }
 
+  const now = Date.now();
+  const lastSent = lastAlertSentAt.get(ctx.endpoint) || 0;
+  if (now - lastSent < ALERT_COOLDOWN_MS) {
+    console.warn(`⚠️ Error alert throttled for ${ctx.endpoint} (cooldown active).`);
+    return;
+  }
+  lastAlertSentAt.set(ctx.endpoint, now);
+
+  const safeEndpoint = escapeHtml(ctx.endpoint);
+  const safeProvider = escapeHtml(ctx.provider);
+  const safeTimestamp = escapeHtml(ctx.timestamp);
+  const safeErrorMessage = escapeHtml(ctx.errorMessage);
+
   const subject = `🚨 rush2026.fyi Error — ${ctx.endpoint}`;
 
   const html = `
@@ -51,20 +68,20 @@ export async function sendErrorAlert(
   <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
     <tr>
       <td style="padding: 8px 12px; background: #f3f4f6; font-weight: bold; width: 120px; border: 1px solid #e5e7eb;">Endpoint</td>
-      <td style="padding: 8px 12px; border: 1px solid #e5e7eb;"><code>${ctx.endpoint}</code></td>
+      <td style="padding: 8px 12px; border: 1px solid #e5e7eb;"><code>${safeEndpoint}</code></td>
     </tr>
     <tr>
       <td style="padding: 8px 12px; background: #f3f4f6; font-weight: bold; border: 1px solid #e5e7eb;">Provider</td>
-      <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${ctx.provider}</td>
+      <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${safeProvider}</td>
     </tr>
     <tr>
       <td style="padding: 8px 12px; background: #f3f4f6; font-weight: bold; border: 1px solid #e5e7eb;">Timestamp</td>
-      <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${ctx.timestamp}</td>
+      <td style="padding: 8px 12px; border: 1px solid #e5e7eb;">${safeTimestamp}</td>
     </tr>
     <tr>
       <td style="padding: 8px 12px; background: #f3f4f6; font-weight: bold; border: 1px solid #e5e7eb;">Error</td>
       <td style="padding: 8px 12px; border: 1px solid #e5e7eb; color: #dc2626;">
-        <pre style="margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 13px;">${escapeHtml(ctx.errorMessage)}</pre>
+        <pre style="margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 13px;">${safeErrorMessage}</pre>
       </td>
     </tr>
   </table>
@@ -106,5 +123,6 @@ function escapeHtml(str: string): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

@@ -266,10 +266,7 @@ export async function validateLyricChallenge(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        promptLines: challenge.promptLines,
-        expectedLyric: challenge.missingLine,
-        expectedSong: challenge.title,
-        album: challenge.album,
+        challengeId: challenge.id,
         userLyric,
         userSong,
       }),

@@ -4,6 +4,12 @@
 import { PagesFunction, Env } from '../types';
 import { GEMINI_LIGHT_MODEL, GEMINI_MODEL, OPENAI_MODEL } from '../constants';
 import { sendErrorAlert } from '../errorNotifier';
+import { createIpRateLimiter, getClientIp, getCorsHeaders, readJsonBodyWithLimit } from '../utils/request';
+
+// In-memory sliding-window IP rate limiter (max 10 requests per 60 seconds per IP)
+// Pair with Cloudflare WAF Rate Limiting Rules for strict cross-isolate enforcement.
+const checkTriviaRateLimit = createIpRateLimiter(10, 60 * 1000);
+const MAX_TRIVIA_BODY_BYTES = 1024;
 
 interface TriviaQuestion {
   question: string;
@@ -637,16 +643,19 @@ async function callOpenAI(
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  // CORS headers — restrict browser access to the production domain (not a server-side abuse control)
-
   const origin = context.request.headers.get('Origin') || '';
-  const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
-  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': corsOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
+  const corsHeaders = getCorsHeaders(origin, 'POST, OPTIONS');
+
+  const clientIp = getClientIp(context.request);
+  if (!checkTriviaRateLimit(clientIp)) {
+    return new Response(JSON.stringify({
+      error: 'Rate limit exceeded',
+      details: 'Too many trivia requests. Please wait a minute before trying again.'
+    }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': '60', ...corsHeaders }
+    });
+  }
 
   let useOpenAI = false;
 
@@ -661,52 +670,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: `${useOpenAI ? 'OPENAI' : 'GEMINI'}_API_KEY not configured` }), {
-        status: 500,
+      console.error(`Trivia API key not configured (useOpenAI=${useOpenAI})`);
+      return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
+        status: 503,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
     }
 
     // ── Input validation ──────────────────────────────────────────────
-    const request = context.request;
-
-    // Verify Content-Type
-    const contentType = request.headers.get('Content-Type') || '';
-    if (!contentType.includes('application/json')) {
-      return new Response(JSON.stringify({ error: 'Content-Type must be application/json' }), {
-        status: 415,
+    const bodyResult = await readJsonBodyWithLimit(context.request, MAX_TRIVIA_BODY_BYTES);
+    if (!bodyResult.ok) {
+      return new Response(JSON.stringify({ error: bodyResult.error }), {
+        status: bodyResult.status,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
     }
 
-    // Reject oversized payloads (max 1 KB for a simple { count: N } body)
-    const contentLength = parseInt(request.headers.get('Content-Length') || '0', 10);
-    if (contentLength > 1024) {
-      return new Response(JSON.stringify({ error: 'Request body too large' }), {
-        status: 413,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
-    }
-
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON body' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
-    }
-
-    // Validate body shape
-    if (typeof body !== 'object' || body === null || Array.isArray(body)) {
-      return new Response(JSON.stringify({ error: 'Request body must be a JSON object' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
-      });
-    }
-
-    const { count: rawCount, difficulty: rawDifficulty, era: rawEra } = body as {
+    const { count: rawCount, difficulty: rawDifficulty, era: rawEra } = bodyResult.data as {
       count?: unknown;
       difficulty?: unknown;
       era?: unknown;
@@ -775,14 +755,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 // Handle CORS preflight requests
 export const onRequestOptions: PagesFunction<Env> = async (context) => {
   const origin = context.request.headers.get('Origin') || '';
-  const allowedOrigins = ['https://rush2026.fyi', 'https://www.rush2026.fyi'];
-  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
   return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': corsOrigin,
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    }
+    headers: getCorsHeaders(origin, 'POST, OPTIONS')
   });
 };

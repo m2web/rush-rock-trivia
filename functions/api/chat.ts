@@ -1,6 +1,6 @@
 import { PagesFunction, Env } from '../types';
 import { GEMINI_LIGHT_MODEL, GEMINI_MODEL, OPENAI_MODEL } from '../constants';
-import { getClientIp, getCorsHeaders } from '../utils/request';
+import { createIpRateLimiter, getClientIp, getCorsHeaders, readJsonBodyWithLimit } from '../utils/request';
 import { DEFAULT_MEETUPS } from '../../data/defaultMeetups';
 
 function sanitizePromptField(val: unknown): string {
@@ -170,7 +170,7 @@ const geminiChatRouterSchema = {
   required: ["escalateToProfessorModel", "reply"]
 };
 
-async function callGeminiProfessorChat(apiKey: string, prompt: string): Promise<string> {
+async function callGeminiProfessorChat(apiKey: string, systemPrompt: string, userMessage: string): Promise<string> {
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
     method: 'POST',
     headers: {
@@ -178,9 +178,13 @@ async function callGeminiProfessorChat(apiKey: string, prompt: string): Promise<
       'x-goog-api-key': apiKey,
     },
     body: JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: systemPrompt }]
+      },
       contents: [{
+        role: 'user',
         parts: [{
-          text: prompt
+          text: userMessage
         }]
       }],
       generationConfig: {
@@ -205,7 +209,7 @@ async function callGeminiProfessorChat(apiKey: string, prompt: string): Promise<
 }
 
 async function callGeminiChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
-  const basePrompt = `${getSystemPrompt(persona, fanStory, meetupsContext)}\n\nUser: ${userMessage}`;
+  const systemPrompt = getSystemPrompt(persona, fanStory, meetupsContext);
   const routerInstruction = [
     `MODEL SELF-ROUTING RULES (YOU ARE ${GEMINI_LIGHT_MODEL}):`,
     '- If this message is general Rush fan conversation, album/song discussion ("Working Man" or "Subdivisions" level), or 2026-2027 tour/meetup concierge questions: set "escalateToProfessorModel": false and write your full response in "reply".',
@@ -219,9 +223,13 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
       'x-goog-api-key': apiKey,
     },
     body: JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: `${routerInstruction}\n\n${systemPrompt}` }]
+      },
       contents: [{
+        role: 'user',
         parts: [{
-          text: `${routerInstruction}\n\n${basePrompt}`
+          text: userMessage
         }]
       }],
       generationConfig: {
@@ -252,7 +260,7 @@ async function callGeminiChat(apiKey: string, userMessage: string, fanStory: str
   }
 
   console.log(`🧠 [Gemini Chat Router] ${GEMINI_LIGHT_MODEL} escalated chat message to ${GEMINI_MODEL}. Reason: ${parsed.escalationReason || 'Professor-level query'}`);
-  return callGeminiProfessorChat(apiKey, basePrompt);
+  return callGeminiProfessorChat(apiKey, systemPrompt, userMessage);
 }
 
 async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: string, persona: 'fan' | 'digital-man' | 'archivist', meetupsContext?: string): Promise<string> {
@@ -287,41 +295,19 @@ async function callOpenAIChat(apiKey: string, userMessage: string, fanStory: str
 }
 
 // In-memory sliding-window IP rate limiter (max 5 requests per 60 seconds per IP)
-// Note: In-memory Map provides lightweight, low-latency edge rate limiting per Cloudflare isolate.
-// For strict cross-isolate guarantees, a persistent store (e.g., KV or Durable Object) can be used.
-const ipRequestLogs = new Map<string, number[]>();
+// Note: Pair with Cloudflare WAF Rate Limiting Rules for strict cross-isolate enforcement.
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 5;
 const MAX_MESSAGE_LENGTH = 500;
+const MAX_FAN_STORY_LENGTH = 500;
+const MAX_CHAT_BODY_BYTES = 4096;
 const MAX_SESSION_TURNS = 15;
 
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-
-  // Opportunistic cleanup of stale IP entries when the map grows
-  if (ipRequestLogs.size > 100) {
-    for (const [loggedIp, loggedTimestamps] of ipRequestLogs.entries()) {
-      if (loggedTimestamps.length === 0 || now - loggedTimestamps[loggedTimestamps.length - 1] >= RATE_LIMIT_WINDOW_MS) {
-        ipRequestLogs.delete(loggedIp);
-      }
-    }
-  }
-
-  const timestamps = (ipRequestLogs.get(ip) || []).filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
-  
-  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    ipRequestLogs.set(ip, timestamps);
-    return false; // Rate limit exceeded
-  }
-  
-  timestamps.push(now);
-  ipRequestLogs.set(ip, timestamps);
-  return true;
-}
+const checkRateLimit = createIpRateLimiter(MAX_REQUESTS_PER_WINDOW, RATE_LIMIT_WINDOW_MS);
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const origin = context.request.headers.get('Origin') || '';
-  const corsHeaders = getCorsHeaders(origin);
+  const corsHeaders = getCorsHeaders(origin, 'POST, OPTIONS');
 
   // Determine client IP for rate limiting
   const clientIp = getClientIp(context.request);
@@ -343,22 +329,22 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       : (context.env.GEMINI_API_KEY || (context.env as any).GOOGLE_API_KEY);
 
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: `${useOpenAI ? 'OPENAI' : 'GEMINI'}_API_KEY not configured` }), {
-        status: 500,
+      console.error(`Chat API key not configured (useOpenAI=${useOpenAI})`);
+      return new Response(JSON.stringify({ error: 'Service temporarily unavailable' }), {
+        status: 503,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
     }
 
-    const request = context.request;
-    let body: { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'digital-man' | 'archivist' };
-    try {
-      body = (await request.json()) as { userMessage?: string; fanStory?: string; turnCount?: number; persona?: 'fan' | 'digital-man' | 'archivist' };
-    } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON payload in request body' }), {
-        status: 400,
+    const bodyResult = await readJsonBodyWithLimit(context.request, MAX_CHAT_BODY_BYTES);
+    if (!bodyResult.ok) {
+      return new Response(JSON.stringify({ error: bodyResult.error }), {
+        status: bodyResult.status,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
     }
+
+    const body = bodyResult.data as { userMessage?: unknown; fanStory?: unknown; turnCount?: unknown; persona?: unknown };
     const { userMessage, fanStory, turnCount } = body;
     const persona: 'fan' | 'digital-man' = (body.persona === 'digital-man' || body.persona === 'archivist') ? 'digital-man' : 'fan';
 
@@ -377,6 +363,26 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         status: 400,
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
+    }
+
+    let validatedFanStory = '';
+    if (fanStory !== undefined && fanStory !== null) {
+      if (typeof fanStory !== 'string') {
+        return new Response(JSON.stringify({ error: 'fanStory must be a string' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+      if (fanStory.length > MAX_FAN_STORY_LENGTH) {
+        return new Response(JSON.stringify({
+          error: 'Fan story too long',
+          details: `Fan stories are limited to ${MAX_FAN_STORY_LENGTH} characters.`
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders }
+        });
+      }
+      validatedFanStory = fanStory;
     }
 
     if (typeof turnCount === 'number' && turnCount > MAX_SESSION_TURNS) {
@@ -409,8 +415,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const reply = useOpenAI
-      ? await callOpenAIChat(apiKey, userMessage, fanStory || '', persona, meetupsContext)
-      : await callGeminiChat(apiKey, userMessage, fanStory || '', persona, meetupsContext);
+      ? await callOpenAIChat(apiKey, userMessage, validatedFanStory, persona, meetupsContext)
+      : await callGeminiChat(apiKey, userMessage, validatedFanStory, persona, meetupsContext);
 
     return new Response(JSON.stringify({ reply }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -431,6 +437,6 @@ export const onRequestOptions: PagesFunction = async (context) => {
   const origin = context.request.headers.get('Origin') || '';
   return new Response(null, {
     status: 204,
-    headers: getCorsHeaders(origin)
+    headers: getCorsHeaders(origin, 'POST, OPTIONS')
   });
 };

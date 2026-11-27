@@ -249,7 +249,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <span>🔒</span> Privacy & The Temples of Syrinx
             </h3>
             <p className="text-sm text-gray-300 leading-relaxed mb-3">
-              Your chat conversations with the Synthetic Rush Fan are completely private and ephemeral. We do not log, store, or track your messages, fan stories, or chat sessions on our servers or databases. Once you close or refresh the page, your conversation is gone.
+              We do not store your chat history on our servers or databases—once you close or refresh the page, your conversation is cleared. To generate replies, your message and optional fan story are sent to our third-party AI provider (Google Gemini or OpenAI). Your optional fan story is saved only in your browser&apos;s local storage so you don&apos;t have to re-enter it.
             </p>
             <p className="text-sm leading-relaxed font-medium text-amber-300">
               We are not the great computer halls of Syrinx from 2112—just a fellow Rush fan celebrating the music! 😊🤘❤️

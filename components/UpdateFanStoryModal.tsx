@@ -27,6 +27,7 @@ const UpdateFanStoryModal: React.FC<UpdateFanStoryModalProps> = ({ isOpen, newSt
         <p className="text-gray-300 mb-2">We noticed new details about your Rush fan story. Would you like to update it?</p>
         <textarea
           className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 mb-4 min-h-[100px]"
+          maxLength={500}
           value={story}
           onChange={e => setStory(e.target.value)}
         />

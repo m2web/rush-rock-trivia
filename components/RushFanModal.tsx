@@ -48,6 +48,7 @@ const RushFanModal: React.FC<RushFanModalProps> = ({ isOpen, onSubmit, initialSt
         <textarea
           className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 mb-4 min-h-[100px]"
           placeholder="Share your Rush origin story... (optional)"
+          maxLength={500}
           value={story}
           onChange={e => setStory(e.target.value)}
         />

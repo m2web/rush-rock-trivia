@@ -45,7 +45,7 @@ export async function sendNewMeetupAlert(
   const safeOrganizer = meetup.organizer_name ? escapeHtml(meetup.organizer_name) : 'Rush Fan';
   const safeDescription = meetup.description ? escapeHtml(meetup.description) : 'No description provided';
   const safeId = escapeHtml(meetup.id);
-  const safeRsvp = meetup.rsvp_link ? escapeHtml(meetup.rsvp_link) : null;
+  const safeRsvp = meetup.rsvp_link && isSafeHttpUrl(meetup.rsvp_link) ? escapeHtml(meetup.rsvp_link) : null;
 
   const html = `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 620px; margin: 0 auto; padding: 24px; background: #ffffff; color: #1f2937;">
@@ -88,7 +88,7 @@ export async function sendNewMeetupAlert(
     ${safeRsvp ? `
     <tr>
       <td style="padding: 10px 12px; background: #f9fafb; font-weight: 600; border: 1px solid #e5e7eb;">RSVP Link</td>
-      <td style="padding: 10px 12px; border: 1px solid #e5e7eb;"><a href="${safeRsvp}" target="_blank" style="color: #2563eb; text-decoration: underline;">${safeRsvp}</a></td>
+      <td style="padding: 10px 12px; border: 1px solid #e5e7eb;"><a href="${safeRsvp}" target="_blank" rel="noopener noreferrer" style="color: #2563eb; text-decoration: underline;">${safeRsvp}</a></td>
     </tr>` : ''}
     <tr>
       <td style="padding: 10px 12px; background: #f9fafb; font-weight: 600; border: 1px solid #e5e7eb;">Description</td>
@@ -140,6 +140,16 @@ export async function sendNewMeetupAlert(
   } catch (err) {
     // Non-blocking catch to ensure function reliability
     console.error('❌ Failed to send meetup alert email:', err);
+  }
+}
+
+/** Validate http/https URL scheme for defense-in-depth before rendering links. */
+function isSafeHttpUrl(str: string): boolean {
+  try {
+    const url = new URL(str);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
   }
 }
 
